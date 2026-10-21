@@ -1126,58 +1126,66 @@ async function aiGemini(prompt, requireJson = true){
     ? `${sys}\nOutput ONLY valid JSON. No markdown.\n\nTask: ${prompt}`
     : `${sys}\n\nTask: ${prompt}`;
 
-  let availableModels = [];
+  // Priority list of fastest/most common models. (We won't bother fetching the whole list unless these fail)
+  let modelsToTry = ["gemini-3.8-flash", "gemini-2.5-flash", "gemini-1.5-flash", "gemini-pro"];
+  
+  let lastError = "Could not connect to any Gemini model.";
 
-  // 1. Dynamically fetch the list of models available to this API key
-  try {
-    const listRes = await fetch(`${base}/models?key=${encodeURIComponent(k)}`);
-    if (listRes.ok) {
-      const listData = await listRes.json();
-      // Filter for models that support generateContent
-      availableModels = (listData.models || [])
-        .filter(m => m.supportedGenerationMethods?.includes("generateContent"))
-        .map(m => m.name.replace("models/", ""));
-    }
-  } catch(e) {
-    console.warn("Could not fetch model list, using fallback.", e);
-  }
-
-  // 2. Fallback if the list fetch fails entirely
-  if (!availableModels.length) {
-    availableModels = ["gemini-3.8-flash", "gemini-2.5-flash", "gemini-2.0-flash"];
-  }
-
-  let lastError = "No models available.";
-
-  // 3. Try each available model until one works
-  for (let model of availableModels) {
+  for (let model of modelsToTry) {
     try {
+      // Update the UI so it doesn't look frozen
+      const statusEls = [document.getElementById("gm"), document.getElementById("ai-parse-status"), document.getElementById("plan-ai-status"), document.getElementById("kg")];
+      statusEls.forEach(el => {
+        if (el && (el.innerHTML.includes("spinner") || el.innerHTML.includes("Testing"))) {
+          el.innerHTML = `<span class="spinner"></span> Trying model: ${model}...`;
+        }
+      });
+
       const url = `${base}/models/${model}:generateContent?key=${encodeURIComponent(k)}`;
       
+      // Add a 12-second timeout so it can't hang forever
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 12000);
+
       const body = { contents: [{ parts: [{ text: ask }] }] };
       if (requireJson) body.generationConfig = { responseMimeType: "application/json" };
 
       const res = await fetch(url, {
         method: "POST",
         headers: {"Content-Type":"application/json"},
-        body: JSON.stringify(body)
+        body: JSON.stringify(body),
+        signal: controller.signal
       });
+      
+      clearTimeout(timeoutId);
 
       if (res.ok) {
         const j = await res.json();
         const txt = j.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (txt) return requireJson ? JSON.parse(txt) : txt;
+        if (txt) {
+          try {
+            return requireJson ? JSON.parse(txt) : txt;
+          } catch (parseError) {
+            // Sometimes the AI returns markdown-wrapped JSON despite instructions
+            const clean = txt.replace(/```json/gi, "").replace(/```/g, "").trim();
+            return requireJson ? JSON.parse(clean) : clean;
+          }
+        }
       } else {
         const errData = await res.json().catch(() => ({}));
         lastError = errData.error?.message || `HTTP ${res.status}`;
         
-        // If the key is completely invalid, stop trying other models
+        // If it's a key error, stop immediately. No point trying other models.
         if (res.status === 400 || res.status === 403) {
           throw new Error(`API Key rejected: ${lastError}`);
         }
       }
     } catch(e) {
-      lastError = e.message;
+      if (e.name === 'AbortError') {
+        lastError = `Model ${model} timed out.`;
+      } else {
+        lastError = e.message;
+      }
     }
   }
 
