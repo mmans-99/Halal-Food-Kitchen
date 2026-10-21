@@ -1120,18 +1120,39 @@ async function aiGemini(prompt, requireJson = true){
   const k = KEY();
   if (!k) throw new Error("API Key is missing. Please save it in AI Studio Settings.");
   
-  // Updated to include current active models based on the error message
-  const models = ["gemini-3.8-flash", "gemini-4-argon", "gemini-2.5-flash"];
+  const base = "https://generativelanguage.googleapis.com/v1beta";
   const sys = "You are a Halal chef AI. STRICT HALAL: absolutely no pork, bacon, lard, ham, alcohol, wine, beer, mirin, sake or gelatine.";
   const ask = requireJson 
     ? `${sys}\nOutput ONLY valid JSON. No markdown.\n\nTask: ${prompt}`
     : `${sys}\n\nTask: ${prompt}`;
-  
-  let lastError = "Could not connect to any Gemini model.";
 
-  for (let model of models) {
+  let availableModels = [];
+
+  // 1. Dynamically fetch the list of models available to this API key
+  try {
+    const listRes = await fetch(`${base}/models?key=${encodeURIComponent(k)}`);
+    if (listRes.ok) {
+      const listData = await listRes.json();
+      // Filter for models that support generateContent
+      availableModels = (listData.models || [])
+        .filter(m => m.supportedGenerationMethods?.includes("generateContent"))
+        .map(m => m.name.replace("models/", ""));
+    }
+  } catch(e) {
+    console.warn("Could not fetch model list, using fallback.", e);
+  }
+
+  // 2. Fallback if the list fetch fails entirely
+  if (!availableModels.length) {
+    availableModels = ["gemini-3.8-flash", "gemini-2.5-flash", "gemini-2.0-flash"];
+  }
+
+  let lastError = "No models available.";
+
+  // 3. Try each available model until one works
+  for (let model of availableModels) {
     try {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(k)}`;
+      const url = `${base}/models/${model}:generateContent?key=${encodeURIComponent(k)}`;
       
       const body = { contents: [{ parts: [{ text: ask }] }] };
       if (requireJson) body.generationConfig = { responseMimeType: "application/json" };
@@ -1149,7 +1170,11 @@ async function aiGemini(prompt, requireJson = true){
       } else {
         const errData = await res.json().catch(() => ({}));
         lastError = errData.error?.message || `HTTP ${res.status}`;
-        if (res.status === 400 || res.status === 403) throw new Error(`API Key rejected: ${lastError}`);
+        
+        // If the key is completely invalid, stop trying other models
+        if (res.status === 400 || res.status === 403) {
+          throw new Error(`API Key rejected: ${lastError}`);
+        }
       }
     } catch(e) {
       lastError = e.message;
