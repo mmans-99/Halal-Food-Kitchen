@@ -1,23 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-<!-- Link to Web App Manifest -->
-<link rel="manifest" href="manifest.webmanifest">
-
-<!-- Favicon / Home Screen Icon -->
-<link rel="apple-touch-icon" href="icon-192.png">
-<link rel="icon" type="image/png" href="icon-192.png">
-
-<!-- Register Service Worker in JavaScript -->
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
-  });
-}
-</script>
-
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0B5D4B">
@@ -92,8 +75,15 @@ details summary{cursor:pointer;font-family:"Iowan Old Style",Palatino,Georgia,se
 details[open] summary{margin-bottom:8px}
 :focus-visible{outline:3px solid var(--s);outline-offset:2px}
 .warn-box{background:#FFF3CD;border:1px solid #FFEBAA;color:#856404;padding:12px 16px;border-radius:12px;margin:12px 0;font-size:.9rem}
-@media(prefers-color-scheme:dark){.warn-box{background:#3A2E00;border-color:#524200;color:#FFE8A3}}
+.err-box{background:#FEE2E2;border:1px solid #FCA5A5;color:#991B1B;padding:12px 16px;border-radius:12px;margin:12px 0;font-size:.9rem}
+@media(prefers-color-scheme:dark){.warn-box{background:#3A2E00;border-color:#524200;color:#FFE8A3}.err-box{background:#450a0a;border-color:#7f1d1d;color:#fecaca}}
 @media(max-width:480px){.sl,.il{columns:1}.macro-grid{grid-template-columns:repeat(2,1fr)}}
+input[type=file]{width:100%;padding:14px;border:2px dashed var(--line);border-radius:14px;background:var(--bg);cursor:pointer;transition:border-color .15s}
+input[type=file]:hover{border-color:var(--g)}
+#file-results{margin-top:12px}
+#file-results ul{margin:8px 0;padding-left:20px;font-size:.85rem;color:var(--mut)}
+.file-fmt{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;font-size:.85rem;line-height:1.7}
+.file-fmt code{background:var(--g2);padding:1px 6px;border-radius:4px;font-size:.82rem}
 </style>
 </head>
 <body>
@@ -110,9 +100,9 @@ details[open] summary{margin-bottom:8px}
 
   <section class="box">
     <h3>Your Pantry &amp; Ingredients</h3>
-    <p class="mu">Start typing — suggestions appear below and the recipe list narrows live. Press Add or Enter to save an ingredient.</p>
+    <p class="mu">Type an ingredient — suggestions appear below and the recipe list narrows live. Press Add or Enter to save it.</p>
     <div class="add">
-      <input type="text" id="in" autocomplete="off" placeholder="e.g. sal… → salmon" aria-label="Ingredient you have">
+      <input type="text" id="in" autocomplete="off" placeholder="e.g. sal… → salmon, or chips, mixed leaf salad" aria-label="Ingredient you have">
       <button class="btn" id="addb" type="button">Add</button>
     </div>
     <div id="sugg" aria-live="polite"></div>
@@ -163,6 +153,22 @@ details[open] summary{margin-bottom:8px}
   </details>
 
   <details class="box">
+    <summary>📁 Upload recipes from file (TXT, MD, CSV, JSON, PDF)</summary>
+    <p class="mu">Upload one or more files. The parser finds all recipes, checks each for halal compliance, and imports the valid ones to your offline database.</p>
+    <input type="file" id="file-upload" accept=".txt,.md,.csv,.json,.pdf" multiple>
+    <div class="file-fmt">
+      <strong>Accepted formats:</strong><br>
+      • <strong>TXT / MD</strong> — one recipe per block, with <em>Ingredients</em> and <em>Method</em> headings. Separate recipes with <code># Title</code>, <code>---</code>, or a blank line followed by a short capitalised line.<br>
+      • <strong>CSV</strong> — one recipe per line: <code>Title;meal;cuisine;time;appliance;tags;cal;P;C;F;ingredients;steps</code><br>
+      &nbsp;&nbsp;<code>meal</code>: b/l/d/s/t &nbsp; <code>appliance</code>: a/s/o/m/n &nbsp; <code>tags</code>: hp v V g<br>
+      • <strong>JSON</strong> — array of objects with fields <code>n,m,c,t,me,tg,cal,p,car,f,i,s</code> (ingredients array, steps array).<br>
+      • <strong>PDF</strong> — text-based PDFs only. Scanned/image-only PDFs are not supported (would need OCR). Needs internet on the first upload to fetch pdf.js.
+    </div>
+    <button class="ch" data-k="download-template" type="button" style="margin-top:8px">⬇️ Download template CSV</button>
+    <div id="file-results" aria-live="polite"></div>
+  </details>
+
+  <details class="box">
     <summary>Gemini AI Settings</summary>
     <p class="mu">A free API key from aistudio.google.com. Stored only in this browser's localStorage — never hardcode it in a public repo.</p>
     <div class="add">
@@ -193,12 +199,6 @@ details[open] summary{margin-bottom:8px}
 </dialog>
 
 <script>
-/* ================================================================
-   RECIPE DATABASE
-   Title ; meal(b/l/d/s/t) ; cuisine ; minutes ; appliances(asomn) ;
-   tags(hp v V g) ; kcal ; protein ; carbs ; fat ; ingredients(comma) ;
-   steps(pipe)
-   ================================================================ */
 const D = `
 Jammy Air Fryer Eggs;b;Modern;9;a;hpvg;140;12;1;10;eggs;Place cold eggs in air fryer basket|Air fry at 170C for 9 minutes|Transfer to ice water for 3 minutes|Peel and season
 Air Fryer Egg & Hummus Toast;b;Modern;6;a;hpv;380;18;32;20;bread,hummus,eggs,smoked paprika,olive oil;Spread hummus on bread|Make a well and crack in an egg|Air fry at 180C for 6 minutes|Dust with paprika
@@ -328,7 +328,6 @@ Air Fryer Apple Crumble;t;Modern;20;a;v;310;4;46;13;apple,oats,flour,butter,suga
 Coconut Date Bites;t;Modern;10;n;hvVg;170;3;24;8;dates,coconut,oats;Blitz the dates and oats|Roll in desiccated coconut|Chill for 20 minutes|Serve
 `;
 
-/* ---------------- helpers ---------------- */
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
@@ -337,7 +336,6 @@ const E  = {b:"🍳", l:"🥗", d:"🍲", s:"🥜", t:"🍮"};
 const ME = {a:"Air Fryer", s:"Stovetop", o:"Oven", m:"Microwave", n:"No-Cook"};
 const TG = {h:"Healthy", p:"High-Protein", v:"Vegetarian", V:"Vegan", g:"Gluten-Free"};
 const DN = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
-
 const OK_TAGS = "hpvVg";
 const OK_APPL = "asomn";
 
@@ -348,7 +346,6 @@ const st = {
   fav: true, plan: null, fo: false
 };
 
-/* ---------------- normalisation ---------------- */
 function normalizeRecipe(r){
   const m  = "bldst".includes(r.m) ? r.m : "d";
   const tgSrc = Array.isArray(r.tg) ? r.tg.join("") : String(r.tg || "p");
@@ -368,7 +365,6 @@ function normalizeRecipe(r){
   };
 }
 
-/* ---------------- storage ---------------- */
 const loadPantry = () => {
   try { const v = JSON.parse(localStorage.getItem("hk-pantry") || "[]"); st.ing = Array.isArray(v) ? v : []; }
   catch(e){ st.ing = []; }
@@ -382,7 +378,6 @@ const saveCustomRecipes = () => {
 };
 const KEY = () => { try { return localStorage.getItem("hk-gemini-key"); } catch(e){ return null; } };
 
-/* ---------------- matching ---------------- */
 const stem = w => {
   if (w.length <= 3) return w;
   if (/ies$/.test(w)) return w.slice(0,-3) + "y";
@@ -393,16 +388,175 @@ const stem = w => {
 };
 const tok = s => String(s).toLowerCase().replace(/[^a-z0-9' ]+/g," ").split(/\s+/).filter(Boolean).map(stem);
 
+const COMMON_ING = [
+  "eggs","egg whites","bread","toast","sliced bread","baguette","sourdough",
+  "pitta bread","pitta","tortilla wrap","wrap","english muffin","naan","crackers",
+  "chips","crisps","fries","frozen chips","potato wedges","hash browns",
+  "potatoes","sweet potato","carrot","onion","red onion","spring onion","shallot",
+  "garlic","ginger","tomato","cherry tomatoes","tinned tomatoes","chopped tomatoes","passata",
+  "cucumber","pepper","bell pepper","aubergine","courgette","broccoli","cauliflower",
+  "asparagus","green beans","peas","frozen peas","sweetcorn","mushroom","leek",
+  "celery","cabbage","kale","beetroot","spinach","lettuce","mixed leaf salad",
+  "salad leaves","rocket","watercress","avocado","olives","pickles","capers",
+  "sun-dried tomatoes","banana","apple","orange","lemon","lime","mango",
+  "berries","strawberries","blueberries","raspberries","grapes","pineapple",
+  "dates","raisins","sultanas","figs","apricots","dried apricots",
+  "walnuts","almonds","cashews","peanuts","pistachio","mixed nuts","pine nuts",
+  "milk","almond milk","oat milk","soy milk","coconut milk","cream","double cream",
+  "yoghurt","greek yoghurt","cream cheese","butter","ghee","margarine",
+  "cheddar","mozzarella","feta","halloumi","parmesan","ricotta","paneer","cheese",
+  "chicken breast","chicken thigh","chicken wings","chicken drumsticks","whole chicken",
+  "minced beef","beef strips","steak","minced lamb","lamb chops","lamb mince",
+  "turkey","turkey mince","sausage","chicken sausage","sujuk",
+  "salmon","smoked salmon","cod","haddock","tuna","tinned tuna","prawns","shrimp",
+  "sardines","mackerel","white fish","fish fillets",
+  "tofu","tempeh","falafel","hummus","houmous","tahini","peanut butter",
+  "rice","basmati rice","white rice","brown rice","jasmine rice","wild rice",
+  "quinoa","couscous","bulgur wheat","spaghetti","penne","fusilli","macaroni",
+  "noodles","egg noodles","rice noodles","lasagne sheets",
+  "oats","porridge oats","granola","cereal","muesli",
+  "flour","plain flour","self-raising flour","gram flour","bread flour","cornflour",
+  "baking powder","baking soda","yeast","cocoa powder","chocolate","chocolate chips",
+  "dark chocolate","milk chocolate","white chocolate",
+  "olive oil","vegetable oil","sunflower oil","coconut oil","sesame oil","rapeseed oil",
+  "soy sauce","light soy sauce","dark soy sauce","vinegar","balsamic vinegar",
+  "apple cider vinegar","white vinegar","lemon juice","lime juice",
+  "mayonnaise","mayo","ketchup","tomato ketchup","mustard","bbq sauce",
+  "hot sauce","chilli sauce","sriracha","sweet chilli sauce",
+  "salt","sea salt","black pepper","white pepper","paprika","smoked paprika",
+  "cumin","coriander","turmeric","cinnamon","nutmeg","cardamom","cloves",
+  "ginger powder","garlic powder","onion powder","chilli powder","chilli flakes",
+  "curry powder","garam masala","mixed spice","bay leaves","oregano","thyme",
+  "rosemary","sage","parsley","coriander","cilantro","basil","mint","dill",
+  "za'atar","zaatar","sumac","ras el hanout","harissa",
+  "chicken stock","vegetable stock","beef stock","stock cubes","stock pot","bouillon",
+  "sugar","brown sugar","caster sugar","icing sugar","honey","maple syrup","date syrup",
+  "jam","marmalade","nutella","salsa","guacamole",
+  "coconut","desiccated coconut","shredded coconut","sesame seeds","chia seeds",
+  "flax seeds","sunflower seeds","pumpkin seeds",
+  "popcorn kernels","filo pastry","puff pastry","shortcrust pastry",
+  "vanilla","vanilla extract","vanilla essence",
+  "rose water","orange blossom water",
+  "water","foil","parchment paper","baking paper",
+  "baked beans","black beans","kidney beans","cannellini beans","fava beans",
+  "chickpeas","lentils","red lentils","green lentils","brown lentils"
+];
+
+const SYNONYMS = {
+  "aubergine": ["eggplant"],
+  "courgette": ["zucchini"],
+  "coriander": ["cilantro"],
+  "rocket": ["arugula"],
+  "green chilli": ["green chili"],
+  "chilli flakes": ["red pepper flakes", "chili flakes"],
+  "bell pepper": ["red pepper", "green pepper", "yellow pepper", "capsicum"],
+  "pepper": ["bell pepper"],
+  "mixed leaf salad": ["lettuce", "salad leaves", "rocket", "spinach", "greens", "leafy greens"],
+  "salad leaves": ["lettuce", "rocket", "spinach", "mixed leaf salad"],
+  "leafy greens": ["lettuce", "spinach", "kale", "rocket", "mixed leaf salad"],
+  "lettuce": ["mixed leaf salad", "salad leaves", "rocket", "greens"],
+  "spinach": ["baby spinach", "mixed leaf salad", "greens"],
+  "chips": ["fries", "french fries", "potatoes", "wedges", "potato wedges"],
+  "crisps": ["potato chips"],
+  "fries": ["chips", "potatoes", "wedges"],
+  "wedges": ["potatoes", "chips", "fries"],
+  "potato wedges": ["potatoes", "chips"],
+  "potatoes": ["potato"],
+  "hash browns": ["potatoes", "potato"],
+  "yoghurt": ["yogurt"],
+  "greek yoghurt": ["greek yogurt", "yoghurt", "yogurt"],
+  "cream": ["double cream", "single cream", "heavy cream", "whipping cream"],
+  "cheese": ["cheddar", "mozzarella", "feta", "halloumi", "parmesan", "ricotta", "paneer"],
+  "butter": ["ghee", "margarine"],
+  "minced beef": ["ground beef", "beef mince"],
+  "minced lamb": ["ground lamb", "lamb mince"],
+  "prawns": ["shrimp"],
+  "white fish": ["cod", "haddock", "tilapia", "pollock"],
+  "tuna": ["tinned tuna", "canned tuna"],
+  "sardines": ["tinned sardines"],
+  "chicken": ["chicken breast", "chicken thigh", "chicken wings", "chicken drumsticks"],
+  "sausage": ["chicken sausage", "turkey sausage", "sujuk", "beef sausage"],
+  "rice": ["basmati rice", "white rice", "brown rice", "jasmine rice"],
+  "chickpeas": ["chickpea", "garbanzo beans"],
+  "lentils": ["red lentils", "green lentils", "brown lentils"],
+  "oats": ["porridge oats", "rolled oats", "oatmeal"],
+  "bread": ["toast", "sliced bread", "white bread", "brown bread", "sourdough", "baguette"],
+  "pitta": ["pita", "pitta bread", "pita bread"],
+  "tortilla wrap": ["wrap", "tortilla", "flatbread"],
+  "flatbread": ["pitta", "naan", "tortilla"],
+  "hummus": ["houmous", "humus"],
+  "mayonnaise": ["mayo"],
+  "peanut butter": ["nut butter", "almond butter"],
+  "soy sauce": ["light soy sauce", "dark soy sauce"],
+  "honey": ["maple syrup", "date syrup"],
+  "almond milk": ["oat milk", "soy milk", "milk"],
+  "oat milk": ["almond milk", "soy milk", "milk"],
+  "milk": ["almond milk", "oat milk", "soy milk"],
+  "cinnamon": ["ground cinnamon"],
+  "cumin": ["ground cumin", "cumin seeds"],
+  "paprika": ["smoked paprika", "sweet paprika"],
+  "smoked paprika": ["paprika"],
+  "za'atar": ["zaatar", "zatar"],
+  "tinned tomatoes": ["canned tomatoes", "chopped tomatoes"],
+  "chopped tomatoes": ["tinned tomatoes", "canned tomatoes", "passata"],
+  "stock": ["chicken stock", "vegetable stock", "beef stock", "stock cubes", "bouillon"],
+  "sweet potato": ["sweet potatoes"],
+  "bananas": ["banana"],
+  "avocado": ["avocados"],
+  "olives": ["black olives", "green olives"],
+  "coconut milk": ["coconut cream"]
+};
+
+const expandCache = new Map();
+function expandSynonyms(text){
+  const key = String(text || "").toLowerCase().trim();
+  if (!key) return new Set();
+  if (expandCache.has(key)) return expandCache.get(key);
+  const out = new Set();
+  out.add(key);
+  for (const [grpKey, grpVals] of Object.entries(SYNONYMS)){
+    const k = grpKey.toLowerCase();
+    const vals = grpVals.map(v => v.toLowerCase());
+    const allForms = [k, ...vals];
+    if (allForms.includes(key)) allForms.forEach(f => out.add(f));
+  }
+  key.split(/\s+/).forEach(token => {
+    if (token.length < 3) return;
+    out.add(token);
+    out.add(stem(token));
+    for (const [grpKey, grpVals] of Object.entries(SYNONYMS)){
+      const k = grpKey.toLowerCase();
+      const vals = grpVals.map(v => v.toLowerCase());
+      const allForms = [k, ...vals, stem(k), ...vals.map(stem)];
+      if (allForms.includes(token) || allForms.includes(stem(token))){
+        allForms.forEach(f => out.add(f));
+      }
+    }
+  });
+  expandCache.set(key, out);
+  return out;
+}
+
 function matchIng(pantryItem, recipeIng){
-  const a = tok(pantryItem), b = tok(recipeIng);
-  if (!a.length || !b.length) return false;
-  if (a.join(" ") === b.join(" ")) return true;
-  return a.some(x => x.length >= 3 && b.includes(x));
+  const a = expandSynonyms(pantryItem);
+  const b = expandSynonyms(recipeIng);
+  if (!a.size || !b.size) return false;
+  const [small, large] = a.size <= b.size ? [a, b] : [b, a];
+  for (const x of small){
+    if (x.length >= 3 && large.has(x)) return true;
+  }
+  return false;
 }
 function matchQuery(q, recipeIng){
-  const a = tok(q), b = tok(recipeIng);
-  if (!a.length || !b.length) return false;
-  return b.some(y => a.some(x => y === x || (x.length >= 2 && y.startsWith(x))));
+  const qTokens = tok(q);
+  const rTokens = tok(recipeIng);
+  if (rTokens.some(y => qTokens.some(x => y === x || (x.length >= 2 && y.startsWith(x))))) return true;
+  const a = expandSynonyms(q);
+  const b = expandSynonyms(recipeIng);
+  for (const x of a){
+    if (x.length >= 3 && b.has(x)) return true;
+  }
+  return false;
 }
 
 const pantryHas = x => st.ing.some(u => matchIng(u, x));
@@ -413,7 +567,6 @@ const sc = r => {
 };
 const ratio = s => s.tot ? s.h / s.tot : 0;
 
-/* ---------------- filters ---------------- */
 function passes(r){
   if (st.meal && r.m !== st.meal) return false;
   if (st.me && !r.me.includes(st.me)) return false;
@@ -439,12 +592,11 @@ const tagsOf = r => {
 const tagsHtml = r => tagsOf(r).map(t => `<span class="tg">${esc(t)}</span>`).join("");
 const mel = r => [...r.me].map(x => ME[x]).filter(Boolean).join(", ") || "Stovetop";
 
-/* ---------------- database init ---------------- */
 function initDatabase(){
   R = [];
   D.split("\n").filter(l => l.trim()).forEach(line => {
     const p = line.split(";");
-    if (p.length < 12){ console.warn("Skipped malformed line:", line.slice(0,40)); return; }
+    if (p.length < 12) return;
     const [n,m,c,t,me,tg,cal,pr,car,f,i,s] = p;
     R.push(normalizeRecipe({
       n: n.trim(), m, c, t, me, tg, cal, p: pr, car, f,
@@ -452,39 +604,39 @@ function initDatabase(){
       s: s.split("|").map(x => x.trim()).filter(Boolean)
     }));
   });
-
   let userR = [];
   try { userR = JSON.parse(localStorage.getItem("hk-user") || "[]"); } catch(e){ userR = []; }
   if (Array.isArray(userR)) userR.forEach(x => { if (x && x.n) R.push(normalizeRecipe({...x, u:1})); });
-
   R.forEach((r, i) => r.id = i);
   R = R.filter(r => r.i.length && r.s.length);
   R.forEach((r, i) => r.id = i);
-
   loadPantry();
   $("#hcount").textContent = R.length;
 }
 
-/* ---------------- local ingredient index ---------------- */
 let ALL_ING = [];
 function rebuildIngredientIndex(){
   const set = new Set();
   R.forEach(r => r.i.forEach(x => set.add(x)));
   ALL_ING = [...set].sort((a,b) => a.localeCompare(b));
+  expandCache.clear();
 }
 function suggest(q){
   const v = String(q || "").trim().toLowerCase();
   if (!v) return [];
   const starts = [], contains = [];
-  ALL_ING.forEach(x => {
-    const lx = x.toLowerCase();
-    if (lx.startsWith(v)) starts.push(x);
-    else if (lx.includes(v)) contains.push(x);
+  const seen = new Set();
+  const pool = [...ALL_ING, ...COMMON_ING];
+  pool.forEach(x => {
+    const lc = x.toLowerCase();
+    if (seen.has(lc)) return;
+    seen.add(lc);
+    if (lc.startsWith(v)) starts.push(x);
+    else if (lc.includes(v)) contains.push(x);
   });
-  return starts.concat(contains).slice(0, 6);
+  return starts.concat(contains).slice(0, 8);
 }
 
-/* ---------------- Open Food Facts (IndexedDB, permanent cache) ---------------- */
 const OFF_MIN = 2;
 const OFF_STALE_MS = 90 * 24 * 60 * 60 * 1000;
 
@@ -574,28 +726,22 @@ async function clearOFFCache(){
 async function searchOFF(q){
   if (!navigator.onLine) return [];
   if (!q || q.length < OFF_MIN) return [];
-
   const url = "https://world.openfoodfacts.org/cgi/search.pl?search_terms=" +
     encodeURIComponent(q) +
     "&search_simple=1&action=process&json=1&page_size=20" +
     "&fields=product_name,product_name_en";
-
   let res;
   try { res = await fetch(url, { headers: { "Accept": "application/json" } }); }
   catch(e){ return []; }
   if (!res.ok) return [];
-
   let data;
   try { data = await res.json(); } catch(e){ return []; }
-
   const names = (data.products || [])
     .map(p => (p.product_name_en || p.product_name || "").trim())
     .filter(n => n && n.length <= 60)
     .map(n => n.toLowerCase());
-
   const seen = new Set(), out = [];
   names.forEach(n => { if (!seen.has(n)){ seen.add(n); out.push(n); } });
-
   const result = out.slice(0, 6);
   await idbPut(q, result);
   updateCacheCount();
@@ -608,16 +754,13 @@ async function scheduleOffSearch(q){
   clearTimeout(offTimer);
   offSeq++;
   const seq = offSeq;
-
   if (!q || q.length < OFF_MIN || !offEnabled() || !navigator.onLine){
     offResults = []; offLoading = false;
     renderSuggestions();
     return;
   }
-
   const cached = await idbGetEntry(q);
   if (seq !== offSeq) return;
-
   if (cached){
     offResults = cached.v; offLoading = false;
     renderSuggestions();
@@ -630,10 +773,8 @@ async function scheduleOffSearch(q){
     }
     return;
   }
-
   offLoading = true; offResults = [];
   renderSuggestions();
-
   offTimer = setTimeout(async () => {
     if (seq !== offSeq) return;
     const res = await searchOFF(q);
@@ -648,27 +789,21 @@ function renderSuggestions(){
   const local = suggest(q);
   const localLc = new Set(local.map(x => x.toLowerCase()));
   const off = offResults.filter(x => !localLc.has(x.toLowerCase())).slice(0, 6);
-
   let html = local.map(x =>
     `<button class="ch" data-k="pick" data-v="${esc(x)}" type="button">+ ${esc(x)}</button>`
   ).join("");
-
   html += off.map(x =>
     `<button class="ch off" data-k="pick" data-v="${esc(x)}" type="button" title="From Open Food Facts">🌐 ${esc(x)}</button>`
   ).join("");
-
   if (offLoading){
     html += `<span class="mu" style="align-self:center">Searching Open Food Facts…</span>`;
   }
-
   if (!local.length && !off.length && q && !offLoading){
     html = `<span class="mu">No matches — press Add to save “${esc(q)}” as typed.</span>`;
   }
-
   $("#sugg").innerHTML = html;
 }
 
-/* ---------------- pantry chips ---------------- */
 function rC(){
   $("#ic").innerHTML = st.ing.map((x,i) =>
     `<span class="ic">${esc(x)}<button data-k="rm" data-v="${i}" type="button" aria-label="Remove ${esc(x)}">×</button></span>`
@@ -679,7 +814,6 @@ function addI(v){
   let added = false;
   parts.forEach(x => { if (!st.ing.includes(x)){ st.ing.push(x); added = true; } });
   if (added) savePantry();
-
   clearTimeout(offTimer);
   offSeq++;
   offResults = []; offLoading = false;
@@ -690,7 +824,6 @@ function addI(v){
   rM();
 }
 
-/* ---------------- tabs ---------------- */
 function rT(){
   $("#gb").hidden = st.tab !== "find";
   document.querySelectorAll(".tabs button").forEach(b => {
@@ -698,7 +831,6 @@ function rT(){
   });
 }
 
-/* ---------------- filter UI ---------------- */
 const chips = (k, obj, cur) => Object.entries(obj).map(([v,l]) => {
   const on = cur instanceof Set ? cur.has(v) : cur === v;
   return `<button class="ch${on ? " on" : ""}" data-k="${k}" data-v="${v}" type="button" aria-pressed="${on}">${l}</button>`;
@@ -716,7 +848,6 @@ const fbar = () => {
        + (n ? `<button class="ch" data-k="clr" type="button">Clear filters</button>` : "");
 };
 
-/* ---------------- recipe card ---------------- */
 const card = r => {
   const s = sc(r);
   const active = st.ing.length > 0;
@@ -732,14 +863,11 @@ const card = r => {
   </div>`;
 };
 
-/* ---------------- browse render ---------------- */
 function rM(){
   const out = $("#out");
   if (st.tab === "plan") return rP(out);
-
   const active = st.ing.length > 0;
   let L = R.filter(passes);
-
   if (active){
     L = L.map(r => [r, sc(r)])
          .filter(([, s]) => s.h > 0 && (!st.full || s.miss.length === 0))
@@ -750,11 +878,9 @@ function rM(){
   } else {
     L = L.slice().sort((a,b) => a.t - b.t);
   }
-
   const cats = Object.entries({"":"All", ...M})
     .map(([v,l]) => `<button class="cat${st.meal === v ? " on" : ""}" data-k="meal" data-v="${v}" type="button">${v ? E[v] + " " : ""}${l}</button>`)
     .join("");
-
   out.innerHTML = `<div class="cats">${cats}</div>
   <div class="bar2">
     ${fbar()}
@@ -765,10 +891,11 @@ function rM(){
   <h2 class="cnt">${L.length} recipe${L.length === 1 ? "" : "s"}${active ? " matching your pantry" : ""}${st.query ? ` for “${esc(st.query)}”` : ""}</h2>
   ${L.length
     ? `<div class="grid">${L.map(card).join("")}</div>`
-    : `<p class="mu">${st.query ? `Nothing matches “${esc(st.query)}”. Try a shorter word, or clear the box.` : "No recipes match these filters. Try clearing them."}</p>`}`;
+    : `<p class="mu">${st.query
+        ? `Nothing matches “${esc(st.query)}”. Try a shorter word, or clear the box.`
+        : `No recipes use your pantry items. Try adding everyday basics like eggs, bread, chicken, rice, tomatoes, or potatoes.`}</p>`}`;
 }
 
-/* ---------------- planner ---------------- */
 function pick(meal, used){
   let pool = R.filter(r => r.m === meal && passes(r));
   if (!pool.length) return null;
@@ -857,7 +984,6 @@ function rP(out){
   ${pl ? shop(pl) : `<p class="mu">Choose your preferences and generate a plan.</p>`}`;
 }
 
-/* ---------------- modal ---------------- */
 function openModal(d){ if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open",""); }
 function closeModal(d){ if (typeof d.close === "function") d.close(); else d.removeAttribute("open"); }
 
@@ -899,7 +1025,6 @@ function deleteRecipe(id){
   rM();
 }
 
-/* ---------------- AI ---------------- */
 const BAD = /pork|bacon|\bham\b|lard|wine|beer|\brum\b|gelatin|gelatine|alcohol|pepperoni|prosciutto|brandy|whisk(e)?y|\bsake\b|mirin|vodka|chorizo|pancetta/i;
 
 async function aiGemini(prompt){
@@ -909,7 +1034,6 @@ async function aiGemini(prompt){
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(k)}`;
   const sys = "You are a Halal chef AI. Output ONLY one valid JSON object, no markdown. STRICT HALAL: absolutely no pork, bacon, lard, ham, alcohol, wine, beer, mirin, sake or gelatine.";
   const ask = `${sys}\n\nTask: ${prompt}\n\nReturn exactly this shape: {"n":"Title","m":"b|l|d|s|t","c":"Cuisine","t":15,"me":"a|s|o|m|n","tg":"h|p|v|V|g (combine freely)","cal":380,"p":28,"car":32,"f":14,"i":["2 eggs","1 tbsp olive oil"],"s":["Step one","Step two"]}`;
-
   let res;
   try {
     res = await fetch(url, {
@@ -918,9 +1042,7 @@ async function aiGemini(prompt){
       body: JSON.stringify({ contents: [{ parts: [{ text: ask }] }] })
     });
   } catch(e){ throw {c:"off"}; }
-
   if (!res.ok) throw {c: (res.status === 400 || res.status === 403) ? "auth" : "api"};
-
   const j = await res.json();
   const txt = (((j.candidates || [])[0] || {}).content || {}).parts?.[0]?.text || "";
   const clean = txt.replace(/```json/gi, "").replace(/```/g, "").trim();
@@ -936,7 +1058,6 @@ async function genAI(){
     const req = $("#ask").value.trim() || "quick simple halal recipe";
     const has = st.ing.length ? st.ing.join(", ") : "eggs, bread, tuna";
     const raw = await aiGemini(`Write one short easy 100% halal recipe using mainly these ingredients: ${has}. Extra preference: ${req}`);
-
     if (BAD.test(JSON.stringify(raw))){
       g.textContent = "The generated recipe contained non-halal ingredients and was blocked.";
       return;
@@ -951,7 +1072,6 @@ async function genAI(){
     saveCustomRecipes();
     rebuildIngredientIndex();
     $("#hcount").textContent = R.length;
-
     g.textContent = `Saved “${v.n}” to your device — it now works offline.`;
     st.tab = "find";
     rT(); rM(); openRecipe(v.id);
@@ -971,14 +1091,11 @@ function saveKey(){
   $("#kg").textContent = v ? "Gemini API key saved on this device." : "Key removed.";
 }
 
-/* ---------------- custom recipe ---------------- */
 function parseCustomText(t, forcedMeal){
   const L = t.split(/\r?\n/).map(x => x.trim()).filter(Boolean);
   if (L.length < 3) return null;
-
   const iIdx = L.findIndex(x => /^ingredients?\b/i.test(x));
   const sIdx = L.findIndex((x,k) => k > iIdx && /^(method|instructions|steps|directions)\b/i.test(x));
-
   let ing = [], stp = [];
   if (iIdx >= 0 && sIdx > iIdx){
     ing = L.slice(iIdx + 1, sIdx);
@@ -990,7 +1107,6 @@ function parseCustomText(t, forcedMeal){
   ing = ing.map(x => x.replace(/^[\d.\-\s]+/, "").trim()).filter(Boolean);
   stp = stp.map(x => x.replace(/^[\d.\-)\s]+/, "").trim()).filter(Boolean);
   if (!ing.length || !stp.length) return null;
-
   const lo = t.toLowerCase();
   let me = "";
   if (/air.?fry/.test(lo)) me += "a";
@@ -998,7 +1114,6 @@ function parseCustomText(t, forcedMeal){
   if (/microwave/.test(lo)) me += "m";
   if (/pan|fry|boil|simmer|stove|grill/.test(lo)) me += "s";
   if (!me && /chill|refrigerat|no.?cook|mix/.test(lo)) me = "n";
-
   let meal = forcedMeal;
   if (!meal){
     if (/breakfast|morning|porridge|pancake/.test(lo)) meal = "b";
@@ -1007,7 +1122,6 @@ function parseCustomText(t, forcedMeal){
     else if (/snack|dip/.test(lo)) meal = "s";
     else meal = "d";
   }
-
   return {
     n: L[0].slice(0, 70), m: meal, c: "Custom recipe",
     t: 15, me: me || "s", tg: "p",
@@ -1020,13 +1134,10 @@ function addCustomRecipe(){
   const t = $("#pt").value.trim(), g = $("#pg"), forced = $("#pm2").value;
   if (t.length < 15){ g.textContent = "Please paste a fuller recipe first."; return; }
   if (BAD.test(t)){ g.textContent = "Rejected: the text mentions non-halal ingredients (pork, alcohol, gelatine)."; return; }
-
   const parsed = parseCustomText(t, forced);
   if (!parsed){ g.textContent = "Could not parse that. Include a title, an Ingredients heading and a Method heading."; return; }
-
   const r = normalizeRecipe(parsed);
   if (!r.i.length || !r.s.length){ g.textContent = "No ingredients or steps detected."; return; }
-
   r.id = R.length;
   R.push(r);
   saveCustomRecipes();
@@ -1038,21 +1149,338 @@ function addCustomRecipe(){
   rT(); rM();
 }
 
-/* ---------------- events ---------------- */
+const looksLikeTitle = s => {
+  if (!s) return false;
+  const t = s.trim();
+  if (!t || t.length > 80) return false;
+  if (/[.!?]$/.test(t)) return false;
+  if (/^\s*[-•*]\s/.test(t)) return false;
+  if (/^\s*\d+[.)]\s/.test(t)) return false;
+  if (!/[A-Z]/.test(t)) return false;
+  return true;
+};
+
+function splitRecipeBlocks(text){
+  const blocks = [];
+  let current = [];
+  const lines = text.split(/\r?\n/);
+  for (let i = 0; i < lines.length; i++){
+    const line = lines[i];
+    if (/^# /.test(line) && current.some(l => l.trim())){
+      blocks.push(current.join("\n"));
+      current = [line.replace(/^#\s*/, "")];
+      continue;
+    }
+    if (/^\s*(-{3,}|={3,})\s*$/.test(line)){
+      if (current.some(l => l.trim())){
+        blocks.push(current.join("\n"));
+        current = [];
+      }
+      continue;
+    }
+    if (!line.trim() && current.some(l => l.trim())){
+      const nextNonBlank = (lines.slice(i+1).find(l => l.trim()) || "").trim();
+      const hasIng = current.some(l => /^ingredients?\b/i.test(l));
+      const hasMet = current.some(l => /^(method|instructions|steps|directions)\b/i.test(l));
+      const nextIsHeading = /^(ingredients?|method|instructions|steps|directions)\b/i.test(nextNonBlank);
+      if (hasIng && hasMet && !nextIsHeading && looksLikeTitle(nextNonBlank)){
+        blocks.push(current.join("\n"));
+        current = [];
+        continue;
+      }
+    }
+    current.push(line);
+  }
+  if (current.some(l => l.trim())) blocks.push(current.join("\n"));
+  return blocks.filter(b => b.trim().length > 20);
+}
+
+function parseTextFile(content){
+  return splitRecipeBlocks(content).map(b => parseCustomText(b, "")).filter(Boolean);
+}
+
+function parseCSVFile(content){
+  const lines = content.split(/\r?\n/).filter(l => l.trim());
+  const recipes = [];
+  for (let i = 0; i < lines.length; i++){
+    const line = lines[i];
+    if (i === 0 && /^(title|name|recipe)\b/i.test(line.trim())) continue;
+    const parts = line.split(";");
+    if (parts.length >= 12){
+      const [n,m,c,t,me,tg,cal,p,car,f,i,s] = parts;
+      if (!n.trim()) continue;
+      recipes.push({
+        n: n.trim(), m, c, t, me, tg, cal, p, car, f,
+        i: i.split(",").map(x => x.trim()).filter(Boolean),
+        s: s.split("|").map(x => x.trim()).filter(Boolean)
+      });
+    }
+  }
+  return recipes;
+}
+
+const FIELD_ALIASES = {
+  n: ["n","name","title"],
+  m: ["m","meal","mealType","meal_type"],
+  c: ["c","cuisine","category"],
+  t: ["t","time","minutes","cookTime","cook_time"],
+  me: ["me","appliance","method"],
+  tg: ["tg","tags","diet","dietary"],
+  cal: ["cal","calories","kcal"],
+  p: ["p","protein"],
+  car: ["car","carbs","carbohydrates"],
+  f: ["f","fat"],
+  i: ["i","ingredients","ing"],
+  s: ["s","steps","instructions","method"]
+};
+
+function mapJSONRecipe(item){
+  if (Array.isArray(item)){
+    const [n,m,c,t,me,tg,cal,p,car,f,i,s] = item;
+    return { n, m, c, t, me, tg, cal, p, car, f, i, s };
+  }
+  const out = {};
+  for (const [target, aliases] of Object.entries(FIELD_ALIASES)){
+    for (const a of aliases){
+      if (item[a] !== undefined){ out[target] = item[a]; break; }
+    }
+  }
+  return out;
+}
+
+function parseJSONFile(content){
+  const data = JSON.parse(content);
+  let arr = [];
+  if (Array.isArray(data)) arr = data;
+  else if (data && Array.isArray(data.recipes)) arr = data.recipes;
+  else if (data && data.recipe) arr = [data.recipe];
+  else arr = [data];
+  return arr.map(mapJSONRecipe).filter(r => r && r.n);
+}
+
+let pdfJsLoaded = false;
+
+async function loadPdfJs(){
+  if (pdfJsLoaded && window.pdfjsLib) return;
+  if (!navigator.onLine && !window.pdfjsLib){
+    throw new Error("PDF support needs internet the first time (loads pdf.js once)");
+  }
+  await new Promise((resolve, reject) => {
+    if (window.pdfjsLib){
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+      pdfJsLoaded = true;
+      return resolve();
+    }
+    const s = document.createElement("script");
+    s.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+    s.onload = () => {
+      if (!window.pdfjsLib) return reject(new Error("pdf.js failed to initialise"));
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+      pdfJsLoaded = true;
+      resolve();
+    };
+    s.onerror = () => reject(new Error("Could not load pdf.js — check your connection"));
+    document.head.appendChild(s);
+  });
+}
+
+async function extractPdfText(arrayBuffer){
+  await loadPdfJs();
+  let pdf;
+  try {
+    pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  } catch(e){
+    if (/password/i.test(e.message)) throw new Error("PDF is password-protected");
+    throw new Error("Could not open PDF: " + e.message);
+  }
+  if (!pdf || !pdf.numPages) throw new Error("PDF has no pages");
+  let out = "";
+  for (let p = 1; p <= pdf.numPages; p++){
+    const page = await pdf.getPage(p);
+    const content = await page.getTextContent();
+    let line = "", lastY = null;
+    for (const item of content.items){
+      if (typeof item.str !== "string" || !item.str) continue;
+      const y = item.transform ? item.transform[5] : null;
+      const newLine = (lastY !== null && y !== null && Math.abs(y - lastY) > 3) || item.hasEOL;
+      if (newLine && line){ out += line.trim() + "\n"; line = ""; }
+      line += item.str;
+      if (!item.hasEOL) line += " ";
+      if (y !== null) lastY = y;
+    }
+    if (line.trim()) out += line.trim() + "\n";
+    out += "\n";
+  }
+  const clean = out.trim();
+  if (clean.length < 20){
+    throw new Error("PDF appears to have no extractable text (scanned/image-only PDF)");
+  }
+  return clean;
+}
+
+const SUPPORTED_EXTS = ["txt","md","csv","json","pdf"];
+
+function validateFile(file){
+  if (!file) return "No file provided";
+  const ext = (file.name.split(".").pop() || "").toLowerCase();
+  if (!ext) return `${file.name}: file has no extension`;
+  if (!SUPPORTED_EXTS.includes(ext)){
+    return `${file.name}: unsupported type ".${ext}". Use TXT, MD, CSV, JSON, or PDF.`;
+  }
+  if (!file.size) return `${file.name}: file is empty`;
+  const limit = ext === "pdf" ? 20 * 1024 * 1024 : 5 * 1024 * 1024;
+  if (file.size > limit){
+    return `${file.name}: exceeds ${(limit / 1048576)|0} MB limit`;
+  }
+  return null;
+}
+
+function parseUploadedFile(file){
+  const ext = file.name.split(".").pop().toLowerCase();
+  const isPdf = ext === "pdf";
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("Could not read file"));
+    reader.onload = async () => {
+      const raw = reader.result;
+      if (isPdf){
+        try {
+          const text = await extractPdfText(raw);
+          const recipes = parseTextFile(text);
+          if (!recipes.length){
+            reject(new Error("PDF text extracted, but no recipes detected (try a PDF with clearer 'Ingredients' and 'Method' headings)"));
+          } else {
+            resolve(recipes);
+          }
+        } catch(e){ reject(e); }
+        return;
+      }
+      const content = raw;
+      if (/^\s*(<!doctype|<html|<head|<body)/i.test(content)){
+        return reject(new Error("HTML files are not supported"));
+      }
+      try {
+        if (ext === "json") return resolve(parseJSONFile(content));
+        if (ext === "csv")  return resolve(parseCSVFile(content));
+        return resolve(parseTextFile(content));
+      } catch(e){ reject(new Error(e.message)); }
+    };
+    if (isPdf) reader.readAsArrayBuffer(file);
+    else reader.readAsText(file);
+  });
+}
+
+async function handleFileUpload(files){
+  const bar = $("#file-results");
+  if (!files.length) return;
+
+  bar.innerHTML = `<p class="mu">Processing ${files.length} file${files.length === 1 ? "" : "s"}…</p>`;
+
+  const total = { added: 0, rejected: 0, invalid: 0, errors: [] };
+
+  for (const file of files){
+    const failReason = validateFile(file);
+    if (failReason){
+      total.errors.push(failReason);
+      continue;
+    }
+
+    let recipes = [];
+    try {
+      recipes = await parseUploadedFile(file);
+    } catch(e){
+      total.errors.push(`${file.name}: ${e.message}`);
+      continue;
+    }
+
+    if (!recipes.length){
+      total.errors.push(`${file.name}: no recipes detected`);
+      continue;
+    }
+
+    for (const raw of recipes){
+      if (!raw || !raw.n){ total.invalid++; continue; }
+      if (BAD.test(JSON.stringify(raw))){
+        total.rejected++;
+        total.errors.push(`${raw.n}: contains non-halal ingredients`);
+        continue;
+      }
+      const r = normalizeRecipe({
+        ...raw,
+        c: raw.c || `Imported from ${file.name}`
+      });
+      if (!r.i.length || !r.s.length){
+        total.invalid++;
+        total.errors.push(`${raw.n}: missing ingredients or steps`);
+        continue;
+      }
+      r.id = R.length;
+      r.u = 1;
+      R.push(r);
+      total.added++;
+    }
+  }
+
+  saveCustomRecipes();
+  rebuildIngredientIndex();
+  $("#hcount").textContent = R.length;
+
+  let html = "";
+
+  if (total.added === 0){
+    html += `<div class="err-box">⚠️ <strong>No recipes were imported.</strong> See reasons below.</div>`;
+  } else {
+    html += `<p class="mu" style="margin:0 0 8px"><strong>${total.added}</strong> recipe${total.added === 1 ? "" : "s"} added`;
+    if (total.rejected) html += `, <strong>${total.rejected}</strong> rejected (non-halal)`;
+    if (total.invalid)  html += `, <strong>${total.invalid}</strong> skipped (invalid)`;
+    html += `</p>`;
+  }
+
+  if (total.errors.length){
+    html += `<details ${total.added === 0 ? "open" : ""}><summary class="mu" style="cursor:pointer">Issues (${total.errors.length})</summary>
+      <ul>${total.errors.slice(0, 30).map(x => `<li>${esc(x)}</li>`).join("")}${total.errors.length > 30 ? `<li>… and ${total.errors.length - 30} more</li>` : ""}</ul>
+    </details>`;
+  }
+
+  bar.innerHTML = html;
+
+  if (total.added > 0){
+    st.tab = "find";
+    rT();
+    rM();
+  }
+}
+
+function downloadTemplate(){
+  const tpl =
+`Spicy Lemon Salmon;d;Modern;15;a;hp;380;32;4;22;salmon,lemon,olive oil,paprika,garlic;Rub the salmon with oil and spices|Air fry at 190C for 10 minutes|Squeeze lemon over before serving
+Garlic Butter Prawns;d;Mediterranean;10;s;hp;290;28;2;18;prawns,butter,garlic,parsley,lemon;Melt butter with garlic|Add prawns and cook 3 minutes|Finish with parsley and lemon
+Cinnamon Apple Oats;b;Modern;12;s;hvVg;290;8;50;7;oats,apple,cinnamon,raisins,milk;Simmer the oats in the milk|Grate the apple into the pan|Add the cinnamon and raisins|Cook for 3 more minutes
+`;
+  const blob = new Blob([tpl], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "halal-kitchen-template.csv";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 document.addEventListener("click", e => {
   const t = e.target;
-
   if (t.id === "open-key-guide")  return openModal($("#key-dlg"));
   if (t.id === "close-key-guide") return closeModal($("#key-dlg"));
   if (t.id === "addb") return addI($("#in").value);
   if (t.id === "gen")  return genAI();
   if (t.id === "ks")   return saveKey();
   if (t.id === "pa")   return addCustomRecipe();
-
   const el = t.closest("[data-k]");
   if (!el) return;
   const k = el.dataset.k, v = el.dataset.v;
-
   switch (k){
     case "tab":  st.tab = v; break;
     case "tg": case "pm":
@@ -1071,6 +1499,7 @@ document.addEventListener("click", e => {
     case "pick": return addI(v);
     case "copy": return copyShoppingList();
     case "clear-off": clearOFFCache(); return;
+    case "download-template": downloadTemplate(); return;
     case "rand": {
       const pool = R.filter(passes);
       if (pool.length) openRecipe(pool[Math.floor(Math.random() * pool.length)].id);
@@ -1120,6 +1549,10 @@ document.addEventListener("change", e => {
     setOffEnabled(e.target.checked);
     scheduleOffSearch(st.query);
   }
+  if (e.target.id === "file-upload"){
+    handleFileUpload(Array.from(e.target.files || []));
+    e.target.value = "";
+  }
 });
 
 window.addEventListener("online", () => {
@@ -1128,7 +1561,6 @@ window.addEventListener("online", () => {
 
 $("#dlg").addEventListener("click", e => { if (e.target.id === "dlg") closeModal(e.target); });
 
-/* ---------------- boot ---------------- */
 initDatabase();
 rebuildIngredientIndex();
 const offT = $("#off-toggle");
