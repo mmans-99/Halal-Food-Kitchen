@@ -1127,7 +1127,7 @@ async function aiGemini(prompt, requireJson = true){
     : `${sys}\n\nTask: ${prompt}`;
 
   // Priority list of fastest/most common models. (We won't bother fetching the whole list unless these fail)
-  let modelsToTry = ["gemini-3.8-flash", "gemini-2.5-flash", "gemini-1.5-flash", "gemini-pro"];
+  let modelsToTry = ["gemini-3.8-flash", "gemini-3.5-flash", "gemini-2.5-flash"];
   
   let lastError = "Could not connect to any Gemini model.";
 
