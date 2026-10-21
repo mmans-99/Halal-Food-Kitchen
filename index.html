@@ -1,26 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-<!-- Link to Web App Manifest -->
-<link rel="manifest" href="manifest.webmanifest">
-
-<!-- Favicon / Home Screen Icon -->
-<link rel="apple-touch-icon" href="icon-192.png">
-<link rel="icon" type="image/png" href="icon-192.png">
-
-<!-- Register Service Worker in JavaScript -->
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
-  });
-}
-</script>
-
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0B5D4B">
+
+<!-- Link to Web App Manifest & Icons -->
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+
 <title>Halal Kitchen</title>
 <style>
 :root{--bg:#F5F8F6;--ink:#10231F;--mut:#5E716B;--card:#fff;--line:#E0E9E4;--g:#0B5D4B;--g2:#E3F1EB;--on:#fff;--s:#F2B84B;color-scheme:light}
@@ -30,12 +19,28 @@ body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-app
 h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;margin:0;line-height:1.15}
 h2{font-size:1.45rem}h3{font-size:1.1rem}
 button,select,input,textarea{font:inherit;color:inherit}
-.hero{background:#0B5D4B url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Cg fill='none' stroke='white' stroke-opacity='.1' stroke-width='1.5'%3E%3Crect x='12' y='12' width='32' height='32'/%3E%3Crect x='12' y='12' width='32' height='32' transform='rotate(45 28 28)'/%3E%3C/g%3E%3C/svg%3E");color:#fff;padding:calc(20px + env(safe-area-inset-top,0px)) 20px 84px}
+
+/* Header & Drawer Navigation */
+.hero{background:#0B5D4B url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Cg fill='none' stroke='white' stroke-opacity='.1' stroke-width='1.5'%3E%3Crect x='12' y='12' width='32' height='32'/%3E%3Crect x='12' y='12' width='32' height='32' transform='rotate(45 28 28)'/%3E%3C/g%3E%3C/svg%3E");color:#fff;padding:calc(16px + env(safe-area-inset-top,0px)) 20px 64px;position:relative}
 .in{max-width:960px;margin:auto}
-.brand{font-weight:600;opacity:.9;margin-bottom:30px}
-.hero h1{font-size:clamp(2.1rem,6.5vw,3.4rem);font-weight:700;max-width:13em;letter-spacing:-.01em}
-.hero p{max-width:34em;opacity:.85;margin:12px 0 0}
-.wrap{max-width:960px;margin:-54px auto 0;padding:0 16px 56px}
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.menu-btn{background:rgba(255,255,255,0.15);border:0;color:#fff;font-size:1.5rem;padding:8px 12px;border-radius:8px;cursor:pointer}
+.brand{font-weight:600;opacity:.9}
+.hero h1{font-size:clamp(1.8rem,6vw,3rem);font-weight:700;max-width:13em;letter-spacing:-.01em}
+.hero p{max-width:34em;opacity:.85;margin:12px 0 0;font-size:.95rem}
+
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);opacity:0;pointer-events:none;transition:opacity .3s;z-index:100}
+.drawer-overlay.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;left:-280px;bottom:0;width:280px;background:var(--card);z-index:101;transition:left .3s cubic-bezier(0.4, 0, 0.2, 1);display:flex;flex-direction:column;box-shadow:4px 0 24px rgba(0,0,0,0.2)}
+.drawer.open{left:0}
+.drawer-head{padding:calc(20px + env(safe-area-inset-top,0px)) 20px 20px;background:var(--g);color:var(--on);font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:1.3rem;font-weight:700}
+.drawer-list{list-style:none;padding:10px 0;margin:0;flex:1;overflow-y:auto}
+.drawer-item{display:block;width:100%;text-align:left;background:none;border:0;padding:16px 20px;font-size:1.05rem;font-weight:600;cursor:pointer;border-bottom:1px solid var(--line);transition:background .2s}
+.drawer-item:hover,.drawer-item.active{background:var(--g2);color:var(--g)}
+.drawer-item span{display:inline-block;width:28px;font-size:1.2rem}
+
+/* Layout */
+.wrap{max-width:960px;margin:-40px auto 0;padding:0 16px 56px}
 .box{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 10px 28px -14px rgba(11,93,75,.35);margin-bottom:16px}
 .add{display:flex;gap:8px}
 input[type=text],input[type=password],select,textarea{flex:1;min-width:0;padding:13px 15px;border-radius:13px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)}
@@ -51,9 +56,7 @@ textarea{width:100%;resize:vertical}
 .ic{display:inline-flex;align-items:center;background:var(--g2);color:var(--ink);border-radius:99px;padding:3px 4px 3px 14px;font-weight:600}
 .ic button{background:none;border:0;cursor:pointer;font-size:1.15rem;padding:0 9px;color:var(--mut)}
 .mu{color:var(--mut);font-size:.92rem;margin:2px 0 6px}
-.tabs{position:sticky;top:0;z-index:5;display:flex;gap:6px;padding:calc(8px + env(safe-area-inset-top,0px)) 0 10px;background:var(--bg)}
-.tabs button{flex:1;border:1px solid var(--line);background:var(--card);padding:11px;border-radius:14px;cursor:pointer;font-weight:600}
-.tabs button[aria-selected=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
 .cats{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 12px}
 .cat{flex:none;border:1px solid var(--line);background:var(--card);border-radius:14px;padding:9px 15px;cursor:pointer;font-weight:600}
 .cat.on{background:var(--g);color:var(--on);border-color:var(--g)}
@@ -101,13 +104,30 @@ input[type=file]:hover{border-color:var(--g)}
 #file-results ul{margin:8px 0;padding-left:20px;font-size:.85rem;color:var(--mut)}
 .file-fmt{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;font-size:.85rem;line-height:1.7}
 .file-fmt code{background:var(--g2);padding:1px 6px;border-radius:4px;font-size:.82rem}
+.load-more-wrap{text-align:center;margin-top:24px;margin-bottom:24px}
+.load-more-wrap button{width:100%;max-width:300px;padding:14px;background:var(--g2);color:var(--g);border:1px solid var(--g);font-size:1.05rem}
+[hidden]{display:none !important}
 </style>
 </head>
 <body>
 
+<!-- Side Drawer Menu -->
+<div class="drawer-overlay" id="drawer-overlay"></div>
+<nav class="drawer" id="drawer">
+  <div class="drawer-head">🍲 Halal Kitchen</div>
+  <ul class="drawer-list">
+    <button class="drawer-item active" data-k="nav" data-v="find"><span>🍳</span> Browse Recipes</button>
+    <button class="drawer-item" data-k="nav" data-v="plan"><span>📅</span> Meal Planner</button>
+    <button class="drawer-item" data-k="nav" data-v="tools"><span>⚙️</span> Tools & Settings</button>
+  </ul>
+</nav>
+
 <header class="hero">
   <div class="in">
-    <div class="brand">🍲 Halal Kitchen</div>
+    <div class="top-bar">
+      <button class="menu-btn" id="menu-btn" aria-label="Open menu">☰</button>
+      <div class="brand">Halal Kitchen</div>
+    </div>
     <h1>What shall we cook tonight?</h1>
     <p><span id="hcount">Halal</span> recipes with calories, macros, air fryer settings, live pantry search and a weekly planner.</p>
   </div>
@@ -115,88 +135,93 @@ input[type=file]:hover{border-color:var(--g)}
 
 <div class="wrap">
 
-  <section class="box">
-    <h3>Your Pantry &amp; Ingredients</h3>
-    <p class="mu">Type an ingredient — suggestions appear below and the recipe list narrows live. Press Add or Enter to save it.</p>
-    <div class="add">
-      <input type="text" id="in" autocomplete="off" placeholder="e.g. sal… → salmon, or chips, mixed leaf salad" aria-label="Ingredient you have">
-      <button class="btn" id="addb" type="button">Add</button>
-    </div>
-    <div id="sugg" aria-live="polite"></div>
-    <div id="ic"></div>
-    <label class="mu" style="display:flex;align-items:center;gap:8px;margin-top:10px;cursor:pointer">
-      <input type="checkbox" id="off-toggle">
-      <span>Also suggest real products from <strong>Open Food Facts</strong> <span style="opacity:.7">(online)</span></span>
-    </label>
-    <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
-      <button class="ch" data-k="clear-off" type="button" style="font-size:.82rem;margin:0">🗑️ Clear OFF cache</button>
-      <span class="mu" id="off-count" style="margin:0"></span>
-    </div>
-  </section>
+  <!-- VIEW: BROWSE -->
+  <div id="view-find">
+    <section class="box">
+      <h3>Your Pantry &amp; Ingredients</h3>
+      <p class="mu">Type an ingredient — suggestions appear below and the recipe list narrows live. Press Add or Enter to save it.</p>
+      <div class="add">
+        <input type="text" id="in" autocomplete="off" placeholder="e.g. sal… → salmon, or chips" aria-label="Ingredient you have">
+        <button class="btn" id="addb" type="button">Add</button>
+      </div>
+      <div id="sugg" aria-live="polite"></div>
+      <div id="ic"></div>
+      <label class="mu" style="display:flex;align-items:center;gap:8px;margin-top:10px;cursor:pointer">
+        <input type="checkbox" id="off-toggle">
+        <span>Also suggest real products from <strong>Open Food Facts</strong> <span style="opacity:.7">(online)</span></span>
+      </label>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
+        <button class="ch" data-k="clear-off" type="button" style="font-size:.82rem;margin:0">🗑️ Clear OFF cache</button>
+        <span class="mu" id="off-count" style="margin:0"></span>
+      </div>
+    </section>
+    
+    <div id="out"></div>
+  </div>
 
-  <nav class="tabs" role="tablist">
-    <button role="tab" data-k="tab" data-v="find" type="button" aria-selected="true">Browse Recipes</button>
-    <button role="tab" data-k="tab" data-v="plan" type="button" aria-selected="false">Meal Planner</button>
-  </nav>
+  <!-- VIEW: MEAL PLANNER -->
+  <div id="view-plan" hidden>
+    <div id="out-plan"></div>
+  </div>
 
-  <section class="box" id="gb">
-    <h3>Generate AI Halal Recipe</h3>
-    <p class="mu">Uses Google Gemini AI. Generated recipes are sanitised, checked against halal rules, and saved to this device for offline use.</p>
-    <div class="add">
-      <input type="text" id="ask" autocomplete="off" placeholder="Optional: high protein, low calorie, air fryer, Turkish">
-      <button class="btn alt" id="gen" type="button">Generate with Gemini</button>
-    </div>
-    <p class="mu" id="gm" role="status"></p>
-  </section>
+  <!-- VIEW: TOOLS -->
+  <div id="view-tools" hidden>
+    <section class="box" id="gb">
+      <h3>Generate AI Halal Recipe</h3>
+      <p class="mu">Uses Google Gemini AI. Generated recipes are sanitised, checked against halal rules, and saved to this device.</p>
+      <div class="add">
+        <input type="text" id="ask" autocomplete="off" placeholder="Optional: high protein, low carb, Turkish">
+        <button class="btn alt" id="gen" type="button">Generate with Gemini</button>
+      </div>
+      <p class="mu" id="gm" role="status"></p>
+    </section>
 
-  <div id="out"></div>
+    <details class="box">
+      <summary>📁 Upload recipes from file (TXT, MD, CSV, JSON, PDF)</summary>
+      <p class="mu">Upload files. The parser finds all recipes, checks each for halal compliance, and imports the valid ones.</p>
+      <input type="file" id="file-upload" accept=".txt,.md,.csv,.json,.pdf" multiple>
+      <div class="file-fmt">
+        <strong>Accepted formats:</strong><br>
+        • <strong>TXT / MD</strong> — one recipe per block, with <em>Ingredients</em> and <em>Method</em> headings.<br>
+        • <strong>CSV</strong> — one recipe per line: <code>Title;meal;cuisine;time;appliance;tags;cal;P;C;F;ingredients;steps</code><br>
+        • <strong>JSON</strong> — array of objects with fields <code>n,m,c,t,me,tg,cal,p,car,f,i,s</code>.<br>
+        • <strong>PDF</strong> — text-based PDFs only. Needs internet on first upload to fetch pdf.js.
+      </div>
+      <button class="ch" data-k="download-template" type="button" style="margin-top:8px">⬇️ Download template CSV</button>
+      <div id="file-results" aria-live="polite"></div>
+    </details>
 
-  <details class="box" style="margin-top:22px">
-    <summary>Add your own custom recipe</summary>
-    <p class="mu">Paste a recipe to save it on this device for offline use. Non-halal recipes are rejected.</p>
-    <textarea id="pt" rows="6" placeholder="Spicy Lemon Salmon&#10;Ingredients&#10;2 salmon fillets&#10;1 tsp paprika&#10;1 lemon&#10;Method&#10;1. Air fry salmon at 190C for 10 mins"></textarea>
-    <div class="add" style="margin-top:10px">
-      <select id="pm2">
-        <option value="">Meal: auto-detect</option>
-        <option value="b">Breakfast</option>
-        <option value="l">Lunch</option>
-        <option value="d">Dinner</option>
-        <option value="s">Snack</option>
-        <option value="t">Dessert</option>
-      </select>
-      <button class="btn" id="pa" type="button">Sort &amp; Add</button>
-    </div>
-    <p class="mu" id="pg" role="status"></p>
-  </details>
+    <details class="box">
+      <summary>Add your own custom recipe manually</summary>
+      <p class="mu">Paste a recipe text to save it on this device for offline use.</p>
+      <textarea id="pt" rows="6" placeholder="Spicy Lemon Salmon&#10;Ingredients&#10;2 salmon fillets&#10;1 tsp paprika&#10;Method&#10;1. Air fry salmon at 190C for 10 mins"></textarea>
+      <div class="add" style="margin-top:10px">
+        <select id="pm2">
+          <option value="">Meal: auto-detect</option>
+          <option value="b">Breakfast</option>
+          <option value="l">Lunch</option>
+          <option value="d">Dinner</option>
+          <option value="s">Snack</option>
+          <option value="t">Dessert</option>
+        </select>
+        <button class="btn" id="pa" type="button">Sort &amp; Add</button>
+      </div>
+      <p class="mu" id="pg" role="status"></p>
+    </details>
 
-  <details class="box">
-    <summary>📁 Upload recipes from file (TXT, MD, CSV, JSON, PDF)</summary>
-    <p class="mu">Upload one or more files. The parser finds all recipes, checks each for halal compliance, and imports the valid ones to your offline database.</p>
-    <input type="file" id="file-upload" accept=".txt,.md,.csv,.json,.pdf" multiple>
-    <div class="file-fmt">
-      <strong>Accepted formats:</strong><br>
-      • <strong>TXT / MD</strong> — one recipe per block, with <em>Ingredients</em> and <em>Method</em> headings. Separate recipes with <code># Title</code>, <code>---</code>, or a blank line followed by a short capitalised line.<br>
-      • <strong>CSV</strong> — one recipe per line: <code>Title;meal;cuisine;time;appliance;tags;cal;P;C;F;ingredients;steps</code><br>
-      &nbsp;&nbsp;<code>meal</code>: b/l/d/s/t &nbsp; <code>appliance</code>: a/s/o/m/n &nbsp; <code>tags</code>: hp v V g<br>
-      • <strong>JSON</strong> — array of objects with fields <code>n,m,c,t,me,tg,cal,p,car,f,i,s</code> (ingredients array, steps array).<br>
-      • <strong>PDF</strong> — text-based PDFs only. Scanned/image-only PDFs are not supported (would need OCR). Needs internet on the first upload to fetch pdf.js.
-    </div>
-    <button class="ch" data-k="download-template" type="button" style="margin-top:8px">⬇️ Download template CSV</button>
-    <div id="file-results" aria-live="polite"></div>
-  </details>
+    <details class="box">
+      <summary>Gemini AI Settings</summary>
+      <p class="mu">A free API key from aistudio.google.com. Stored only in this browser's localStorage.</p>
+      <div class="add">
+        <input type="password" id="key" autocomplete="off" placeholder="AIzaSy..." aria-label="Gemini API Key">
+        <button class="btn" id="ks" type="button">Save Key</button>
+      </div>
+      <p class="mu" id="kg" role="status"></p>
+      <button class="ch" id="open-key-guide" type="button" style="margin-top:10px">🔑 Free Key Guide</button>
+    </details>
+  </div>
 
-  <details class="box">
-    <summary>Gemini AI Settings</summary>
-    <p class="mu">A free API key from aistudio.google.com. Stored only in this browser's localStorage — never hardcode it in a public repo.</p>
-    <div class="add">
-      <input type="password" id="key" autocomplete="off" placeholder="AIzaSy..." aria-label="Gemini API Key">
-      <button class="btn" id="ks" type="button">Save Key</button>
-    </div>
-    <p class="mu" id="kg" role="status"></p>
-    <button class="ch" id="open-key-guide" type="button" style="margin-top:10px">🔑 Free Key Guide</button>
-  </details>
-
-  <p class="mu">100% halal: no pork, bacon, lard, alcohol, wine or gelatine. Browsing, pantry search, macros and meal planning work fully offline.</p>
+  <p class="mu" style="text-align:center;margin-top:30px">100% halal: no pork, bacon, lard, alcohol, wine or gelatine. Browsing, pantry search, macros and meal planning work fully offline.</p>
 </div>
 
 <dialog id="dlg"><div class="in2"></div></dialog>
@@ -216,6 +241,13 @@ input[type=file]:hover{border-color:var(--g)}
 </dialog>
 
 <script>
+// Register Service Worker for PWA offline support
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+
 const D = `
 Jammy Air Fryer Eggs;b;Modern;9;a;hpvg;140;12;1;10;eggs;Place cold eggs in air fryer basket|Air fry at 170C for 9 minutes|Transfer to ice water for 3 minutes|Peel and season
 Air Fryer Egg & Hummus Toast;b;Modern;6;a;hpv;380;18;32;20;bread,hummus,eggs,smoked paprika,olive oil;Spread hummus on bread|Make a well and crack in an egg|Air fry at 180C for 6 minutes|Dust with paprika
@@ -360,7 +392,8 @@ let R = [];
 const st = {
   ing: [], query: "", meal: "", me: "", tm: "0", tg: new Set(),
   tab: "find", full: false, days: "5", pm: new Set(["b","l","d"]),
-  fav: true, plan: null, fo: false
+  fav: true, plan: null, fo: false,
+  limit: 12
 };
 
 function normalizeRecipe(r){
@@ -369,15 +402,11 @@ function normalizeRecipe(r){
   const tg = [...tgSrc].filter(c => OK_TAGS.includes(c)).join("") || "p";
   const meSrc = Array.isArray(r.me) ? r.me.join("") : String(r.me || "s");
   const me = [...meSrc].filter(c => OK_APPL.includes(c)).join("") || "s";
-  const i = Array.isArray(r.i) ? r.i.map(String)
-          : String(r.i || "").split(",").map(x => x.trim()).filter(Boolean);
-  const s = Array.isArray(r.s) ? r.s.map(String)
-          : String(r.s || "").split("|").map(x => x.trim()).filter(Boolean);
+  const i = Array.isArray(r.i) ? r.i.map(String) : String(r.i || "").split(",").map(x => x.trim()).filter(Boolean);
+  const s = Array.isArray(r.s) ? r.s.map(String) : String(r.s || "").split("|").map(x => x.trim()).filter(Boolean);
   return {
-    ...r, m, tg, me,
-    c: String(r.c || "Custom"),
-    t: +r.t || 15, cal: +r.cal || 350,
-    p: +r.p || 20, car: +r.car || 30, f: +r.f || 12,
+    ...r, m, tg, me, c: String(r.c || "Custom"),
+    t: +r.t || 15, cal: +r.cal || 350, p: +r.p || 20, car: +r.car || 30, f: +r.f || 12,
     i, s
   };
 }
@@ -406,122 +435,62 @@ const stem = w => {
 const tok = s => String(s).toLowerCase().replace(/[^a-z0-9' ]+/g," ").split(/\s+/).filter(Boolean).map(stem);
 
 const COMMON_ING = [
-  "eggs","egg whites","bread","toast","sliced bread","baguette","sourdough",
-  "pitta bread","pitta","tortilla wrap","wrap","english muffin","naan","crackers",
-  "chips","crisps","fries","frozen chips","potato wedges","hash browns",
-  "potatoes","sweet potato","carrot","onion","red onion","spring onion","shallot",
-  "garlic","ginger","tomato","cherry tomatoes","tinned tomatoes","chopped tomatoes","passata",
-  "cucumber","pepper","bell pepper","aubergine","courgette","broccoli","cauliflower",
-  "asparagus","green beans","peas","frozen peas","sweetcorn","mushroom","leek",
-  "celery","cabbage","kale","beetroot","spinach","lettuce","mixed leaf salad",
-  "salad leaves","rocket","watercress","avocado","olives","pickles","capers",
-  "sun-dried tomatoes","banana","apple","orange","lemon","lime","mango",
-  "berries","strawberries","blueberries","raspberries","grapes","pineapple",
-  "dates","raisins","sultanas","figs","apricots","dried apricots",
-  "walnuts","almonds","cashews","peanuts","pistachio","mixed nuts","pine nuts",
-  "milk","almond milk","oat milk","soy milk","coconut milk","cream","double cream",
-  "yoghurt","greek yoghurt","cream cheese","butter","ghee","margarine",
-  "cheddar","mozzarella","feta","halloumi","parmesan","ricotta","paneer","cheese",
-  "chicken breast","chicken thigh","chicken wings","chicken drumsticks","whole chicken",
-  "minced beef","beef strips","steak","minced lamb","lamb chops","lamb mince",
-  "turkey","turkey mince","sausage","chicken sausage","sujuk",
-  "salmon","smoked salmon","cod","haddock","tuna","tinned tuna","prawns","shrimp",
-  "sardines","mackerel","white fish","fish fillets",
-  "tofu","tempeh","falafel","hummus","houmous","tahini","peanut butter",
-  "rice","basmati rice","white rice","brown rice","jasmine rice","wild rice",
-  "quinoa","couscous","bulgur wheat","spaghetti","penne","fusilli","macaroni",
-  "noodles","egg noodles","rice noodles","lasagne sheets",
-  "oats","porridge oats","granola","cereal","muesli",
-  "flour","plain flour","self-raising flour","gram flour","bread flour","cornflour",
-  "baking powder","baking soda","yeast","cocoa powder","chocolate","chocolate chips",
-  "dark chocolate","milk chocolate","white chocolate",
-  "olive oil","vegetable oil","sunflower oil","coconut oil","sesame oil","rapeseed oil",
-  "soy sauce","light soy sauce","dark soy sauce","vinegar","balsamic vinegar",
-  "apple cider vinegar","white vinegar","lemon juice","lime juice",
-  "mayonnaise","mayo","ketchup","tomato ketchup","mustard","bbq sauce",
-  "hot sauce","chilli sauce","sriracha","sweet chilli sauce",
-  "salt","sea salt","black pepper","white pepper","paprika","smoked paprika",
-  "cumin","coriander","turmeric","cinnamon","nutmeg","cardamom","cloves",
-  "ginger powder","garlic powder","onion powder","chilli powder","chilli flakes",
-  "curry powder","garam masala","mixed spice","bay leaves","oregano","thyme",
-  "rosemary","sage","parsley","coriander","cilantro","basil","mint","dill",
-  "za'atar","zaatar","sumac","ras el hanout","harissa",
-  "chicken stock","vegetable stock","beef stock","stock cubes","stock pot","bouillon",
-  "sugar","brown sugar","caster sugar","icing sugar","honey","maple syrup","date syrup",
-  "jam","marmalade","nutella","salsa","guacamole",
-  "coconut","desiccated coconut","shredded coconut","sesame seeds","chia seeds",
-  "flax seeds","sunflower seeds","pumpkin seeds",
-  "popcorn kernels","filo pastry","puff pastry","shortcrust pastry",
-  "vanilla","vanilla extract","vanilla essence",
-  "rose water","orange blossom water",
-  "water","foil","parchment paper","baking paper",
-  "baked beans","black beans","kidney beans","cannellini beans","fava beans",
-  "chickpeas","lentils","red lentils","green lentils","brown lentils"
+  "eggs","egg whites","bread","toast","sliced bread","baguette","sourdough","pitta bread","pitta","tortilla wrap","wrap","english muffin","naan","crackers",
+  "chips","crisps","fries","frozen chips","potato wedges","hash browns","potatoes","sweet potato","carrot","onion","red onion","spring onion","shallot",
+  "garlic","ginger","tomato","cherry tomatoes","tinned tomatoes","chopped tomatoes","passata","cucumber","pepper","bell pepper","aubergine","courgette",
+  "broccoli","cauliflower","asparagus","green beans","peas","frozen peas","sweetcorn","mushroom","leek","celery","cabbage","kale","beetroot","spinach",
+  "lettuce","mixed leaf salad","salad leaves","rocket","watercress","avocado","olives","pickles","capers","sun-dried tomatoes","banana","apple","orange",
+  "lemon","lime","mango","berries","strawberries","blueberries","raspberries","grapes","pineapple","dates","raisins","sultanas","figs","apricots",
+  "dried apricots","walnuts","almonds","cashews","peanuts","pistachio","mixed nuts","pine nuts","milk","almond milk","oat milk","soy milk","coconut milk",
+  "cream","double cream","yoghurt","greek yoghurt","cream cheese","butter","ghee","margarine","cheddar","mozzarella","feta","halloumi","parmesan","ricotta",
+  "paneer","cheese","chicken breast","chicken thigh","chicken wings","chicken drumsticks","whole chicken","minced beef","beef strips","steak","minced lamb",
+  "lamb chops","lamb mince","turkey","turkey mince","sausage","chicken sausage","sujuk","salmon","smoked salmon","cod","haddock","tuna","tinned tuna",
+  "prawns","shrimp","sardines","mackerel","white fish","fish fillets","tofu","tempeh","falafel","hummus","houmous","tahini","peanut butter",
+  "rice","basmati rice","white rice","brown rice","jasmine rice","wild rice","quinoa","couscous","bulgur wheat","spaghetti","penne","fusilli","macaroni",
+  "noodles","egg noodles","rice noodles","lasagne sheets","oats","porridge oats","granola","cereal","muesli","flour","plain flour","self-raising flour",
+  "gram flour","bread flour","cornflour","baking powder","baking soda","yeast","cocoa powder","chocolate","chocolate chips","dark chocolate","milk chocolate",
+  "white chocolate","olive oil","vegetable oil","sunflower oil","coconut oil","sesame oil","rapeseed oil","soy sauce","light soy sauce","dark soy sauce",
+  "vinegar","balsamic vinegar","apple cider vinegar","white vinegar","lemon juice","lime juice","mayonnaise","mayo","ketchup","tomato ketchup","mustard",
+  "bbq sauce","hot sauce","chilli sauce","sriracha","sweet chilli sauce","salt","sea salt","black pepper","white pepper","paprika","smoked paprika",
+  "cumin","coriander","turmeric","cinnamon","nutmeg","cardamom","cloves","ginger powder","garlic powder","onion powder","chilli powder","chilli flakes",
+  "curry powder","garam masala","mixed spice","bay leaves","oregano","thyme","rosemary","sage","parsley","cilantro","basil","mint","dill",
+  "za'atar","zaatar","sumac","ras el hanout","harissa","chicken stock","vegetable stock","beef stock","stock cubes","stock pot","bouillon",
+  "sugar","brown sugar","caster sugar","icing sugar","honey","maple syrup","date syrup","jam","marmalade","nutella","salsa","guacamole",
+  "coconut","desiccated coconut","shredded coconut","sesame seeds","chia seeds","flax seeds","sunflower seeds","pumpkin seeds",
+  "popcorn kernels","filo pastry","puff pastry","shortcrust pastry","vanilla","vanilla extract","vanilla essence","rose water","orange blossom water",
+  "water","foil","parchment paper","baking paper","baked beans","black beans","kidney beans","cannellini beans","fava beans","chickpeas","lentils",
+  "red lentils","green lentils","brown lentils"
 ];
 
 const SYNONYMS = {
-  "aubergine": ["eggplant"],
-  "courgette": ["zucchini"],
-  "coriander": ["cilantro"],
-  "rocket": ["arugula"],
-  "green chilli": ["green chili"],
-  "chilli flakes": ["red pepper flakes", "chili flakes"],
-  "bell pepper": ["red pepper", "green pepper", "yellow pepper", "capsicum"],
-  "pepper": ["bell pepper"],
+  "aubergine": ["eggplant"], "courgette": ["zucchini"], "coriander": ["cilantro"], "rocket": ["arugula"],
+  "green chilli": ["green chili"], "chilli flakes": ["red pepper flakes", "chili flakes"],
+  "bell pepper": ["red pepper", "green pepper", "yellow pepper", "capsicum"], "pepper": ["bell pepper"],
   "mixed leaf salad": ["lettuce", "salad leaves", "rocket", "spinach", "greens", "leafy greens"],
   "salad leaves": ["lettuce", "rocket", "spinach", "mixed leaf salad"],
   "leafy greens": ["lettuce", "spinach", "kale", "rocket", "mixed leaf salad"],
-  "lettuce": ["mixed leaf salad", "salad leaves", "rocket", "greens"],
-  "spinach": ["baby spinach", "mixed leaf salad", "greens"],
-  "chips": ["fries", "french fries", "potatoes", "wedges", "potato wedges"],
-  "crisps": ["potato chips"],
-  "fries": ["chips", "potatoes", "wedges"],
-  "wedges": ["potatoes", "chips", "fries"],
-  "potato wedges": ["potatoes", "chips"],
-  "potatoes": ["potato"],
-  "hash browns": ["potatoes", "potato"],
-  "yoghurt": ["yogurt"],
-  "greek yoghurt": ["greek yogurt", "yoghurt", "yogurt"],
+  "lettuce": ["mixed leaf salad", "salad leaves", "rocket", "greens"], "spinach": ["baby spinach", "mixed leaf salad", "greens"],
+  "chips": ["fries", "french fries", "potatoes", "wedges", "potato wedges"], "crisps": ["potato chips"],
+  "fries": ["chips", "potatoes", "wedges"], "wedges": ["potatoes", "chips", "fries"],
+  "potato wedges": ["potatoes", "chips"], "potatoes": ["potato"], "hash browns": ["potatoes", "potato"],
+  "yoghurt": ["yogurt"], "greek yoghurt": ["greek yogurt", "yoghurt", "yogurt"],
   "cream": ["double cream", "single cream", "heavy cream", "whipping cream"],
-  "cheese": ["cheddar", "mozzarella", "feta", "halloumi", "parmesan", "ricotta", "paneer"],
-  "butter": ["ghee", "margarine"],
-  "minced beef": ["ground beef", "beef mince"],
-  "minced lamb": ["ground lamb", "lamb mince"],
-  "prawns": ["shrimp"],
-  "white fish": ["cod", "haddock", "tilapia", "pollock"],
-  "tuna": ["tinned tuna", "canned tuna"],
-  "sardines": ["tinned sardines"],
-  "chicken": ["chicken breast", "chicken thigh", "chicken wings", "chicken drumsticks"],
+  "cheese": ["cheddar", "mozzarella", "feta", "halloumi", "parmesan", "ricotta", "paneer"], "butter": ["ghee", "margarine"],
+  "minced beef": ["ground beef", "beef mince"], "minced lamb": ["ground lamb", "lamb mince"],
+  "prawns": ["shrimp"], "white fish": ["cod", "haddock", "tilapia", "pollock"], "tuna": ["tinned tuna", "canned tuna"],
+  "sardines": ["tinned sardines"], "chicken": ["chicken breast", "chicken thigh", "chicken wings", "chicken drumsticks"],
   "sausage": ["chicken sausage", "turkey sausage", "sujuk", "beef sausage"],
-  "rice": ["basmati rice", "white rice", "brown rice", "jasmine rice"],
-  "chickpeas": ["chickpea", "garbanzo beans"],
-  "lentils": ["red lentils", "green lentils", "brown lentils"],
-  "oats": ["porridge oats", "rolled oats", "oatmeal"],
-  "bread": ["toast", "sliced bread", "white bread", "brown bread", "sourdough", "baguette"],
-  "pitta": ["pita", "pitta bread", "pita bread"],
-  "tortilla wrap": ["wrap", "tortilla", "flatbread"],
-  "flatbread": ["pitta", "naan", "tortilla"],
-  "hummus": ["houmous", "humus"],
-  "mayonnaise": ["mayo"],
-  "peanut butter": ["nut butter", "almond butter"],
-  "soy sauce": ["light soy sauce", "dark soy sauce"],
-  "honey": ["maple syrup", "date syrup"],
-  "almond milk": ["oat milk", "soy milk", "milk"],
-  "oat milk": ["almond milk", "soy milk", "milk"],
-  "milk": ["almond milk", "oat milk", "soy milk"],
-  "cinnamon": ["ground cinnamon"],
-  "cumin": ["ground cumin", "cumin seeds"],
-  "paprika": ["smoked paprika", "sweet paprika"],
-  "smoked paprika": ["paprika"],
-  "za'atar": ["zaatar", "zatar"],
-  "tinned tomatoes": ["canned tomatoes", "chopped tomatoes"],
-  "chopped tomatoes": ["tinned tomatoes", "canned tomatoes", "passata"],
-  "stock": ["chicken stock", "vegetable stock", "beef stock", "stock cubes", "bouillon"],
-  "sweet potato": ["sweet potatoes"],
-  "bananas": ["banana"],
-  "avocado": ["avocados"],
-  "olives": ["black olives", "green olives"],
-  "coconut milk": ["coconut cream"]
+  "rice": ["basmati rice", "white rice", "brown rice", "jasmine rice"], "chickpeas": ["chickpea", "garbanzo beans"],
+  "lentils": ["red lentils", "green lentils", "brown lentils"], "oats": ["porridge oats", "rolled oats", "oatmeal"],
+  "bread": ["toast", "sliced bread", "white bread", "brown bread", "sourdough", "baguette"], "pitta": ["pita", "pitta bread", "pita bread"],
+  "tortilla wrap": ["wrap", "tortilla", "flatbread"], "flatbread": ["pitta", "naan", "tortilla"],
+  "hummus": ["houmous", "humus"], "mayonnaise": ["mayo"], "peanut butter": ["nut butter", "almond butter"],
+  "soy sauce": ["light soy sauce", "dark soy sauce"], "honey": ["maple syrup", "date syrup"],
+  "almond milk": ["oat milk", "soy milk", "milk"], "oat milk": ["almond milk", "soy milk", "milk"], "milk": ["almond milk", "oat milk", "soy milk"],
+  "cinnamon": ["ground cinnamon"], "cumin": ["ground cumin", "cumin seeds"], "paprika": ["smoked paprika", "sweet paprika"],
+  "smoked paprika": ["paprika"], "za'atar": ["zaatar", "zatar"], "tinned tomatoes": ["canned tomatoes", "chopped tomatoes"],
+  "chopped tomatoes": ["tinned tomatoes", "canned tomatoes", "passata"], "stock": ["chicken stock", "vegetable stock", "beef stock", "stock cubes", "bouillon"],
+  "sweet potato": ["sweet potatoes"], "bananas": ["banana"], "avocado": ["avocados"], "olives": ["black olives", "green olives"], "coconut milk": ["coconut cream"]
 };
 
 const expandCache = new Map();
@@ -656,18 +625,10 @@ function suggest(q){
 
 const OFF_MIN = 2;
 const OFF_STALE_MS = 90 * 24 * 60 * 60 * 1000;
-
-function offEnabled(){
-  try { return localStorage.getItem("hk-off-enabled") !== "0"; }
-  catch(e){ return true; }
-}
-function setOffEnabled(v){
-  try { localStorage.setItem("hk-off-enabled", v ? "1" : "0"); } catch(e){}
-}
-
+function offEnabled(){ try { return localStorage.getItem("hk-off-enabled") !== "0"; } catch(e){ return true; } }
+function setOffEnabled(v){ try { localStorage.setItem("hk-off-enabled", v ? "1" : "0"); } catch(e){} }
 const OFF_DB = "hk-off-db", OFF_STORE = "cache";
 let offDB = null;
-
 function openOFFDB(){
   return new Promise((resolve, reject) => {
     if (!window.indexedDB) return reject(new Error("no-idb"));
@@ -739,24 +700,16 @@ async function clearOFFCache(){
   updateCacheCount();
   alert("OFF cache cleared. Next searches will hit the network.");
 }
-
 async function searchOFF(q){
   if (!navigator.onLine) return [];
   if (!q || q.length < OFF_MIN) return [];
-  const url = "https://world.openfoodfacts.org/cgi/search.pl?search_terms=" +
-    encodeURIComponent(q) +
-    "&search_simple=1&action=process&json=1&page_size=20" +
-    "&fields=product_name,product_name_en";
+  const url = "https://world.openfoodfacts.org/cgi/search.pl?search_terms=" + encodeURIComponent(q) + "&search_simple=1&action=process&json=1&page_size=20&fields=product_name,product_name_en";
   let res;
-  try { res = await fetch(url, { headers: { "Accept": "application/json" } }); }
-  catch(e){ return []; }
+  try { res = await fetch(url, { headers: { "Accept": "application/json" } }); } catch(e){ return []; }
   if (!res.ok) return [];
   let data;
   try { data = await res.json(); } catch(e){ return []; }
-  const names = (data.products || [])
-    .map(p => (p.product_name_en || p.product_name || "").trim())
-    .filter(n => n && n.length <= 60)
-    .map(n => n.toLowerCase());
+  const names = (data.products || []).map(p => (p.product_name_en || p.product_name || "").trim()).filter(n => n && n.length <= 60).map(n => n.toLowerCase());
   const seen = new Set(), out = [];
   names.forEach(n => { if (!seen.has(n)){ seen.add(n); out.push(n); } });
   const result = out.slice(0, 6);
@@ -764,29 +717,20 @@ async function searchOFF(q){
   updateCacheCount();
   return result;
 }
-
 let offTimer = null, offSeq = 0, offLoading = false, offResults = [];
-
 async function scheduleOffSearch(q){
   clearTimeout(offTimer);
   offSeq++;
   const seq = offSeq;
   if (!q || q.length < OFF_MIN || !offEnabled() || !navigator.onLine){
-    offResults = []; offLoading = false;
-    renderSuggestions();
-    return;
+    offResults = []; offLoading = false; renderSuggestions(); return;
   }
   const cached = await idbGetEntry(q);
   if (seq !== offSeq) return;
   if (cached){
-    offResults = cached.v; offLoading = false;
-    renderSuggestions();
+    offResults = cached.v; offLoading = false; renderSuggestions();
     if (navigator.onLine && (Date.now() - cached.t) > OFF_STALE_MS){
-      searchOFF(q).then(fresh => {
-        if (seq !== offSeq) return;
-        offResults = fresh;
-        renderSuggestions();
-      }).catch(() => {});
+      searchOFF(q).then(fresh => { if (seq !== offSeq) return; offResults = fresh; renderSuggestions(); }).catch(() => {});
     }
     return;
   }
@@ -796,35 +740,23 @@ async function scheduleOffSearch(q){
     if (seq !== offSeq) return;
     const res = await searchOFF(q);
     if (seq !== offSeq) return;
-    offResults = res; offLoading = false;
-    renderSuggestions();
+    offResults = res; offLoading = false; renderSuggestions();
   }, 400);
 }
-
 function renderSuggestions(){
   const q = st.query;
   const local = suggest(q);
   const localLc = new Set(local.map(x => x.toLowerCase()));
   const off = offResults.filter(x => !localLc.has(x.toLowerCase())).slice(0, 6);
-  let html = local.map(x =>
-    `<button class="ch" data-k="pick" data-v="${esc(x)}" type="button">+ ${esc(x)}</button>`
-  ).join("");
-  html += off.map(x =>
-    `<button class="ch off" data-k="pick" data-v="${esc(x)}" type="button" title="From Open Food Facts">🌐 ${esc(x)}</button>`
-  ).join("");
-  if (offLoading){
-    html += `<span class="mu" style="align-self:center">Searching Open Food Facts…</span>`;
-  }
-  if (!local.length && !off.length && q && !offLoading){
-    html = `<span class="mu">No matches — press Add to save “${esc(q)}” as typed.</span>`;
-  }
+  let html = local.map(x => `<button class="ch" data-k="pick" data-v="${esc(x)}" type="button">+ ${esc(x)}</button>`).join("");
+  html += off.map(x => `<button class="ch off" data-k="pick" data-v="${esc(x)}" type="button" title="From Open Food Facts">🌐 ${esc(x)}</button>`).join("");
+  if (offLoading) html += `<span class="mu" style="align-self:center">Searching Open Food Facts…</span>`;
+  if (!local.length && !off.length && q && !offLoading) html = `<span class="mu">No matches — press Add to save “${esc(q)}” as typed.</span>`;
   $("#sugg").innerHTML = html;
 }
 
 function rC(){
-  $("#ic").innerHTML = st.ing.map((x,i) =>
-    `<span class="ic">${esc(x)}<button data-k="rm" data-v="${i}" type="button" aria-label="Remove ${esc(x)}">×</button></span>`
-  ).join("");
+  $("#ic").innerHTML = st.ing.map((x,i) => `<span class="ic">${esc(x)}<button data-k="rm" data-v="${i}" type="button" aria-label="Remove ${esc(x)}">×</button></span>`).join("");
 }
 function addI(v){
   const parts = String(v || "").split(",").map(x => x.trim().toLowerCase()).filter(Boolean);
@@ -835,17 +767,29 @@ function addI(v){
   offSeq++;
   offResults = []; offLoading = false;
   st.query = "";
+  st.limit = 12;
   $("#in").value = "";
   renderSuggestions();
   rC();
   rM();
 }
 
-function rT(){
-  $("#gb").hidden = st.tab !== "find";
-  document.querySelectorAll(".tabs button").forEach(b => {
-    b.setAttribute("aria-selected", b.dataset.v === st.tab ? "true" : "false");
+/* Navigation Logic */
+function switchView(v){
+  st.tab = v;
+  document.getElementById('view-find').hidden = v !== 'find';
+  document.getElementById('view-plan').hidden = v !== 'plan';
+  document.getElementById('view-tools').hidden = v !== 'tools';
+  
+  document.querySelectorAll('.drawer-item').forEach(b => {
+    b.classList.toggle('active', b.dataset.v === v);
   });
+  
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawer-overlay').classList.remove('open');
+  
+  if (v === 'find') rM();
+  if (v === 'plan') rP(document.getElementById('out-plan'));
 }
 
 const chips = (k, obj, cur) => Object.entries(obj).map(([v,l]) => {
@@ -861,8 +805,7 @@ const fpn = () => st.fo ? `<div class="box fp">
 
 const fbar = () => {
   const n = (st.me ? 1 : 0) + (+st.tm ? 1 : 0) + st.tg.size;
-  return `<button class="ch${st.fo ? " on" : ""}" data-k="fo" type="button" aria-expanded="${st.fo}">Filters${n ? ` (${n})` : ""}</button>`
-       + (n ? `<button class="ch" data-k="clr" type="button">Clear filters</button>` : "");
+  return `<button class="ch${st.fo ? " on" : ""}" data-k="fo" type="button" aria-expanded="${st.fo}">Filters${n ? ` (${n})` : ""}</button>` + (n ? `<button class="ch" data-k="clr" type="button">Clear filters</button>` : "");
 };
 
 const card = r => {
@@ -874,43 +817,53 @@ const card = r => {
       <h3>${esc(r.n)}</h3>
       <p class="mu">${esc(r.c)} • ⏱️ ${r.t} min • ${mel(r)}</p>
       <div>${tagsHtml(r)}</div>
-      ${active ? `<div class="mt2"><i style="width:${Math.round(ratio(s)*100)}%"></i></div>
-        <p class="mu">Pantry: ${s.h}/${s.tot}.${s.miss.length ? ` Need ${s.miss.length} more.` : " Ready to cook!"}</p>` : ""}
+      ${active ? `<div class="mt2"><i style="width:${Math.round(ratio(s)*100)}%"></i></div><p class="mu">Pantry: ${s.h}/${s.tot}.${s.miss.length ? ` Need ${s.miss.length} more.` : " Ready to cook!"}</p>` : ""}
     </div>
   </div>`;
 };
 
 function rM(){
   const out = $("#out");
-  if (st.tab === "plan") return rP(out);
   const active = st.ing.length > 0;
   let L = R.filter(passes);
   if (active){
     L = L.map(r => [r, sc(r)])
          .filter(([, s]) => s.h > 0 && (!st.full || s.miss.length === 0))
-         .sort((a,b) => ratio(b[1]) - ratio(a[1])
-                     || a[1].miss.length - b[1].miss.length
-                     || a[0].t - b[0].t)
+         .sort((a,b) => ratio(b[1]) - ratio(a[1]) || a[1].miss.length - b[1].miss.length || a[0].t - b[0].t)
          .map(x => x[0]);
   } else {
     L = L.slice().sort((a,b) => a.t - b.t);
   }
+  
   const cats = Object.entries({"":"All", ...M})
     .map(([v,l]) => `<button class="cat${st.meal === v ? " on" : ""}" data-k="meal" data-v="${v}" type="button">${v ? E[v] + " " : ""}${l}</button>`)
     .join("");
-  out.innerHTML = `<div class="cats">${cats}</div>
+  
+  const totalFound = L.length;
+  const visibleList = L.slice(0, st.limit);
+  
+  let html = `<div class="cats">${cats}</div>
   <div class="bar2">
     ${fbar()}
     ${active ? `<label><input type="checkbox" id="full" ${st.full ? "checked" : ""}> Only recipes I can fully make</label>` : ""}
     <button class="btn alt" data-k="rand" type="button" style="margin-left:auto">Surprise me</button>
   </div>
   ${fpn()}
-  <h2 class="cnt">${L.length} recipe${L.length === 1 ? "" : "s"}${active ? " matching your pantry" : ""}${st.query ? ` for “${esc(st.query)}”` : ""}</h2>
-  ${L.length
-    ? `<div class="grid">${L.map(card).join("")}</div>`
-    : `<p class="mu">${st.query
+  <h2 class="cnt">${totalFound} recipe${totalFound === 1 ? "" : "s"}${active ? " matching your pantry" : ""}${st.query ? ` for “${esc(st.query)}”` : ""}</h2>`;
+  
+  if (totalFound) {
+    html += `<div class="grid">${visibleList.map(card).join("")}</div>`;
+    if (totalFound > st.limit) {
+      html += `<div class="load-more-wrap">
+        <button class="btn" data-k="load-more" type="button">Show More Recipes (${totalFound - st.limit} remaining)</button>
+      </div>`;
+    }
+  } else {
+    html += `<p class="mu">${st.query
         ? `Nothing matches “${esc(st.query)}”. Try a shorter word, or clear the box.`
-        : `No recipes use your pantry items. Try adding everyday basics like eggs, bread, chicken, rice, tomatoes, or potatoes.`}</p>`}`;
+        : `No recipes use your pantry items. Try adding everyday basics like eggs, bread, chicken, rice, tomatoes, or potatoes.`}</p>`;
+  }
+  out.innerHTML = html;
 }
 
 function pick(meal, used){
@@ -944,21 +897,16 @@ function missingItems(plan){
 function copyShoppingList(){
   if (!st.plan) return;
   const items = missingItems(st.plan);
-  const txt = "🛒 Halal Kitchen shopping list\n" +
-    Object.keys(items).sort().map(x => `- ${x} (x${items[x]})`).join("\n");
+  const txt = "🛒 Halal Kitchen shopping list\n" + Object.keys(items).sort().map(x => `- ${x} (x${items[x]})`).join("\n");
   if (navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(txt).then(
-      () => alert("Shopping list copied!"),
-      () => fallbackCopy(txt)
-    );
+    navigator.clipboard.writeText(txt).then(() => alert("Shopping list copied!"), () => fallbackCopy(txt));
   } else fallbackCopy(txt);
 }
 function fallbackCopy(txt){
   const ta = document.createElement("textarea");
   ta.value = txt; ta.style.position = "fixed"; ta.style.opacity = "0";
   document.body.appendChild(ta); ta.select();
-  try { document.execCommand("copy"); alert("Shopping list copied!"); }
-  catch(e){ alert("Copy failed — select the list manually."); }
+  try { document.execCommand("copy"); alert("Shopping list copied!"); } catch(e){ alert("Copy failed — select the list manually."); }
   document.body.removeChild(ta);
 }
 function shop(plan){
@@ -970,9 +918,7 @@ function shop(plan){
       <button class="btn" data-k="copy" type="button">📋 Copy List</button>
     </div>
     <p class="mu">${st.ing.length ? "Only items missing from your pantry are shown." : "Everything your planned week needs."}</p>
-    ${keys.length
-      ? `<ul class="sl">${keys.map(x => `<li>${esc(x)}${c[x] > 1 ? ` ×${c[x]}` : ""}</li>`).join("")}</ul>`
-      : `<p class="mu">Your pantry covers everything in this plan.</p>`}
+    ${keys.length ? `<ul class="sl">${keys.map(x => `<li>${esc(x)}${c[x] > 1 ? ` ×${c[x]}` : ""}</li>`).join("")}</ul>` : `<p class="mu">Your pantry covers everything in this plan.</p>`}
   </div>`;
 }
 function rP(out){
@@ -992,10 +938,7 @@ function rP(out){
   ${pl ? `<div class="grid">${pl.map((d,i) => `<section class="day"><h3>${DN[i]}</h3>
       ${Object.entries(d).map(([k,r]) => `<div class="row">
         <span class="mu">${M[k]}</span>
-        ${r
-          ? `<button class="lk" data-k="open" data-v="${r.id}" type="button">${esc(r.n)}</button>
-             <button class="rr" data-k="rr" data-v="${i},${k}" type="button" aria-label="Swap ${esc(r.n)}">↻</button>`
-          : `<span class="mu">No match</span>`}
+        ${r ? `<button class="lk" data-k="open" data-v="${r.id}" type="button">${esc(r.n)}</button><button class="rr" data-k="rr" data-v="${i},${k}" type="button" aria-label="Swap ${esc(r.n)}">↻</button>` : `<span class="mu">No match</span>`}
       </div>`).join("")}
     </section>`).join("")}</div>` : ""}
   ${pl ? shop(pl) : `<p class="mu">Choose your preferences and generate a plan.</p>`}`;
@@ -1010,8 +953,7 @@ function openRecipe(id){
   const active = st.ing.length > 0;
   const ings = r.i, steps = r.s;
   $("#dlg .in2").innerHTML = `
-    <div class="dh m${r.m}"><span>${E[r.m] || "🍲"}</span>
-      <button class="x" data-k="close" type="button" aria-label="Close">×</button></div>
+    <div class="dh m${r.m}"><span>${E[r.m] || "🍲"}</span><button class="x" data-k="close" type="button" aria-label="Close">×</button></div>
     <h2>${esc(r.n)}</h2>
     <p class="mu">${esc(r.c)} • ⏱️ ${r.t} min • Appliance: <strong>${mel(r)}</strong></p>
     <div class="macro-grid">
@@ -1022,8 +964,7 @@ function openRecipe(id){
     </div>
     <div>${tagsHtml(r)}</div>
     <h3 style="margin-top:16px">Ingredients Needed</h3>
-    <ul class="il">${ings.map(x => `<li class="${active && !pantryHas(x) ? "no" : ""}">${
-      active ? (pantryHas(x) ? "✓ " : "Need: ") : "• "}${esc(x)}</li>`).join("")}</ul>
+    <ul class="il">${ings.map(x => `<li class="${active && !pantryHas(x) ? "no" : ""}">${active ? (pantryHas(x) ? "✓ " : "Need: ") : "• "}${esc(x)}</li>`).join("")}</ul>
     <h3>Step-by-Step Instructions</h3>
     <ol class="st">${steps.map(x => `<li><span>${esc(x)}</span></li>`).join("")}</ol>
     <p class="mu">Cooking oil, salt and black pepper assumed. All meat must be halal certified.</p>
@@ -1040,6 +981,7 @@ function deleteRecipe(id){
   rebuildIngredientIndex();
   closeModal($("#dlg"));
   rM();
+  if (st.tab === 'plan') rP(document.getElementById('out-plan'));
 }
 
 const BAD = /pork|bacon|\bham\b|lard|wine|beer|\brum\b|gelatin|gelatine|alcohol|pepperoni|prosciutto|brandy|whisk(e)?y|\bsake\b|mirin|vodka|chorizo|pancetta/i;
@@ -1090,8 +1032,9 @@ async function genAI(){
     rebuildIngredientIndex();
     $("#hcount").textContent = R.length;
     g.textContent = `Saved “${v.n}” to your device — it now works offline.`;
-    st.tab = "find";
-    rT(); rM(); openRecipe(v.id);
+    st.limit = 12;
+    switchView('find');
+    openRecipe(v.id);
   } catch(e){
     g.textContent =
       e.c === "off"  ? "You are offline. AI generation needs internet — everything else works offline." :
@@ -1162,8 +1105,8 @@ function addCustomRecipe(){
   $("#hcount").textContent = R.length;
   $("#pt").value = "";
   g.textContent = `Saved “${r.n}” — it is now available offline.`;
-  st.tab = "find";
-  rT(); rM();
+  st.limit = 12;
+  switchView('find');
 }
 
 const looksLikeTitle = s => {
@@ -1276,7 +1219,6 @@ function parseJSONFile(content){
 }
 
 let pdfJsLoaded = false;
-
 async function loadPdfJs(){
   if (pdfJsLoaded && window.pdfjsLib) return;
   if (!navigator.onLine && !window.pdfjsLib){
@@ -1284,8 +1226,7 @@ async function loadPdfJs(){
   }
   await new Promise((resolve, reject) => {
     if (window.pdfjsLib){
-      window.pdfjsLib.GlobalWorkerOptions.workerSrc =
-        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
       pdfJsLoaded = true;
       return resolve();
     }
@@ -1293,8 +1234,7 @@ async function loadPdfJs(){
     s.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
     s.onload = () => {
       if (!window.pdfjsLib) return reject(new Error("pdf.js failed to initialise"));
-      window.pdfjsLib.GlobalWorkerOptions.workerSrc =
-        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
       pdfJsLoaded = true;
       resolve();
     };
@@ -1331,26 +1271,19 @@ async function extractPdfText(arrayBuffer){
     out += "\n";
   }
   const clean = out.trim();
-  if (clean.length < 20){
-    throw new Error("PDF appears to have no extractable text (scanned/image-only PDF)");
-  }
+  if (clean.length < 20) throw new Error("PDF appears to have no extractable text (scanned/image-only PDF)");
   return clean;
 }
 
 const SUPPORTED_EXTS = ["txt","md","csv","json","pdf"];
-
 function validateFile(file){
   if (!file) return "No file provided";
   const ext = (file.name.split(".").pop() || "").toLowerCase();
   if (!ext) return `${file.name}: file has no extension`;
-  if (!SUPPORTED_EXTS.includes(ext)){
-    return `${file.name}: unsupported type ".${ext}". Use TXT, MD, CSV, JSON, or PDF.`;
-  }
+  if (!SUPPORTED_EXTS.includes(ext)) return `${file.name}: unsupported type ".${ext}". Use TXT, MD, CSV, JSON, or PDF.`;
   if (!file.size) return `${file.name}: file is empty`;
   const limit = ext === "pdf" ? 20 * 1024 * 1024 : 5 * 1024 * 1024;
-  if (file.size > limit){
-    return `${file.name}: exceeds ${(limit / 1048576)|0} MB limit`;
-  }
+  if (file.size > limit) return `${file.name}: exceeds ${(limit / 1048576)|0} MB limit`;
   return null;
 }
 
@@ -1366,18 +1299,13 @@ function parseUploadedFile(file){
         try {
           const text = await extractPdfText(raw);
           const recipes = parseTextFile(text);
-          if (!recipes.length){
-            reject(new Error("PDF text extracted, but no recipes detected (try a PDF with clearer 'Ingredients' and 'Method' headings)"));
-          } else {
-            resolve(recipes);
-          }
+          if (!recipes.length) reject(new Error("PDF text extracted, but no recipes detected (try a PDF with clearer 'Ingredients' and 'Method' headings)"));
+          else resolve(recipes);
         } catch(e){ reject(e); }
         return;
       }
       const content = raw;
-      if (/^\s*(<!doctype|<html|<head|<body)/i.test(content)){
-        return reject(new Error("HTML files are not supported"));
-      }
+      if (/^\s*(<!doctype|<html|<head|<body)/i.test(content)) return reject(new Error("HTML files are not supported"));
       try {
         if (ext === "json") return resolve(parseJSONFile(content));
         if (ext === "csv")  return resolve(parseCSVFile(content));
@@ -1392,51 +1320,23 @@ function parseUploadedFile(file){
 async function handleFileUpload(files){
   const bar = $("#file-results");
   if (!files.length) return;
-
   bar.innerHTML = `<p class="mu">Processing ${files.length} file${files.length === 1 ? "" : "s"}…</p>`;
-
   const total = { added: 0, rejected: 0, invalid: 0, errors: [] };
 
   for (const file of files){
     const failReason = validateFile(file);
-    if (failReason){
-      total.errors.push(failReason);
-      continue;
-    }
-
+    if (failReason){ total.errors.push(failReason); continue; }
     let recipes = [];
-    try {
-      recipes = await parseUploadedFile(file);
-    } catch(e){
-      total.errors.push(`${file.name}: ${e.message}`);
-      continue;
-    }
-
-    if (!recipes.length){
-      total.errors.push(`${file.name}: no recipes detected`);
-      continue;
-    }
+    try { recipes = await parseUploadedFile(file); }
+    catch(e){ total.errors.push(`${file.name}: ${e.message}`); continue; }
+    if (!recipes.length){ total.errors.push(`${file.name}: no recipes detected`); continue; }
 
     for (const raw of recipes){
       if (!raw || !raw.n){ total.invalid++; continue; }
-      if (BAD.test(JSON.stringify(raw))){
-        total.rejected++;
-        total.errors.push(`${raw.n}: contains non-halal ingredients`);
-        continue;
-      }
-      const r = normalizeRecipe({
-        ...raw,
-        c: raw.c || `Imported from ${file.name}`
-      });
-      if (!r.i.length || !r.s.length){
-        total.invalid++;
-        total.errors.push(`${raw.n}: missing ingredients or steps`);
-        continue;
-      }
-      r.id = R.length;
-      r.u = 1;
-      R.push(r);
-      total.added++;
+      if (BAD.test(JSON.stringify(raw))){ total.rejected++; total.errors.push(`${raw.n}: contains non-halal ingredients`); continue; }
+      const r = normalizeRecipe({...raw, c: raw.c || `Imported from ${file.name}`});
+      if (!r.i.length || !r.s.length){ total.invalid++; total.errors.push(`${raw.n}: missing ingredients or steps`); continue; }
+      r.id = R.length; r.u = 1; R.push(r); total.added++;
     }
   }
 
@@ -1445,7 +1345,6 @@ async function handleFileUpload(files){
   $("#hcount").textContent = R.length;
 
   let html = "";
-
   if (total.added === 0){
     html += `<div class="err-box">⚠️ <strong>No recipes were imported.</strong> See reasons below.</div>`;
   } else {
@@ -1460,19 +1359,16 @@ async function handleFileUpload(files){
       <ul>${total.errors.slice(0, 30).map(x => `<li>${esc(x)}</li>`).join("")}${total.errors.length > 30 ? `<li>… and ${total.errors.length - 30} more</li>` : ""}</ul>
     </details>`;
   }
-
   bar.innerHTML = html;
 
   if (total.added > 0){
-    st.tab = "find";
-    rT();
-    rM();
+    st.limit = 12;
+    switchView('find');
   }
 }
 
 function downloadTemplate(){
-  const tpl =
-`Spicy Lemon Salmon;d;Modern;15;a;hp;380;32;4;22;salmon,lemon,olive oil,paprika,garlic;Rub the salmon with oil and spices|Air fry at 190C for 10 minutes|Squeeze lemon over before serving
+  const tpl = `Spicy Lemon Salmon;d;Modern;15;a;hp;380;32;4;22;salmon,lemon,olive oil,paprika,garlic;Rub the salmon with oil and spices|Air fry at 190C for 10 minutes|Squeeze lemon over before serving
 Garlic Butter Prawns;d;Mediterranean;10;s;hp;290;28;2;18;prawns,butter,garlic,parsley,lemon;Melt butter with garlic|Add prawns and cook 3 minutes|Finish with parsley and lemon
 Cinnamon Apple Oats;b;Modern;12;s;hvVg;290;8;50;7;oats,apple,cinnamon,raisins,milk;Simmer the oats in the milk|Grate the apple into the pan|Add the cinnamon and raisins|Cook for 3 more minutes
 `;
@@ -1487,6 +1383,15 @@ Cinnamon Apple Oats;b;Modern;12;s;hvVg;290;8;50;7;oats,apple,cinnamon,raisins,mi
   URL.revokeObjectURL(url);
 }
 
+document.getElementById('menu-btn').addEventListener('click', () => {
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('drawer-overlay').classList.add('open');
+});
+document.getElementById('drawer-overlay').addEventListener('click', () => {
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawer-overlay').classList.remove('open');
+});
+
 document.addEventListener("click", e => {
   const t = e.target;
   if (t.id === "open-key-guide")  return openModal($("#key-dlg"));
@@ -1499,7 +1404,8 @@ document.addEventListener("click", e => {
   if (!el) return;
   const k = el.dataset.k, v = el.dataset.v;
   switch (k){
-    case "tab":  st.tab = v; break;
+    case "nav": switchView(v); return;
+    case "tab": switchView(v); return;
     case "tg": case "pm":
       st[k].has(v) ? st[k].delete(v) : st[k].add(v);
       if (k === "pm" && st.plan) build();
@@ -1517,6 +1423,7 @@ document.addEventListener("click", e => {
     case "copy": return copyShoppingList();
     case "clear-off": clearOFFCache(); return;
     case "download-template": downloadTemplate(); return;
+    case "load-more": st.limit += 12; break;
     case "rand": {
       const pool = R.filter(passes);
       if (pool.length) openRecipe(pool[Math.floor(Math.random() * pool.length)].id);
@@ -1537,7 +1444,9 @@ document.addEventListener("click", e => {
       savePantry(); rC();
       break;
   }
-  rT(); rM();
+  
+  if (st.tab === 'find') rM();
+  if (st.tab === 'plan') rP(document.getElementById('out-plan'));
 });
 
 document.addEventListener("keydown", e => {
@@ -1553,9 +1462,9 @@ document.addEventListener("keydown", e => {
 document.addEventListener("input", e => {
   if (e.target.id === "in"){
     st.query = e.target.value.trim();
+    st.limit = 12;
     scheduleOffSearch(st.query);
-    if (st.tab !== "find"){ st.tab = "find"; }
-    rT(); rM();
+    rM();
   }
 });
 
@@ -1584,8 +1493,7 @@ const offT = $("#off-toggle");
 if (offT) offT.checked = offEnabled();
 updateCacheCount();
 rC();
-rT();
-rM();
+switchView('find');
 </script>
 </body>
 </html>
