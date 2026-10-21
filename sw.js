@@ -1,4 +1,4 @@
-const CACHE_NAME = 'halal-kitchen-v13';
+const CACHE_NAME = 'halal-kitchen-v14';
 const ASSETS = [
   './index.html',
   './manifest.webmanifest',
