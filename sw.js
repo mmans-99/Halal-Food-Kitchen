@@ -1,12 +1,11 @@
 const CACHE_NAME = 'halal-kitchen-v14';
 const ASSETS = [
-  './index.html',
   './manifest.webmanifest',
   './icon-192.png',
   './icon-512.png'
 ];
 
-// Install event - cache core assets
+// Install event - cache core assets (excluding index.html)
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
@@ -26,23 +25,40 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Fetch event - serve from cache, fallback to network
+// Fetch event - Network First for HTML, Cache First for everything else
 self.addEventListener('fetch', event => {
-  // Skip cross-origin requests like Gemini or Open Food Facts API calls when offline
+  // Skip cross-origin requests (like Gemini API calls)
   if (!event.request.url.startsWith(self.location.origin)) return;
 
+  // If the request is for a webpage (HTML), try the network first
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request).then(networkResponse => {
+        // If successful, put a copy in the cache and return it
+        return caches.open(CACHE_NAME).then(cache => {
+          cache.put(event.request, networkResponse.clone());
+          return networkResponse;
+        });
+      }).catch(() => {
+        // If network fails (offline), return the cached HTML
+        return caches.match(event.request);
+      })
+    );
+    return;
+  }
+
+  // For everything else (icons, etc.), do Cache First
   event.respondWith(
     caches.match(event.request).then(cachedResponse => {
       if (cachedResponse) {
-        // Return cached version, but fetch update in background
-        fetch(event.request).then(networkResponse => {
-          if (networkResponse && networkResponse.status === 200) {
-            caches.open(CACHE_NAME).then(cache => cache.put(event.request, networkResponse));
-          }
-        }).catch(() => {});
         return cachedResponse;
       }
-      return fetch(event.request);
+      return fetch(event.request).then(networkResponse => {
+        return caches.open(CACHE_NAME).then(cache => {
+          cache.put(event.request, networkResponse.clone());
+          return networkResponse;
+        });
+      });
     })
   );
 });
