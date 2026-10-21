@@ -12,15 +12,18 @@
 :root{--bg:#F5F8F6;--ink:#10231F;--mut:#5E716B;--card:#fff;--line:#E0E9E4;--g:#0B5D4B;--g2:#E3F1EB;--on:#fff;--s:#F2B84B;color-scheme:light}
 @media(prefers-color-scheme:dark){:root{--bg:#0B1613;--ink:#E9F2EE;--mut:#98B0A8;--card:#12231E;--line:#223A33;--g:#46C2A5;--g2:#143129;--on:#05211A;color-scheme:dark}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding-bottom:env(safe-area-inset-bottom, 20px)}
 h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;margin:0;line-height:1.15}
 h2{font-size:1.45rem}h3{font-size:1.1rem}
 button,select,input,textarea{font:inherit;color:inherit}
 
 /* Header & Drawer */
-.hero{background:#0B5D4B url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Cg fill='none' stroke='white' stroke-opacity='.1' stroke-width='1.5'%3E%3Crect x='12' y='12' width='32' height='32'/%3E%3Crect x='12' y='12' width='32' height='32' transform='rotate(45 28 28)'/%3E%3C/g%3E%3C/svg%3E");color:#fff;padding:calc(16px + env(safe-area-inset-top,0px)) 20px 64px;position:relative}
+.hero{background:#0B5D4B url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Cg fill='none' stroke='white' stroke-opacity='.1' stroke-width='1.5'%3E%3Crect x='12' y='12' width='32' height='32'/%3E%3Crect x='12' y='12' width='32' height='32' transform='rotate(45 28 28)'/%3E%3C/g%3E%3C/svg%3E");color:#fff;padding:calc(16px + env(safe-area-inset-top,0px)) 20px 64px;position:relative;transition:padding .3s}
+.hero.compact{padding-bottom:16px}
+.hero.compact h1, .hero.compact p{display:none}
+.hero.compact .top-bar{margin-bottom:0}
 .in{max-width:960px;margin:auto}
-.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;transition:margin .3s}
 .menu-btn{background:rgba(255,255,255,0.15);border:0;color:#fff;font-size:1.5rem;padding:8px 12px;border-radius:8px;cursor:pointer}
 .brand{font-weight:600;opacity:.9}
 .hero h1{font-size:clamp(1.8rem,6vw,3rem);font-weight:700;max-width:13em;letter-spacing:-.01em}
@@ -38,6 +41,7 @@ button,select,input,textarea{font:inherit;color:inherit}
 
 /* Layout */
 .wrap{max-width:960px;margin:-40px auto 0;padding:0 16px 56px}
+.hero.compact + .wrap{margin-top:-16px}
 .box{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 10px 28px -14px rgba(11,93,75,.35);margin-bottom:16px}
 .add{display:flex;gap:8px}
 input[type=text],input[type=password],select,textarea{flex:1;min-width:0;padding:13px 15px;border-radius:13px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)}
@@ -141,7 +145,7 @@ input[type=file]:hover{border-color:var(--g)}
   </ul>
 </nav>
 
-<header class="hero">
+<header class="hero" id="main-header">
   <div class="in">
     <div class="top-bar">
       <button class="menu-btn" id="menu-btn" aria-label="Open menu">☰</button>
@@ -160,7 +164,7 @@ input[type=file]:hover{border-color:var(--g)}
       <h3>Your Pantry &amp; Ingredients</h3>
       <p class="mu">Type an ingredient — suggestions appear below. Press Add or Enter to save it, then browse matches.</p>
       <div class="add">
-        <input type="text" id="in" autocomplete="off" placeholder="e.g. sal… → salmon, or chips" aria-label="Ingredient you have">
+        <input type="text" id="in" autocomplete="off" placeholder="e.g. sal… → salmon, or pasta" aria-label="Ingredient you have">
         <button class="btn" id="addb" type="button">Add</button>
       </div>
       <div id="sugg" aria-live="polite"></div>
@@ -195,11 +199,7 @@ input[type=file]:hover{border-color:var(--g)}
       <p class="mu">Upload TXT, MD, CSV, JSON, or PDF. You'll see a preview before anything is saved.</p>
       <input type="file" id="file-upload" accept=".txt,.md,.csv,.json,.pdf" multiple>
       <div class="file-fmt">
-        <strong>Accepted formats:</strong><br>
-        • <strong>TXT / MD</strong> — one recipe per block with <em>Ingredients</em> and <em>Method</em> headings.<br>
-        • <strong>CSV</strong> — <code>Title;meal;cuisine;time;appliance;tags;cal;P;C;F;ingredients;steps</code><br>
-        • <strong>JSON</strong> — array of objects with fields <code>n,m,c,t,me,tg,cal,p,car,f,i,s</code>.<br>
-        • <strong>PDF</strong> — text-based only. Needs internet on first upload (fetches pdf.js).
+        <strong>Having trouble parsing a PDF?</strong> Use the <b>🤖 Parse with AI</b> button that appears after you upload. It reads the raw text and perfectly extracts every recipe.
       </div>
       <div id="file-results" aria-live="polite"></div>
       <div id="upload-preview"></div>
@@ -432,7 +432,8 @@ const st = {
   tab: "home", full: false, days: "5", pm: new Set(["b","l","d"]),
   fav: true, plan: null, fo: false,
   limit: 12,
-  pending: [] // uploads waiting for confirmation
+  pending: [], // uploads waiting for confirmation
+  rawUploadText: "" // for AI parsing
 };
 
 function normalizeRecipe(r){
@@ -492,7 +493,7 @@ const COMMON_ING = [
   "lamb chops","lamb mince","turkey","turkey mince","sausage","chicken sausage","sujuk","salmon","smoked salmon","cod","haddock","tuna","tinned tuna",
   "prawns","shrimp","sardines","mackerel","white fish","fish fillets","tofu","tempeh","falafel","hummus","houmous","tahini","peanut butter",
   "rice","basmati rice","white rice","brown rice","jasmine rice","wild rice","quinoa","couscous","bulgur wheat","spaghetti","penne","fusilli","macaroni",
-  "noodles","egg noodles","rice noodles","lasagne sheets","oats","porridge oats","granola","cereal","muesli","flour","plain flour","self-raising flour",
+  "noodles","egg noodles","rice noodles","lasagne sheets","pasta","oats","porridge oats","granola","cereal","muesli","flour","plain flour","self-raising flour",
   "gram flour","bread flour","cornflour","baking powder","baking soda","yeast","cocoa powder","chocolate","chocolate chips","dark chocolate","milk chocolate",
   "white chocolate","olive oil","vegetable oil","sunflower oil","coconut oil","sesame oil","rapeseed oil","soy sauce","light soy sauce","dark soy sauce",
   "vinegar","balsamic vinegar","apple cider vinegar","white vinegar","lemon juice","lime juice","mayonnaise","mayo","ketchup","tomato ketchup","mustard",
@@ -525,7 +526,9 @@ const SYNONYMS = {
   "prawns": ["shrimp"], "white fish": ["cod", "haddock", "tilapia", "pollock"], "tuna": ["tinned tuna", "canned tuna"],
   "sardines": ["tinned sardines"], "chicken": ["chicken breast", "chicken thigh", "chicken wings", "chicken drumsticks"],
   "sausage": ["chicken sausage", "turkey sausage", "sujuk", "beef sausage"],
-  "rice": ["basmati rice", "white rice", "brown rice", "jasmine rice"], "chickpeas": ["chickpea", "garbanzo beans"],
+  "rice": ["basmati rice", "white rice", "brown rice", "jasmine rice"],
+  "pasta": ["spaghetti", "penne", "fusilli", "macaroni", "lasagne", "noodles", "lasagne sheets"],
+  "chickpeas": ["chickpea", "garbanzo beans"],
   "lentils": ["red lentils", "green lentils", "brown lentils"], "oats": ["porridge oats", "rolled oats", "oatmeal"],
   "bread": ["toast", "sliced bread", "white bread", "brown bread", "sourdough", "baguette"], "pitta": ["pita", "pitta bread", "pita bread"],
   "tortilla wrap": ["wrap", "tortilla", "flatbread"], "flatbread": ["pitta", "naan", "tortilla"],
@@ -824,6 +827,11 @@ function switchView(v){
   document.getElementById('view-plan').hidden = v !== 'plan';
   document.getElementById('view-mine').hidden = v !== 'mine';
   document.getElementById('view-tools').hidden = v !== 'tools';
+  
+  const hero = document.getElementById('main-header');
+  if (v === 'home') hero.classList.remove('compact');
+  else hero.classList.add('compact');
+
   document.querySelectorAll('.drawer-item').forEach(b => {
     b.classList.toggle('active', b.dataset.v === v);
   });
@@ -1075,7 +1083,8 @@ async function aiGemini(prompt){
   const k = KEY();
   if (!k) throw new Error("API Key is missing. Please save it in Settings.");
   
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(k)}`;
+  // Updated to use standard gemini-1.5-flash model
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(k)}`;
   const sys = "You are a Halal chef AI. Output ONLY valid JSON. No markdown. Strict halal rules.";
   const ask = `${sys}\n\nTask: ${prompt}\n\nReturn this exact JSON shape: {"n":"Title","m":"b","c":"Cuisine","t":15,"me":"a","tg":"hpvVg","cal":380,"p":28,"car":32,"f":14,"i":["2 eggs","1 tbsp oil"],"s":["Step 1","Step 2"]}`;
   
@@ -1089,7 +1098,7 @@ async function aiGemini(prompt){
         generationConfig: { responseMimeType: "application/json" }
       })
     });
-  } catch(e){ throw new Error("Network error: Could not reach Google servers. Check connection."); }
+  } catch(e){ throw new Error("Network error: Could not reach Google servers."); }
 
   if (!res.ok) {
     const errData = await res.json().catch(() => ({}));
@@ -1100,12 +1109,12 @@ async function aiGemini(prompt){
 
   const j = await res.json();
   const txt = j.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!txt) throw new Error("Gemini returned an empty response. Try a different prompt.");
+  if (!txt) throw new Error("Gemini returned an empty response.");
   
   try {
     return JSON.parse(txt);
   } catch(e) {
-    throw new Error("Gemini returned invalid JSON. Please try again.");
+    throw new Error("Gemini returned invalid JSON.");
   }
 }
 
@@ -1170,12 +1179,69 @@ async function testKey(){
   }
 }
 
-/* ---------------- Custom Recipe Parsing (SMART) ---------------- */
+/* ---------------- AI Document Parser ---------------- */
+async function parseDocumentWithAI(text) {
+  const k = KEY();
+  if (!k) throw new Error("You need to add a Gemini API Key in Settings to use AI parsing.");
+  
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(k)}`;
+  const prompt = `Extract all recipes from the following text. Return ONLY a valid JSON array. Each object must have:
+  "n" (string, title), "i" (array of strings, ingredients), "s" (array of strings, steps), 
+  "cal" (number, calories), "p" (number, protein grams), "t" (number, time in mins).
+  
+  Text to parse:
+  ${text.slice(0, 30000)}`;
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ 
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { responseMimeType: "application/json" }
+    })
+  });
+  
+  if (!res.ok) throw new Error("AI parsing failed. Check your API key.");
+  const j = await res.json();
+  const txt = j.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!txt) throw new Error("AI returned empty data.");
+  
+  const parsed = JSON.parse(txt);
+  if (!Array.isArray(parsed)) throw new Error("AI did not return a list of recipes.");
+  
+  return parsed.map(r => normalizeRecipe({
+    n: r.n || "Imported AI Recipe",
+    i: r.i || [],
+    s: r.s || [],
+    cal: r.cal || 350, p: r.p || 20, t: r.t || 15,
+    m: "d", c: "AI Extracted", me: "s", tg: "p", u: 1
+  }));
+}
+
+async function triggerAIParse() {
+  const btn = $("#ai-parse-btn");
+  const status = $("#ai-parse-status");
+  if (!st.rawUploadText) return;
+  
+  btn.disabled = true;
+  status.innerHTML = `<div class="spinner"></div> AI is reading the document...`;
+  
+  try {
+    const results = await parseDocumentWithAI(st.rawUploadText);
+    st.pending = results;
+    showUploadPreview();
+  } catch(e) {
+    status.innerHTML = `<span style="color:red">${e.message}</span>`;
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+/* ---------------- Custom Recipe Parsing (Standard) ---------------- */
 function parseCustomText(t, forcedMeal){
   const lines = t.split(/\r?\n/).map(x => x.trim()).filter(Boolean);
   if (!lines.length) return null;
 
-  // 1. Find Ingredients heading
   const iIdx = lines.findIndex(x => /^ingredients?:?/i.test(x));
   
   let title = "Custom Recipe";
@@ -1183,7 +1249,6 @@ function parseCustomText(t, forcedMeal){
   let ingLines = [];
   let stpLines = [];
 
-  // Extract macros from the whole text first
   const calMatch = t.match(/(\d+)\s*kcal/i);
   const proMatch = t.match(/(\d+)\s*g\s*Protein/i);
   const timeMatch = t.match(/(\d+)\s*mins?/i);
@@ -1192,32 +1257,23 @@ function parseCustomText(t, forcedMeal){
   if (timeMatch) macros.t = parseInt(timeMatch[1]);
 
   if (iIdx >= 0) {
-    // Title is everything before Ingredients, cleaned up
     let rawTitle = lines.slice(0, iIdx).join(" ");
-    // Remove leading numbers like "1. " or "3) "
     rawTitle = rawTitle.replace(/^\d+[\.\)]\s*/, "");
-    // Remove the macros part from the title (e.g. "345 kcal | 18g Protein | 7 mins")
     title = rawTitle.split(/\d+\s*kcal/i)[0].trim();
     if (!title) title = "Imported Recipe";
 
-    // Ingredients are between Ingredients and the first step
     let stepStartIndex = iIdx + 1;
     for (let i = iIdx + 1; i < lines.length; i++) {
-      // A line is a step if it starts with a number (1. or 1)) or the word Step
       if (/^\d+[\.\)]/.test(lines[i]) || /^step\s*\d/i.test(lines[i])) {
         stepStartIndex = i;
         break;
       }
     }
 
-    // Join ingredients and split by commas
     const ingText = lines.slice(iIdx + 1, stepStartIndex).join(" ");
     ingLines = ingText.split(",").map(x => x.trim()).filter(Boolean);
-    
-    // Steps are everything after stepStartIndex
     stpLines = lines.slice(stepStartIndex).map(x => x.replace(/^\d+[\.\)]\s*/, "").trim()).filter(Boolean);
   } else {
-    // Fallback if no "Ingredients" keyword found (e.g., pasted without headings)
     title = lines[0].replace(/^\d+[\.\)]\s*/, "").split(/\d+\s*kcal/i)[0].trim();
     const mid = Math.ceil(lines.length / 2);
     ingLines = lines.slice(1, mid).join(",").split(",").map(x => x.trim()).filter(Boolean);
@@ -1283,37 +1339,6 @@ function validateFile(file){
   return null;
 }
 
-function parseCSVFile(content){
-  const lines = content.split(/\r?\n/).filter(l => l.trim());
-  const recipes = [];
-  for (let i = 0; i < lines.length; i++){
-    const line = lines[i];
-    if (i === 0 && /^(title|name|recipe)\b/i.test(line.trim())) continue;
-    const parts = line.split(";");
-    if (parts.length >= 12){
-      const [n,m,c,t,me,tg,cal,p,car,f,i,s] = parts;
-      if (!n.trim()) continue;
-      recipes.push({
-        n: n.trim(), m, c, t, me, tg, cal, p, car, f,
-        i: i.split(",").map(x => x.trim()).filter(Boolean),
-        s: s.split("|").map(x => x.trim()).filter(Boolean)
-      });
-    }
-  }
-  return recipes;
-}
-
-function parseJSONFile(content){
-  const data = JSON.parse(content);
-  let arr = Array.isArray(data) ? data : (data.recipes || [data]);
-  return arr.filter(r => r && (r.n || r.title)).map(r => normalizeRecipe({
-    n: r.n || r.title, m: r.m || "d", c: r.c || "Imported",
-    t: r.t || 15, me: r.me || "s", tg: r.tg || "p",
-    cal: r.cal || 350, p: r.p || 20, car: r.car || 30, f: r.f || 12,
-    i: r.i || r.ingredients || [], s: r.s || r.steps || []
-  }));
-}
-
 let pdfJsLoaded = false;
 async function loadPdfJs(){
   if (pdfJsLoaded && window.pdfjsLib) return;
@@ -1367,6 +1392,7 @@ async function handleFileUpload(files){
   bar.innerHTML = `<div class="upload-status"><div class="spinner"></div> Reading file(s)...</div>`;
   preview.innerHTML = "";
   st.pending = [];
+  st.rawUploadText = "";
 
   for (const file of files){
     const fail = validateFile(file);
@@ -1382,6 +1408,7 @@ async function handleFileUpload(files){
       } else {
         text = await file.text();
       }
+      st.rawUploadText += "\n\n" + text;
     } catch(e) {
       bar.innerHTML = `<div class="err-box">Failed to read ${file.name}: ${e.message}</div>`;
       continue;
@@ -1394,10 +1421,8 @@ async function handleFileUpload(files){
     } else if (ext === "json") {
       parsedList = parseJSONFile(text);
     } else {
-      // TXT, MD, PDF Smart Parser
-      // Split by lines that look like a new recipe title (start with number, or blank line before "Ingredients")
-      // For the provided PDF, it's sequential numbered recipes
-      const blocks = text.split(/\n(?=\d+\.\s)/); // Split on "1. ", "2. ", etc.
+      // Standard text parser
+      const blocks = text.split(/\n(?=\d+\.\s)/);
       for (let b of blocks) {
         if (!b.toLowerCase().includes("ingredients")) continue;
         const parsed = parseCustomText(b, "");
@@ -1406,37 +1431,44 @@ async function handleFileUpload(files){
     }
 
     parsedList.forEach(r => {
-      if (BAD.test(JSON.stringify(r))) {
-        console.warn("Skipped non-halal recipe", r.n);
-        return;
-      }
+      if (BAD.test(JSON.stringify(r))) return;
       st.pending.push(normalizeRecipe(r));
     });
   }
 
   if (!st.pending.length) {
-    bar.innerHTML = `<div class="err-box">No valid recipes found. Ensure the file has "Ingredients" and steps.</div>`;
-    return;
+    bar.innerHTML = `<div class="warn-box">Standard text parser found 0 recipes. This happens with messy PDFs.</div>`;
+  } else {
+    bar.innerHTML = `<div class="ok-box">✅ Found ${st.pending.length} recipes using the standard text parser.</div>`;
   }
+  
+  showUploadPreview();
+}
 
-  bar.innerHTML = `<div class="ok-box">✅ Found ${st.pending.length} recipes in the file(s).</div>`;
-  
-  // Show preview
-  let html = `<h4>Select recipes to import:</h4>`;
-  st.pending.forEach((r, i) => {
-    html += `<label class="pending-item">
-      <input type="checkbox" class="pending-cb" data-idx="${i}" checked>
-      <div>
-        <strong>${esc(r.n)}</strong>
-        <span class="mu">${r.cal} kcal • ${r.t} min • ${r.i.length} ingredients</span>
-      </div>
-    </label>`;
-  });
-  
-  html += `<div class="pending-actions">
-    <button class="btn" id="confirm-import" type="button">Import Selected</button>
-    <button class="ch" id="cancel-import" type="button" style="margin:0">Cancel</button>
-  </div>`;
+function showUploadPreview() {
+  const preview = $("#upload-preview");
+  let html = "";
+
+  if (!st.pending.length) {
+    html += `<button class="btn alt full" id="ai-parse-btn" type="button" onclick="triggerAIParse()">🤖 Let AI parse this file instead</button>
+             <div class="mu" id="ai-parse-status" style="margin-top:10px;text-align:center"></div>`;
+  } else {
+    html += `<h4>Select recipes to import:</h4>`;
+    st.pending.forEach((r, i) => {
+      html += `<label class="pending-item">
+        <input type="checkbox" class="pending-cb" data-idx="${i}" checked>
+        <div>
+          <strong>${esc(r.n)}</strong>
+          <span class="mu">${r.cal} kcal • ${r.t} min • ${r.i.length} ingredients</span>
+        </div>
+      </label>`;
+    });
+    
+    html += `<div class="pending-actions">
+      <button class="btn" id="confirm-import" type="button">Import Selected</button>
+      <button class="ch" id="cancel-import" type="button" style="margin:0">Cancel</button>
+    </div>`;
+  }
   
   preview.innerHTML = `<div class="upload-preview">${html}</div>`;
 }
@@ -1466,6 +1498,7 @@ function confirmImport(){
     $("#upload-preview").innerHTML = `<div class="warn-box">No recipes were selected.</div>`;
   }
   st.pending = [];
+  st.rawUploadText = "";
 }
 
 /* ---------------- Global Event Listeners ---------------- */
@@ -1481,7 +1514,6 @@ document.getElementById('drawer-overlay').addEventListener('click', () => {
 document.addEventListener("click", e => {
   const t = e.target;
 
-  // Modal Controls
   if (t.id === "open-key-guide")  return openModal($("#key-dlg"));
   if (t.id === "close-key-guide") return closeModal($("#key-dlg"));
   if (t.id === "addb") return addI($("#in").value);
