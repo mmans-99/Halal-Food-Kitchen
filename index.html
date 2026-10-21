@@ -1120,8 +1120,8 @@ async function aiGemini(prompt, requireJson = true){
   const k = KEY();
   if (!k) throw new Error("API Key is missing. Please save it in AI Studio Settings.");
   
-  // Updated to the current active models
-  const models = ["gemini-3.8-flash", "gemini-2.5-flash", "gemini-2.0-flash"];
+  // Updated to include current active models based on the error message
+  const models = ["gemini-3.8-flash", "gemini-4-argon", "gemini-2.5-flash"];
   const sys = "You are a Halal chef AI. STRICT HALAL: absolutely no pork, bacon, lard, ham, alcohol, wine, beer, mirin, sake or gelatine.";
   const ask = requireJson 
     ? `${sys}\nOutput ONLY valid JSON. No markdown.\n\nTask: ${prompt}`
