@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<!-- Link to Web App Manifest -->
+<link rel="manifest" href="manifest.webmanifest">
+
+<!-- Favicon / Home Screen Icon -->
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+
+<!-- Register Service Worker in JavaScript -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+</script>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B5D4B">
+<title>Halal Kitchen</title>
+<style>
+:root{--bg:#F5F8F6;--ink:#10231F;--mut:#5E716B;--card:#fff;--line:#E0E9E4;--g:#0B5D4B;--g2:#E3F1EB;--on:#fff;--s:#F2B84B;color-scheme:light}
+@media(prefers-color-scheme:dark){:root{--bg:#0B1613;--ink:#E9F2EE;--mut:#98B0A8;--card:#12231E;--line:#223A33;--g:#46C2A5;--g2:#143129;--on:#05211A;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;margin:0;line-height:1.15}
+h2{font-size:1.45rem}h3{font-size:1.1rem}
+button,select,input,textarea{font:inherit;color:inherit}
+.hero{background:#0B5D4B url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Cg fill='none' stroke='white' stroke-opacity='.1' stroke-width='1.5'%3E%3Crect x='12' y='12' width='32' height='32'/%3E%3Crect x='12' y='12' width='32' height='32' transform='rotate(45 28 28)'/%3E%3C/g%3E%3C/svg%3E");color:#fff;padding:calc(20px + env(safe-area-inset-top,0px)) 20px 84px}
+.in{max-width:960px;margin:auto}
+.brand{font-weight:600;opacity:.9;margin-bottom:30px}
+.hero h1{font-size:clamp(2.1rem,6.5vw,3.4rem);font-weight:700;max-width:13em;letter-spacing:-.01em}
+.hero p{max-width:34em;opacity:.85;margin:12px 0 0}
+.wrap{max-width:960px;margin:-54px auto 0;padding:0 16px 56px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 10px 28px -14px rgba(11,93,75,.35);margin-bottom:16px}
+.add{display:flex;gap:8px}
+input[type=text],input[type=password],select,textarea{flex:1;min-width:0;padding:13px 15px;border-radius:13px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)}
+input:focus,textarea:focus{border-color:var(--g);outline:0}
+textarea{width:100%;resize:vertical}
+.btn{background:var(--g);color:var(--on);border:0;border-radius:13px;padding:12px 20px;font-weight:600;cursor:pointer}
+.btn.alt{background:var(--s);color:#2b2000}
+.ch{border:1px solid var(--line);background:var(--card);padding:6px 14px;border-radius:99px;font-size:.92rem;cursor:pointer;margin:0 6px 6px 0}
+.ch.on{background:var(--g);color:var(--on);border-color:var(--g)}
+.ch.off{background:var(--g2);border-color:var(--g);font-weight:500;font-size:.9rem}
+#sugg{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}
+#ic{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
+.ic{display:inline-flex;align-items:center;background:var(--g2);color:var(--ink);border-radius:99px;padding:3px 4px 3px 14px;font-weight:600}
+.ic button{background:none;border:0;cursor:pointer;font-size:1.15rem;padding:0 9px;color:var(--mut)}
+.mu{color:var(--mut);font-size:.92rem;margin:2px 0 6px}
+.tabs{position:sticky;top:0;z-index:5;display:flex;gap:6px;padding:calc(8px + env(safe-area-inset-top,0px)) 0 10px;background:var(--bg)}
+.tabs button{flex:1;border:1px solid var(--line);background:var(--card);padding:11px;border-radius:14px;cursor:pointer;font-weight:600}
+.tabs button[aria-selected=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.cats{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 12px}
+.cat{flex:none;border:1px solid var(--line);background:var(--card);border-radius:14px;padding:9px 15px;cursor:pointer;font-weight:600}
+.cat.on{background:var(--g);color:var(--on);border-color:var(--g)}
+.bar2{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin-bottom:12px}.bar2 .ch,.bar2 label{margin:0}
+label{display:flex;gap:8px;align-items:center;font-size:.95rem}
+.fp b{display:block;font-size:.88rem;color:var(--mut);margin:8px 0 5px;font-weight:600}.fp>div:first-child b{margin-top:0}
+.cnt{margin:6px 0 14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.rc{padding:0;overflow:hidden;text-align:left;cursor:pointer;display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:18px;transition:transform .15s,border-color .15s}
+.rc:hover,.rc:focus-visible{transform:translateY(-3px);border-color:var(--g)}
+.th,.dh{display:flex;align-items:flex-end;justify-content:space-between;padding:10px 12px;color:#10231F}
+.th{height:100px}.th span{font-size:2.7rem;line-height:1}.th b{font-size:.8rem;background:#fffa;border-radius:99px;padding:2px 11px}
+.mb{background:#FBE3A6}.ml{background:#CDEBD9}.md{background:#F8CDBE}.ms{background:#DDD2F3}.mt{background:#F9D0DD}
+.bd{padding:12px 14px 14px}.bd h3{margin-bottom:3px}
+.tg{display:inline-block;font-size:.78rem;background:var(--g2);border-radius:6px;padding:1px 8px;margin:2px 5px 2px 0}
+.mt2{height:6px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:8px}.mt2 i{display:block;height:100%;background:var(--s)}
+.day{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px}
+.row{display:grid;grid-template-columns:72px 1fr auto;gap:6px;align-items:baseline;padding:7px 0;border-top:1px solid var(--line)}
+.lk{background:none;border:0;text-align:left;cursor:pointer;font-weight:600;padding:0;color:var(--g)}
+.rr{border:1px solid var(--line);background:none;border-radius:8px;cursor:pointer;padding:0 8px}
+.sl{columns:2;margin:0;padding-left:20px}
+.macro-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0;text-align:center}
+.macro-item{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:8px 4px}
+.macro-item span{display:block;font-size:.75rem;color:var(--mut);text-transform:uppercase;font-weight:600}
+.macro-item b{font-size:1.05rem;color:var(--ink)}
+dialog{border:0;border-radius:22px;max-width:560px;width:calc(100% - 24px);background:var(--card);color:var(--ink);padding:0;max-height:90vh;overflow:auto;box-shadow:0 20px 40px rgba(0,0,0,.3)}
+dialog::backdrop{background:rgba(0,0,0,.6);backdrop-filter:blur(3px)}
+.in2{padding:0 22px 22px}
+.dh{height:120px;margin:0 -22px 16px;border-radius:0}.dh span{font-size:3.6rem;line-height:1}
+.dh .x{border:0;background:#fffb;color:#10231F;width:34px;height:34px;border-radius:50%;font-size:1.3rem;cursor:pointer;align-self:flex-start}
+.il{columns:2;padding:0;list-style:none;margin:8px 0 16px}.il li{padding:3px 0}.il .no{color:var(--mut)}
+.st{list-style:none;padding:0;margin:8px 0 16px;counter-reset:n}
+.st li{counter-increment:n;display:flex;gap:12px;margin:11px 0}
+.st li::before{content:counter(n);flex:none;width:26px;height:26px;border-radius:50%;background:var(--g);color:var(--on);display:grid;place-items:center;font-size:.85rem;font-weight:700}
+details summary{cursor:pointer;font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:1.15rem;font-weight:700}
+details[open] summary{margin-bottom:8px}
+:focus-visible{outline:3px solid var(--s);outline-offset:2px}
+.warn-box{background:#FFF3CD;border:1px solid #FFEBAA;color:#856404;padding:12px 16px;border-radius:12px;margin:12px 0;font-size:.9rem}
+@media(prefers-color-scheme:dark){.warn-box{background:#3A2E00;border-color:#524200;color:#FFE8A3}}
+@media(max-width:480px){.sl,.il{columns:1}.macro-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="in">
+    <div class="brand">🍲 Halal Kitchen</div>
+    <h1>What shall we cook tonight?</h1>
+    <p><span id="hcount">Halal</span> recipes with calories, macros, air fryer settings, live pantry search and a weekly planner.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section class="box">
+    <h3>Your Pantry &amp; Ingredients</h3>
+    <p class="mu">Start typing — suggestions appear below and the recipe list narrows live. Press Add or Enter to save an ingredient.</p>
+    <div class="add">
+      <input type="text" id="in" autocomplete="off" placeholder="e.g. sal… → salmon" aria-label="Ingredient you have">
+      <button class="btn" id="addb" type="button">Add</button>
+    </div>
+    <div id="sugg" aria-live="polite"></div>
+    <div id="ic"></div>
+    <label class="mu" style="display:flex;align-items:center;gap:8px;margin-top:10px;cursor:pointer">
+      <input type="checkbox" id="off-toggle">
+      <span>Also suggest real products from <strong>Open Food Facts</strong> <span style="opacity:.7">(online)</span></span>
+    </label>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
+      <button class="ch" data-k="clear-off" type="button" style="font-size:.82rem;margin:0">🗑️ Clear OFF cache</button>
+      <span class="mu" id="off-count" style="margin:0"></span>
+    </div>
+  </section>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-k="tab" data-v="find" type="button" aria-selected="true">Browse Recipes</button>
+    <button role="tab" data-k="tab" data-v="plan" type="button" aria-selected="false">Meal Planner</button>
+  </nav>
+
+  <section class="box" id="gb">
+    <h3>Generate AI Halal Recipe</h3>
+    <p class="mu">Uses Google Gemini AI. Generated recipes are sanitised, checked against halal rules, and saved to this device for offline use.</p>
+    <div class="add">
+      <input type="text" id="ask" autocomplete="off" placeholder="Optional: high protein, low calorie, air fryer, Turkish">
+      <button class="btn alt" id="gen" type="button">Generate with Gemini</button>
+    </div>
+    <p class="mu" id="gm" role="status"></p>
+  </section>
+
+  <div id="out"></div>
+
+  <details class="box" style="margin-top:22px">
+    <summary>Add your own custom recipe</summary>
+    <p class="mu">Paste a recipe to save it on this device for offline use. Non-halal recipes are rejected.</p>
+    <textarea id="pt" rows="6" placeholder="Spicy Lemon Salmon&#10;Ingredients&#10;2 salmon fillets&#10;1 tsp paprika&#10;1 lemon&#10;Method&#10;1. Air fry salmon at 190C for 10 mins"></textarea>
+    <div class="add" style="margin-top:10px">
+      <select id="pm2">
+        <option value="">Meal: auto-detect</option>
+        <option value="b">Breakfast</option>
+        <option value="l">Lunch</option>
+        <option value="d">Dinner</option>
+        <option value="s">Snack</option>
+        <option value="t">Dessert</option>
+      </select>
+      <button class="btn" id="pa" type="button">Sort &amp; Add</button>
+    </div>
+    <p class="mu" id="pg" role="status"></p>
+  </details>
+
+  <details class="box">
+    <summary>Gemini AI Settings</summary>
+    <p class="mu">A free API key from aistudio.google.com. Stored only in this browser's localStorage — never hardcode it in a public repo.</p>
+    <div class="add">
+      <input type="password" id="key" autocomplete="off" placeholder="AIzaSy..." aria-label="Gemini API Key">
+      <button class="btn" id="ks" type="button">Save Key</button>
+    </div>
+    <p class="mu" id="kg" role="status"></p>
+    <button class="ch" id="open-key-guide" type="button" style="margin-top:10px">🔑 Free Key Guide</button>
+  </details>
+
+  <p class="mu">100% halal: no pork, bacon, lard, alcohol, wine or gelatine. Browsing, pantry search, macros and meal planning work fully offline.</p>
+</div>
+
+<dialog id="dlg"><div class="in2"></div></dialog>
+
+<dialog id="key-dlg">
+  <div style="padding:22px">
+    <h2>Getting a Free Gemini API Key</h2>
+    <ol style="margin:14px 0;padding-left:20px;line-height:1.6">
+      <li>Visit <strong>aistudio.google.com</strong></li>
+      <li>Sign in with your Google account</li>
+      <li>Click "Get API key" → "Create API key"</li>
+      <li>Copy the key (starts with <code>AIzaSy...</code>) into the settings box</li>
+    </ol>
+    <div class="warn-box"><strong>⚠️ Never hardcode keys</strong> in a public repo. This app keeps it only in your browser storage.</div>
+    <button class="btn" id="close-key-guide" type="button" style="width:100%;margin-top:12px">Got it!</button>
+  </div>
+</dialog>
+
+<script>
+/* ================================================================
+   RECIPE DATABASE
+   Title ; meal(b/l/d/s/t) ; cuisine ; minutes ; appliances(asomn) ;
+   tags(hp v V g) ; kcal ; protein ; carbs ; fat ; ingredients(comma) ;
+   steps(pipe)
+   ================================================================ */
+const D = `
+Jammy Air Fryer Eggs;b;Modern;9;a;hpvg;140;12;1;10;eggs;Place cold eggs in air fryer basket|Air fry at 170C for 9 minutes|Transfer to ice water for 3 minutes|Peel and season
+Air Fryer Egg & Hummus Toast;b;Modern;6;a;hpv;380;18;32;20;bread,hummus,eggs,smoked paprika,olive oil;Spread hummus on bread|Make a well and crack in an egg|Air fry at 180C for 6 minutes|Dust with paprika
+Boiled Eggs on Buttered Toast;b;Modern;10;s;hpv;320;15;26;18;eggs,bread,butter,black pepper;Boil eggs for 7 minutes|Toast and butter the bread|Peel and halve the eggs|Season and serve
+Microwave Egg & Spinach Cup;b;Modern;3;m;hpvg;190;14;3;13;eggs,spinach,milk,cheddar,black pepper;Wilt spinach in a mug for 20 seconds|Whisk in eggs milk and pepper|Microwave 60s then stir and cook 30s more|Top with grated cheese
+Shakshuka;b;North African;25;s;hvg;280;15;18;16;eggs,tomatoes,onion,bell pepper,garlic,cumin;Soften onion pepper and garlic|Add tomatoes and cumin and simmer 10 minutes|Make wells and crack in the eggs|Cover and cook 5 minutes
+Egg & Avocado Toast;b;Modern;8;s;hv;390;15;28;25;bread,eggs,avocado,lemon;Toast the bread|Mash avocado with lemon and salt|Fry or poach the eggs|Top the toast with avocado and egg
+Menemen;b;Turkish;15;s;hvg;300;16;14;19;eggs,tomatoes,green pepper,onion,paprika,olive oil;Soften onion and pepper in the oil|Add grated tomato and paprika and cook 8 minutes|Pour in the beaten eggs|Stir gently and serve soft
+Air Fryer French Toast;b;Modern;10;a;v;340;12;38;15;bread,eggs,milk,cinnamon,sugar;Whisk eggs milk cinnamon and sugar|Dip each bread slice|Air fry at 180C for 8 minutes turning once|Drizzle with honey
+Overnight Oats with Dates;b;Modern;5;n;hv;330;11;52;8;oats,milk,dates,chia seeds,honey;Mix oats milk and chia in a jar|Chop the dates and stir in|Refrigerate overnight|Drizzle honey before eating
+Banana Oat Pancakes;b;Modern;15;s;hv;310;12;48;8;bananas,eggs,oats,baking powder,cinnamon;Blend banana eggs oats and baking powder|Heat a non-stick pan|Cook small pancakes 2 minutes each side|Serve with fruit
+Air Fryer Hash Browns;b;Modern;18;a;vVg;240;4;32;10;potatoes,olive oil,paprika,garlic powder;Grate and squeeze the potatoes dry|Mix with oil and spices|Shape into patties|Air fry at 190C for 15 minutes flipping once
+Ful Medames;b;Middle Eastern;15;s;hpvVg;290;15;38;8;fava beans,garlic,cumin,olive oil,lemon;Warm the beans with garlic and cumin|Mash roughly|Stir in lemon juice and olive oil|Serve with bread
+Turkish Breakfast Plate;b;Turkish;10;n;hv;420;18;34;22;eggs,white cheese,olives,tomato,cucumber,pitta bread;Slice the cheese tomato and cucumber|Arrange on a plate with the olives|Add the halved boiled eggs|Serve with warm pitta
+Spinach & Feta Omelette;b;Mediterranean;12;s;hpg;310;22;5;23;eggs,spinach,feta,olive oil,black pepper;Wilt the spinach in the oil|Pour in the beaten eggs|Crumble the feta over the top|Fold and serve
+Air Fryer Breakfast Potatoes;b;Modern;20;a;vVg;260;5;36;11;potatoes,olive oil,smoked paprika,garlic powder,onion;Cube the potatoes and onion|Toss with oil and spices|Air fry at 190C for 18 minutes shaking twice|Season and serve
+Greek Yoghurt & Honey Bowl;b;Greek;3;n;hv;270;14;28;11;greek yoghurt,honey,walnuts,cinnamon;Spoon the yoghurt into a bowl|Drizzle with honey|Scatter over crushed walnuts|Dust with cinnamon
+Chia Seed Pudding;b;Modern;5;n;hvVg;250;9;26;12;chia seeds,almond milk,maple syrup,vanilla,berries;Stir the chia into the milk|Add the syrup and vanilla|Chill for 4 hours|Top with berries
+Cheese & Tomato Omelette;b;Modern;10;s;hpg;290;20;4;21;eggs,cheddar,tomato,butter,oregano;Beat the eggs with salt|Melt the butter and add the eggs|Add sliced tomato and grated cheese|Sprinkle with oregano and fold
+Air Fryer Egg Muffins;b;Modern;15;a;hpg;220;17;4;15;eggs,chicken sausage,pepper,cheddar,black pepper;Whisk the eggs with seasoning|Stir in chopped sausage and pepper|Pour into silicone muffin cups|Air fry at 170C for 12 minutes
+Peanut Butter Banana Toast;b;Modern;4;s;hvVg;360;12;40;17;bread,peanut butter,banana,cinnamon;Toast the bread|Spread with peanut butter|Add sliced banana|Dust with cinnamon
+Halloumi & Egg Breakfast Wrap;b;Mediterranean;12;s;hp;470;26;38;24;tortilla wrap,halloumi,eggs,spinach,olive oil;Fry the halloumi until golden|Scramble the eggs|Warm the wrap and add the spinach|Fill with halloumi and egg and roll up
+Air Fryer Shakshuka Eggs;b;North African;15;a;hvg;270;15;16;16;eggs,chopped tomatoes,pepper,cumin,olive oil;Spoon tomatoes pepper and cumin into a small dish|Make 4 wells and crack in the eggs|Air fry at 170C for 10 minutes|Serve with bread
+Berry Smoothie Bowl;b;Modern;5;n;hv;300;10;50;7;banana,berries,milk,oats,honey;Blend the banana berries and milk|Pour into a bowl|Top with oats and extra berries|Drizzle with honey
+Scrambled Eggs & Smoked Salmon;b;Modern;8;s;hpg;360;26;3;27;eggs,smoked salmon,butter,cream,black pepper;Melt the butter gently|Add the eggs and cream and stir slowly|Remove from the heat while still soft|Fold in the salmon
+Besan Chilla;b;Indian;12;s;hpvg;280;14;32;10;gram flour,onion,tomato,green chilli,cumin,oil;Whisk gram flour and water into a batter|Stir in the chopped veg|Cook thin pancakes in an oiled pan|Serve with chutney
+Date & Walnut Porridge;b;Modern;8;s;hv;340;11;54;9;oats,milk,dates,walnuts,cinnamon;Simmer the oats in the milk for 5 minutes|Chop the dates and stir in|Top with the walnuts|Dust with cinnamon
+Egg White Veggie Scramble;b;Modern;10;s;hpg;180;22;8;6;egg whites,pepper,tomato,spinach,olive oil;Heat the oil in a pan|Soften the chopped vegetables|Pour in the egg whites|Scramble gently until set
+Za'atar Manakish;b;Middle Eastern;25;o;vV;340;9;52;11;flatbread dough,za'atar,olive oil;Mix the za'atar with the oil|Roll the dough into rounds|Spread the za'atar mix on top|Bake at 220C for 8 minutes
+Air Fryer Breakfast Burrito;b;Mexican;14;a;hp;430;24;38;20;tortilla wrap,eggs,black beans,cheddar,olive oil;Scramble the eggs|Layer eggs beans and cheese on the wrap|Roll tightly|Air fry at 180C for 6 minutes
+Ricotta & Honey Toast;b;Italian;5;s;hv;330;14;34;15;bread,ricotta,honey,lemon;Toast the bread|Spread with ricotta|Drizzle with honey|Grate over the lemon zest
+Aloo Paratha;b;Indian;30;s;v;420;10;56;17;flour,potatoes,cumin,green chilli,ghee;Knead the flour and water into a dough|Mash the potatoes with the spices|Stuff the dough and roll flat|Cook in ghee until golden
+Cinnamon Apple Oats;b;Modern;12;s;hvVg;290;8;50;7;oats,apple,cinnamon,raisins,milk;Simmer the oats in the milk|Grate the apple into the pan|Add the cinnamon and raisins|Cook for 3 minutes more
+Labneh & Za'atar Toast;b;Middle Eastern;4;s;hv;310;13;32;15;bread,labneh,za'atar,olive oil;Toast the bread|Spread with labneh|Sprinkle the za'atar on top|Drizzle with olive oil
+Mango Overnight Oats;b;Modern;5;n;hv;320;10;56;7;oats,yoghurt,mango,chia seeds,honey;Mix oats yoghurt and chia|Chop half the mango and stir in|Chill overnight|Top with the remaining mango
+Turkish Eggs;b;Turkish;12;s;hpvg;330;17;8;26;eggs,greek yoghurt,garlic,butter,chilli flakes,bread;Whisk the garlic into the yoghurt|Poach the eggs for 3 minutes|Spoon yoghurt onto a plate and top with the eggs|Melt butter with chilli flakes and pour over
+Sujuk & Eggs;b;Turkish;10;s;hp;390;22;4;31;eggs,sujuk,onion,butter,black pepper;Fry sliced sujuk with the onion in butter|Pour in the beaten eggs|Scramble gently|Season and serve with bread
+Honey & Banana Porridge;b;Modern;8;s;hv;320;11;52;8;oats,milk,banana,honey,cinnamon;Simmer the oats in the milk for 5 minutes|Slice the banana over the top|Drizzle with honey|Dust with cinnamon
+Halloumi Breakfast Muffin;b;Mediterranean;10;s;hp;400;23;30;21;english muffin,halloumi,egg,tomato,olive oil;Fry the halloumi 2 minutes each side|Fry the egg|Toast the muffin|Stack with tomato and serve
+Egg & Hummus Pitta Pocket;l;Middle Eastern;5;s;pv;410;20;46;16;pitta bread,hummus,eggs,cucumber,za'atar;Toast the pitta and cut in half|Spread hummus inside|Slice the boiled eggs and cucumber|Stuff in and sprinkle with za'atar
+Quick Tuna Hummus Pitta;l;Modern;5;n;hp;430;36;42;12;tuna,hummus,pitta bread,lemon,black pepper;Drain the tuna and mix with hummus lemon and pepper|Slice open the pitta|Stuff with the tuna mix|Serve cold
+Tuna Salad Bowl;l;Modern;10;n;hpg;290;34;8;13;tuna,cucumber,tomato,olives,lettuce,lemon;Chop the veg and toss with flaked tuna|Dress with lemon and oil|Season|Serve
+Chicken Shawarma Wraps;l;Middle Eastern;30;s;p;510;38;48;18;chicken thigh,tortilla wrap,yoghurt,garlic,lemon,cucumber,shawarma spice;Marinate sliced chicken in spice lemon and garlic|Pan fry on high heat for 8 minutes|Fill wraps with chicken and cucumber|Drizzle with garlic yoghurt and roll
+Tomato & Lentil Soup;l;Modern;30;s;hvVg;240;12;40;3;red lentils,tomatoes,onion,carrot,garlic;Soften onion carrot and garlic|Add lentils tomatoes and 700ml water|Simmer for 20 minutes|Blend if you like it smooth
+Air Fryer Falafel;l;Middle Eastern;30;a;vV;310;12;42;11;chickpeas,onion,parsley,garlic,cumin,flour;Blitz everything into a rough paste|Shape into patties and brush with oil|Air fry at 190C for 14 minutes|Flip once halfway
+Grilled Halloumi Salad;l;Mediterranean;12;s;hv;350;19;14;25;halloumi,lettuce,tomato,cucumber,olive oil,lemon;Grill the halloumi 2 minutes each side|Toss the salad vegetables|Top with the halloumi|Dress with lemon and oil
+Tabbouleh;l;Middle Eastern;15;n;vV;220;6;34;7;parsley,bulgur wheat,tomato,cucumber,lemon,olive oil;Soak the bulgur in hot water for 10 minutes|Chop the parsley tomato and cucumber finely|Mix everything together|Dress with lemon and oil
+Fattoush Salad;l;Middle Eastern;15;s;v;260;6;32;12;lettuce,tomato,cucumber,radish,pitta bread,lemon,olive oil;Toast and break up the pitta|Chop all the vegetables|Toss with lemon and oil|Top with the crispy pitta
+Chicken & Rice Bowl;l;Modern;25;s;hp;520;40;58;12;chicken breast,rice,broccoli,garlic,soy sauce,olive oil;Cook the rice|Pan fry diced chicken with the garlic|Steam the broccoli|Bowl up and drizzle with soy sauce
+Hummus & Veggie Wrap;l;Middle Eastern;5;n;vV;360;12;46;14;tortilla wrap,hummus,carrot,cucumber,spinach,lemon;Spread hummus over the wrap|Grate the carrot and slice the cucumber|Add the spinach|Roll tightly and slice
+Sardine Toast;l;Mediterranean;6;s;hp;330;24;26;15;bread,sardines,tomato,lemon,olive oil;Toast the bread|Mash the sardines with lemon|Spread on the toast|Top with sliced tomato and oil
+Lentil & Vegetable Soup;l;Modern;35;s;hvVg;250;14;38;4;green lentils,carrot,celery,onion,garlic,stock;Soften the onion carrot celery and garlic|Add the lentils and stock|Simmer for 25 minutes|Season and serve
+Chickpea Salad;l;Mediterranean;10;n;hvVg;300;14;38;10;chickpeas,tomato,cucumber,red onion,parsley,lemon,olive oil;Drain the chickpeas|Chop the vegetables and parsley|Toss everything together|Dress with lemon and oil
+Turkish Lentil Soup;l;Turkish;30;s;hvVg;230;12;36;4;red lentils,onion,carrot,potato,turmeric,stock,lemon;Soften the onion carrot and potato|Add lentils turmeric and stock|Simmer for 20 minutes|Blend and finish with lemon
+Beef Kofta Wrap;l;Middle Eastern;20;s;p;520;34;42;24;minced beef,onion,cumin,parsley,tortilla wrap,yoghurt;Mix the mince with grated onion cumin and parsley|Shape into fingers and fry 8 minutes|Warm the wrap|Add the kofta and yoghurt and roll
+Egg Salad Sandwich;l;Modern;8;s;hpv;380;20;32;19;eggs,bread,mayonnaise,spring onion,black pepper;Boil the eggs for 9 minutes and cool|Mash with mayo and spring onion|Season|Sandwich between the bread
+Quinoa Tabbouleh Bowl;l;Modern;20;s;hvVg;320;12;42;12;quinoa,parsley,tomato,cucumber,lemon,olive oil;Cook the quinoa and cool it|Chop the parsley tomato and cucumber|Toss everything together|Dress with lemon and oil
+Mozzarella & Tomato Sandwich;l;Italian;6;s;hv;400;20;36;20;bread,mozzarella,tomato,basil,olive oil;Slice the mozzarella and tomato|Layer on the bread with basil|Drizzle with olive oil|Grill 2 minutes until melting
+Air Fryer Chicken Quesadilla;l;Mexican;12;a;hp;470;30;38;22;tortilla wrap,chicken breast,cheddar,pepper,onion;Cook and shred the chicken|Layer chicken cheese and veg on the wrap|Fold over|Air fry at 190C for 8 minutes
+Prawn & Avocado Salad;l;Modern;12;s;hpg;330;28;12;20;prawns,avocado,lettuce,tomato,lemon,olive oil;Pan fry the prawns for 3 minutes|Toss the salad leaves and tomato|Add the prawns and sliced avocado|Dress with lemon and oil
+Falafel Pitta;l;Middle Eastern;8;s;vV;430;16;54;16;falafel,pitta bread,hummus,tomato,lettuce,pickles;Warm the pitta|Stuff with the falafel|Add hummus tomato lettuce and pickles|Drizzle with tahini
+Air Fryer Garlic Butter Salmon;d;Modern;10;a;hpg;420;34;2;30;salmon,butter,garlic,parsley,lemon;Mix melted butter garlic parsley and lemon|Brush over the salmon|Air fry at 190C for 8 to 10 minutes|Serve when flaky
+Air Fryer Crispy Cod & Lemon;d;Modern;12;a;hpg;260;32;4;12;cod,paprika,garlic powder,olive oil,lemon;Rub the cod with oil and spices|Air fry at 200C for 10 to 12 minutes|Turn halfway|Squeeze lemon over before serving
+Air Fryer Cajun Fish Tacos;d;Mexican;12;a;hp;380;28;38;12;white fish,tortilla wrap,cajun spice,olive oil,yoghurt;Coat the fish with oil and cajun spice|Air fry at 190C for 10 minutes|Flake into warm wraps|Top with yoghurt and salad
+Air Fryer Peri-Peri Wings;d;Modern;22;a;hpg;520;42;2;38;chicken wings,peri peri spice,olive oil,garlic powder;Toss the wings with oil and spices|Air fry at 200C for 20 to 22 minutes|Turn halfway|Serve when crisp
+Air Fryer Chicken Tikka;d;Indian;15;a;pg;340;42;6;16;chicken breast,yoghurt,garlic,ginger,garam masala,lemon;Marinate the cubed chicken for 10 minutes|Air fry at 200C for 12 minutes|Turn once|Serve with rice or salad
+Air Fryer Salmon & Asparagus;d;Modern;15;a;hpg;390;32;6;26;salmon,asparagus,lemon,garlic,olive oil;Rub the salmon with oil garlic and salt|Add the asparagus to the basket|Air fry at 190C for 10 minutes|Squeeze lemon over
+Air Fryer Kofta;d;Middle Eastern;25;a;pg;420;36;4;28;minced beef,onion,parsley,cumin,garlic;Mix the mince with grated onion and spices|Shape into fingers|Air fry at 190C for 12 minutes|Serve with flatbread
+Air Fryer Drumsticks;d;Modern;35;a;pg;460;40;3;31;chicken drumsticks,yoghurt,paprika,garlic;Coat the drumsticks in yoghurt and spices|Air fry at 190C for 22 to 25 minutes|Turn halfway|Check the juices run clear
+Red Lentil Dal;d;Indian;30;s;hpvVg;320;18;52;4;red lentils,onion,garlic,tomato,turmeric,cumin;Fry the onion garlic and spices|Add lentils tomato and water|Simmer for 20 minutes|Season and serve with rice
+Chicken Fried Rice;d;Chinese;20;s;p;480;32;58;12;rice,chicken breast,eggs,peas,carrot,soy sauce,garlic;Stir fry diced chicken until cooked|Add veg and garlic then the cold rice|Push aside and scramble the eggs|Mix in the soy sauce
+Beef & Veg Stir-fry;d;Chinese;20;s;p;420;36;22;20;beef,pepper,broccoli,garlic,ginger,soy sauce;Sear the beef on high heat and set aside|Stir fry veg garlic and ginger for 4 minutes|Return the beef|Add the soy sauce
+Spaghetti Bolognese;d;Italian;40;s;p;560;34;62;18;spaghetti,minced beef,tomato,onion,garlic;Brown the mince with onion and garlic|Add tomatoes and simmer 25 minutes|Cook the spaghetti|Toss together
+Chicken Biryani;d;Indian;60;s;p;620;42;72;16;rice,chicken thigh,yoghurt,onion,garlic,ginger,garam masala;Marinate the chicken in yoghurt and spices|Fry onion and cook the chicken 15 minutes|Layer with par-boiled rice|Cover and steam 20 minutes
+Lemon Garlic Lamb Chops;d;Mediterranean;20;s;hpg;480;38;2;35;lamb chops,garlic,lemon,rosemary,olive oil;Marinate the chops in oil garlic lemon and rosemary|Grill 4 minutes per side|Rest for 5 minutes|Serve
+Sweet Soy Salmon;d;Chinese;20;s;hp;450;34;24;24;salmon,soy sauce,honey,garlic,rice,broccoli;Pan fry the salmon 4 minutes per side|Add soy honey and garlic to glaze|Steam the broccoli|Serve with rice
+Baked Sweet Potato with Chickpeas;d;Modern;50;o;hvVg;380;14;68;6;sweet potato,chickpeas,tahini,lemon,spinach;Bake the sweet potatoes at 200C for 40 minutes|Warm the chickpeas and spinach|Split the potatoes|Fill and drizzle with tahini and lemon
+Air Fryer Tandoori Chicken;d;Indian;30;a;pg;390;44;6;20;chicken thigh,yoghurt,garam masala,garlic,ginger,lemon;Marinate the chicken in yoghurt and spices|Air fry at 190C for 18 minutes|Turn once|Serve with salad
+Moroccan Chicken Tagine;d;Moroccan;60;s;pg;480;38;14;30;chicken thigh,olives,lemon,onion,garlic,ginger,turmeric;Brown the chicken with onion garlic ginger and turmeric|Add water and lemon and simmer 35 minutes|Add the olives for the last 10 minutes|Serve with couscous
+Chicken Karahi;d;Pakistani;35;s;p;520;42;12;34;chicken,tomato,ginger,garlic,green chilli,cumin,oil;Fry the ginger and garlic in the oil|Add the chicken and brown|Add tomatoes and cook 20 minutes|Finish with green chilli
+Lamb Kofta Curry;d;Indian;40;s;p;540;36;16;38;minced lamb,onion,garlic,ginger,tomato,garam masala,yoghurt;Shape the mince into small koftas|Fry onion garlic and ginger|Add tomato and spice then simmer|Add the koftas and cook 15 minutes
+Chana Masala;d;Indian;30;s;hvVg;340;16;48;10;chickpeas,onion,tomato,garlic,ginger,garam masala;Fry the onion garlic and ginger|Add tomato and spices|Add the chickpeas and water|Simmer for 15 minutes
+Palak Paneer;d;Indian;30;s;hvg;380;20;16;27;spinach,paneer,onion,garlic,ginger,cumin;Blanch and blend the spinach|Fry onion garlic ginger and cumin|Add the spinach puree|Stir in the paneer cubes
+Butter Chicken;d;Indian;40;s;pg;560;38;18;36;chicken thigh,yoghurt,tomato,butter,cream,garam masala;Marinate the chicken in yoghurt and spices|Grill or pan fry the chicken|Simmer tomato with butter and cream|Add the chicken and cook 10 minutes
+Fish Curry;d;Indian;30;s;pg;380;34;14;20;white fish,onion,tomato,garlic,ginger,coconut milk,curry powder;Fry the onion garlic and ginger|Add tomato and curry powder|Pour in the coconut milk|Add the fish and simmer 10 minutes
+Prawn Stir-fry;d;Chinese;15;s;hp;320;30;18;14;prawns,pepper,broccoli,garlic,ginger,soy sauce;Stir fry garlic and ginger for 1 minute|Add the prawns and cook 3 minutes|Add the veg and stir fry 4 minutes|Splash in the soy sauce
+Stuffed Peppers;d;Mediterranean;50;o;hp;420;28;44;15;pepper,rice,minced beef,onion,tomato,paprika;Cook the rice and brown the mince with onion|Mix with tomato and paprika|Stuff the halved peppers|Bake at 200C for 30 minutes
+Aubergine Moussaka;d;Mediterranean;60;o;hvg;450;24;32;26;aubergine,minced lamb,tomato,onion,milk,flour,cheese;Roast the aubergine slices for 20 minutes|Cook the mince with onion and tomato|Layer aubergine and mince|Top with white sauce and bake 25 minutes
+Chicken Shawarma Platter;d;Middle Eastern;35;s;p;580;44;52;22;chicken thigh,yoghurt,garlic,lemon,shawarma spice,rice,pitta bread;Marinate the chicken for 15 minutes|Pan fry or grill for 8 minutes|Cook the rice|Serve with pitta and garlic sauce
+Lamb Tagine with Apricots;d;Moroccan;75;s;pg;540;36;34;28;lamb,apricots,onion,garlic,ginger,cinnamon,couscous;Brown the lamb with onion and spices|Add apricots and water|Simmer for 60 minutes|Serve over couscous
+Chicken & Vegetable Traybake;d;Modern;45;o;hp;440;38;36;16;chicken thigh,potato,carrot,pepper,olive oil,paprika;Toss everything with oil and paprika|Spread on a tray|Bake at 200C for 40 minutes|Turn once halfway
+Air Fryer Lamb Chops;d;Mediterranean;15;a;hpg;470;36;2;34;lamb chops,olive oil,garlic,rosemary;Rub the chops with oil garlic and rosemary|Air fry at 200C for 10 to 12 minutes|Rest for 4 minutes|Serve
+Teriyaki Salmon;d;Japanese;20;s;hp;430;34;22;22;salmon,soy sauce,honey,ginger,garlic,rice;Mix soy honey ginger and garlic|Pan fry the salmon 4 minutes per side|Pour the sauce over and reduce|Serve with rice
+Chicken Fajitas;d;Mexican;25;s;hp;470;38;40;18;chicken breast,pepper,onion,tortilla wrap,paprika,cumin;Slice the chicken and veg|Stir fry with paprika and cumin for 10 minutes|Warm the wraps|Fill and roll
+Thai Green Chicken Curry;d;Thai;30;s;pg;490;36;16;32;chicken thigh,green curry paste,coconut milk,pepper,basil,rice;Fry the curry paste for 2 minutes|Add coconut milk and chicken|Simmer for 15 minutes|Add pepper and basil then serve with rice
+Lentil Shepherd's Pie;d;Modern;55;o;hvVg;390;20;52;12;green lentils,potato,carrot,onion,tomato,stock;Cook lentils with onion carrot tomato and stock for 20 minutes|Boil and mash the potatoes|Top the lentil mix with mash|Bake at 200C for 25 minutes
+Mushroom Risotto;d;Italian;35;s;hv;420;12;58;14;arborio rice,mushroom,onion,garlic,stock,parmesan,butter;Soften onion garlic and mushrooms|Add the rice and stir|Add stock a ladle at a time|Finish with butter and parmesan
+Vegetable Biryani;d;Indian;45;s;hvVg;460;12;72;14;rice,carrot,peas,potato,onion,yoghurt,garam masala;Fry onion and veg with spices|Layer with par-boiled rice and yoghurt|Cover and steam for 20 minutes|Fluff and serve
+Beef Casserole;d;Modern;90;s;p;480;38;24;26;beef,carrot,potato,onion,stock,tomato puree,thyme;Brown the beef|Add veg stock tomato and thyme|Simmer covered for 75 minutes|Season and serve
+Salmon Fish Cakes;d;Modern;25;s;hp;390;28;26;18;salmon,potato,spring onion,egg,breadcrumbs,lemon;Cook and mash the potato|Flake in cooked salmon and spring onion|Shape cakes and coat in egg and breadcrumbs|Fry 3 minutes each side
+Chicken & Chickpea Curry;d;Indian;35;s;pg;500;40;28;24;chicken thigh,chickpeas,tomato,onion,garlic,ginger,curry powder;Fry onion garlic and ginger|Add the chicken and brown|Add tomato chickpeas and spice|Simmer for 20 minutes
+Hummus & Cucumber Toast;s;Middle Eastern;3;n;hvV;240;8;30;10;bread,hummus,cucumber,olive oil,chilli flakes;Toast the bread|Spread with hummus|Top with cucumber|Drizzle with oil and chilli flakes
+Air Fryer Pitta Crisps;s;Middle Eastern;6;a;vV;280;6;42;10;pitta bread,olive oil,oregano,garlic powder;Cut the pitta into triangles|Toss with oil and herbs|Air fry at 190C for 5 to 6 minutes|Shake halfway
+Za'atar Roasted Chickpeas;s;Middle Eastern;12;a;hvVg;220;10;32;6;chickpeas,olive oil,za'atar,garlic powder;Drain and dry the chickpeas|Toss with oil and spices|Air fry at 200C for 12 minutes|Shake every 4 minutes
+Air Fryer Halloumi Fries;s;Mediterranean;8;a;hv;330;20;4;26;halloumi,olive oil,paprika,honey;Cut the halloumi into sticks|Brush with oil and paprika|Air fry at 190C for 7 minutes|Drizzle with honey
+Fruit & Nut Yoghurt Pot;s;Modern;3;n;hv;260;14;24;12;greek yoghurt,berries,almonds,honey;Spoon the yoghurt into a pot|Add the berries|Scatter over chopped almonds|Drizzle with honey
+Air Fryer Sweet Potato Wedges;s;Modern;18;a;vVg;230;4;34;9;sweet potato,olive oil,paprika,garlic powder;Cut the sweet potato into wedges|Toss with oil and spices|Air fry at 200C for 16 minutes|Shake twice
+Date & Nut Energy Balls;s;Modern;10;n;hvVg;180;5;24;8;dates,almonds,oats,cocoa powder;Blitz everything in a processor|Roll into balls|Chill for 30 minutes|Store in the fridge
+Hummus Veggie Sticks;s;Middle Eastern;5;n;hvVg;200;8;20;11;hummus,carrot,cucumber,pepper;Spoon the hummus into a bowl|Cut the veg into sticks|Arrange around the hummus|Serve
+Air Fryer Samosas;s;Indian;25;a;v;290;6;36;13;filo pastry,potato,peas,cumin,oil;Mash the cooked potato with peas and cumin|Fill and fold the filo|Brush with oil|Air fry at 190C for 12 minutes
+Air Fryer Spiced Nuts;s;Modern;8;a;hvVg;250;7;12;20;mixed nuts,olive oil,cumin,paprika,honey;Toss the nuts with oil spices and honey|Air fry at 170C for 6 minutes|Shake once|Cool before serving
+Cheese & Cucumber Sticks;s;Modern;3;n;hv;220;14;6;16;cheddar,cucumber,crackers;Slice the cheese|Cut the cucumber into sticks|Arrange with the crackers|Serve
+Popcorn;s;Modern;5;m;vVg;150;3;24;5;popcorn kernels,olive oil,salt;Put the kernels in a paper bag|Microwave 2 to 3 minutes until popping slows|Toss with oil and salt|Serve
+Air Fryer Brownies;t;Modern;25;a;v;290;4;38;14;flour,cocoa,sugar,butter,eggs;Whisk the melted butter sugar and eggs|Fold in the flour and cocoa|Pour into a lined tin|Air fry at 160C for 18 minutes
+Basbousa;t;Middle Eastern;40;o;v;320;5;48;12;semolina,yoghurt,sugar,butter,baking powder,almonds;Mix semolina yoghurt sugar butter and baking powder|Spread in a tin and top with almonds|Bake at 180C for 30 minutes|Pour over sugar syrup and cool
+Rice Pudding;t;Modern;35;s;hv;280;8;46;7;rice,milk,sugar,vanilla,cinnamon;Simmer the rice in the milk for 25 minutes|Add the sugar and vanilla|Cook 5 minutes more|Dust with cinnamon
+Baklava Cups;t;Turkish;30;o;v;260;5;30;14;filo pastry,pistachio,butter,honey;Layer buttered filo in a muffin tin|Fill with chopped pistachio|Bake at 180C for 15 minutes|Drizzle with honey
+Date & Tahini Truffles;t;Middle Eastern;10;n;hvVg;190;5;26;9;dates,tahini,cocoa powder,sesame seeds;Blitz the dates and tahini|Roll into balls|Coat in cocoa or sesame|Chill for 20 minutes
+Air Fryer Banana Boats;t;Modern;10;a;hv;240;5;38;9;banana,chocolate chips,peanut butter,foil;Slice the banana lengthways|Fill with chocolate chips and peanut butter|Wrap in foil|Air fry at 180C for 8 minutes
+Honey & Pistachio Yoghurt;t;Middle Eastern;5;n;hv;270;13;26;12;greek yoghurt,honey,pistachio,rose water;Spoon the yoghurt into bowls|Drizzle with honey|Scatter over crushed pistachio|Add a drop of rose water
+Semolina Halwa;t;Indian;25;s;v;340;5;48;15;semolina,ghee,sugar,milk,cardamom,almonds;Fry the semolina in ghee until golden|Add the milk and sugar and stir|Cook until thick|Top with almonds and cardamom
+Chocolate Chia Pudding;t;Modern;5;n;hvVg;260;8;28;13;chia seeds,almond milk,cocoa powder,maple syrup;Whisk the cocoa and syrup into the milk|Stir in the chia|Chill for 4 hours|Serve chilled
+Grilled Pineapple with Honey;t;Modern;10;s;hvVg;180;2;34;5;pineapple,honey,cinnamon,mint;Slice the pineapple|Grill 3 minutes each side|Drizzle with honey|Dust with cinnamon and add mint
+Kunafa Cups;t;Middle Eastern;25;o;v;360;6;40;20;kunafa pastry,butter,ricotta,sugar syrup,pistachio;Mix the pastry with melted butter|Press into muffin cups|Fill with ricotta and bake at 180C for 15 minutes|Drizzle with syrup and top with pistachio
+Mango Sorbet;t;Modern;5;n;hvVg;150;1;36;0;frozen mango,honey,lemon;Blend the frozen mango with honey and lemon|Add a splash of water if needed|Blend until smooth|Freeze for 1 hour then serve
+Air Fryer Apple Crumble;t;Modern;20;a;v;310;4;46;13;apple,oats,flour,butter,sugar,cinnamon;Mix oats flour butter and sugar into crumbs|Place chopped apple in a dish|Top with the crumble|Air fry at 170C for 15 minutes
+Coconut Date Bites;t;Modern;10;n;hvVg;170;3;24;8;dates,coconut,oats;Blitz the dates and oats|Roll in desiccated coconut|Chill for 20 minutes|Serve
+`;
+
+/* ---------------- helpers ---------------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+const M  = {b:"Breakfast", l:"Lunch", d:"Dinner", s:"Snack", t:"Dessert"};
+const E  = {b:"🍳", l:"🥗", d:"🍲", s:"🥜", t:"🍮"};
+const ME = {a:"Air Fryer", s:"Stovetop", o:"Oven", m:"Microwave", n:"No-Cook"};
+const TG = {h:"Healthy", p:"High-Protein", v:"Vegetarian", V:"Vegan", g:"Gluten-Free"};
+const DN = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+
+const OK_TAGS = "hpvVg";
+const OK_APPL = "asomn";
+
+let R = [];
+const st = {
+  ing: [], query: "", meal: "", me: "", tm: "0", tg: new Set(),
+  tab: "find", full: false, days: "5", pm: new Set(["b","l","d"]),
+  fav: true, plan: null, fo: false
+};
+
+/* ---------------- normalisation ---------------- */
+function normalizeRecipe(r){
+  const m  = "bldst".includes(r.m) ? r.m : "d";
+  const tgSrc = Array.isArray(r.tg) ? r.tg.join("") : String(r.tg || "p");
+  const tg = [...tgSrc].filter(c => OK_TAGS.includes(c)).join("") || "p";
+  const meSrc = Array.isArray(r.me) ? r.me.join("") : String(r.me || "s");
+  const me = [...meSrc].filter(c => OK_APPL.includes(c)).join("") || "s";
+  const i = Array.isArray(r.i) ? r.i.map(String)
+          : String(r.i || "").split(",").map(x => x.trim()).filter(Boolean);
+  const s = Array.isArray(r.s) ? r.s.map(String)
+          : String(r.s || "").split("|").map(x => x.trim()).filter(Boolean);
+  return {
+    ...r, m, tg, me,
+    c: String(r.c || "Custom"),
+    t: +r.t || 15, cal: +r.cal || 350,
+    p: +r.p || 20, car: +r.car || 30, f: +r.f || 12,
+    i, s
+  };
+}
+
+/* ---------------- storage ---------------- */
+const loadPantry = () => {
+  try { const v = JSON.parse(localStorage.getItem("hk-pantry") || "[]"); st.ing = Array.isArray(v) ? v : []; }
+  catch(e){ st.ing = []; }
+};
+const savePantry = () => { try { localStorage.setItem("hk-pantry", JSON.stringify(st.ing)); } catch(e){} };
+const saveCustomRecipes = () => {
+  try {
+    const list = R.filter(r => r.u).map(({id, ...rest}) => rest);
+    localStorage.setItem("hk-user", JSON.stringify(list));
+  } catch(e){}
+};
+const KEY = () => { try { return localStorage.getItem("hk-gemini-key"); } catch(e){ return null; } };
+
+/* ---------------- matching ---------------- */
+const stem = w => {
+  if (w.length <= 3) return w;
+  if (/ies$/.test(w)) return w.slice(0,-3) + "y";
+  if (/oes$/.test(w)) return w.slice(0,-2);
+  if (/es$/.test(w))  return w.slice(0,-2);
+  if (/s$/.test(w))   return w.slice(0,-1);
+  return w;
+};
+const tok = s => String(s).toLowerCase().replace(/[^a-z0-9' ]+/g," ").split(/\s+/).filter(Boolean).map(stem);
+
+function matchIng(pantryItem, recipeIng){
+  const a = tok(pantryItem), b = tok(recipeIng);
+  if (!a.length || !b.length) return false;
+  if (a.join(" ") === b.join(" ")) return true;
+  return a.some(x => x.length >= 3 && b.includes(x));
+}
+function matchQuery(q, recipeIng){
+  const a = tok(q), b = tok(recipeIng);
+  if (!a.length || !b.length) return false;
+  return b.some(y => a.some(x => y === x || (x.length >= 2 && y.startsWith(x))));
+}
+
+const pantryHas = x => st.ing.some(u => matchIng(u, x));
+const queryHas  = x => !!st.query && matchQuery(st.query, x);
+const sc = r => {
+  const miss = r.i.filter(x => !pantryHas(x));
+  return { h: r.i.length - miss.length, tot: r.i.length, miss };
+};
+const ratio = s => s.tot ? s.h / s.tot : 0;
+
+/* ---------------- filters ---------------- */
+function passes(r){
+  if (st.meal && r.m !== st.meal) return false;
+  if (st.me && !r.me.includes(st.me)) return false;
+  if (+st.tm && r.t > +st.tm) return false;
+  for (const g of st.tg){
+    if (g === "v"){ if (!/[vV]/.test(r.tg)) return false; }
+    else if (!r.tg.includes(g)) return false;
+  }
+  if (st.query && !r.i.some(x => queryHas(x))) return false;
+  return true;
+}
+
+const tagsOf = r => {
+  const out = [];
+  [...r.tg].forEach(g => {
+    if (g === "v" && r.tg.includes("V")) return;
+    if (TG[g]) out.push(TG[g]);
+  });
+  if (r.ai) out.push("Gemini AI");
+  else if (r.u) out.push("Added by you");
+  return out;
+};
+const tagsHtml = r => tagsOf(r).map(t => `<span class="tg">${esc(t)}</span>`).join("");
+const mel = r => [...r.me].map(x => ME[x]).filter(Boolean).join(", ") || "Stovetop";
+
+/* ---------------- database init ---------------- */
+function initDatabase(){
+  R = [];
+  D.split("\n").filter(l => l.trim()).forEach(line => {
+    const p = line.split(";");
+    if (p.length < 12){ console.warn("Skipped malformed line:", line.slice(0,40)); return; }
+    const [n,m,c,t,me,tg,cal,pr,car,f,i,s] = p;
+    R.push(normalizeRecipe({
+      n: n.trim(), m, c, t, me, tg, cal, p: pr, car, f,
+      i: i.split(",").map(x => x.trim()).filter(Boolean),
+      s: s.split("|").map(x => x.trim()).filter(Boolean)
+    }));
+  });
+
+  let userR = [];
+  try { userR = JSON.parse(localStorage.getItem("hk-user") || "[]"); } catch(e){ userR = []; }
+  if (Array.isArray(userR)) userR.forEach(x => { if (x && x.n) R.push(normalizeRecipe({...x, u:1})); });
+
+  R.forEach((r, i) => r.id = i);
+  R = R.filter(r => r.i.length && r.s.length);
+  R.forEach((r, i) => r.id = i);
+
+  loadPantry();
+  $("#hcount").textContent = R.length;
+}
+
+/* ---------------- local ingredient index ---------------- */
+let ALL_ING = [];
+function rebuildIngredientIndex(){
+  const set = new Set();
+  R.forEach(r => r.i.forEach(x => set.add(x)));
+  ALL_ING = [...set].sort((a,b) => a.localeCompare(b));
+}
+function suggest(q){
+  const v = String(q || "").trim().toLowerCase();
+  if (!v) return [];
+  const starts = [], contains = [];
+  ALL_ING.forEach(x => {
+    const lx = x.toLowerCase();
+    if (lx.startsWith(v)) starts.push(x);
+    else if (lx.includes(v)) contains.push(x);
+  });
+  return starts.concat(contains).slice(0, 6);
+}
+
+/* ---------------- Open Food Facts (IndexedDB, permanent cache) ---------------- */
+const OFF_MIN = 2;
+const OFF_STALE_MS = 90 * 24 * 60 * 60 * 1000;
+
+function offEnabled(){
+  try { return localStorage.getItem("hk-off-enabled") !== "0"; }
+  catch(e){ return true; }
+}
+function setOffEnabled(v){
+  try { localStorage.setItem("hk-off-enabled", v ? "1" : "0"); } catch(e){}
+}
+
+const OFF_DB = "hk-off-db", OFF_STORE = "cache";
+let offDB = null;
+
+function openOFFDB(){
+  return new Promise((resolve, reject) => {
+    if (!window.indexedDB) return reject(new Error("no-idb"));
+    const req = indexedDB.open(OFF_DB, 1);
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains(OFF_STORE)){
+        const store = db.createObjectStore(OFF_STORE, { keyPath: "q" });
+        store.createIndex("t", "t");
+      }
+    };
+    req.onsuccess = () => { offDB = req.result; resolve(offDB); };
+    req.onerror  = () => reject(req.error);
+  });
+}
+async function idbGetEntry(q){
+  try {
+    if (!offDB) await openOFFDB();
+    return await new Promise(resolve => {
+      const tx = offDB.transaction(OFF_STORE, "readonly");
+      const req = tx.objectStore(OFF_STORE).get(q);
+      req.onsuccess = () => resolve(req.result || null);
+      req.onerror  = () => resolve(null);
+    });
+  } catch(e){ return null; }
+}
+async function idbPut(q, v){
+  try {
+    if (!offDB) await openOFFDB();
+    return await new Promise(resolve => {
+      const tx = offDB.transaction(OFF_STORE, "readwrite");
+      tx.objectStore(OFF_STORE).put({ q, v, t: Date.now() });
+      tx.oncomplete = () => resolve(true);
+      tx.onerror    = () => resolve(false);
+    });
+  } catch(e){ return false; }
+}
+async function idbCount(){
+  try {
+    if (!offDB) await openOFFDB();
+    return await new Promise(resolve => {
+      const tx = offDB.transaction(OFF_STORE, "readonly");
+      const req = tx.objectStore(OFF_STORE).count();
+      req.onsuccess = () => resolve(req.result);
+      req.onerror  = () => resolve(0);
+    });
+  } catch(e){ return 0; }
+}
+async function idbClear(){
+  try {
+    if (!offDB) await openOFFDB();
+    return await new Promise(resolve => {
+      const tx = offDB.transaction(OFF_STORE, "readwrite");
+      tx.objectStore(OFF_STORE).clear();
+      tx.oncomplete = () => resolve(true);
+      tx.onerror    = () => resolve(false);
+    });
+  } catch(e){ return false; }
+}
+async function updateCacheCount(){
+  const el = document.getElementById("off-count");
+  if (!el) return;
+  const n = await idbCount();
+  el.textContent = n ? `(${n} cached)` : "";
+}
+async function clearOFFCache(){
+  if (!confirm("Clear all cached Open Food Facts searches?\n\nYour pantry, recipes and AI recipes are unaffected.")) return;
+  await idbClear();
+  updateCacheCount();
+  alert("OFF cache cleared. Next searches will hit the network.");
+}
+
+async function searchOFF(q){
+  if (!navigator.onLine) return [];
+  if (!q || q.length < OFF_MIN) return [];
+
+  const url = "https://world.openfoodfacts.org/cgi/search.pl?search_terms=" +
+    encodeURIComponent(q) +
+    "&search_simple=1&action=process&json=1&page_size=20" +
+    "&fields=product_name,product_name_en";
+
+  let res;
+  try { res = await fetch(url, { headers: { "Accept": "application/json" } }); }
+  catch(e){ return []; }
+  if (!res.ok) return [];
+
+  let data;
+  try { data = await res.json(); } catch(e){ return []; }
+
+  const names = (data.products || [])
+    .map(p => (p.product_name_en || p.product_name || "").trim())
+    .filter(n => n && n.length <= 60)
+    .map(n => n.toLowerCase());
+
+  const seen = new Set(), out = [];
+  names.forEach(n => { if (!seen.has(n)){ seen.add(n); out.push(n); } });
+
+  const result = out.slice(0, 6);
+  await idbPut(q, result);
+  updateCacheCount();
+  return result;
+}
+
+let offTimer = null, offSeq = 0, offLoading = false, offResults = [];
+
+async function scheduleOffSearch(q){
+  clearTimeout(offTimer);
+  offSeq++;
+  const seq = offSeq;
+
+  if (!q || q.length < OFF_MIN || !offEnabled() || !navigator.onLine){
+    offResults = []; offLoading = false;
+    renderSuggestions();
+    return;
+  }
+
+  const cached = await idbGetEntry(q);
+  if (seq !== offSeq) return;
+
+  if (cached){
+    offResults = cached.v; offLoading = false;
+    renderSuggestions();
+    if (navigator.onLine && (Date.now() - cached.t) > OFF_STALE_MS){
+      searchOFF(q).then(fresh => {
+        if (seq !== offSeq) return;
+        offResults = fresh;
+        renderSuggestions();
+      }).catch(() => {});
+    }
+    return;
+  }
+
+  offLoading = true; offResults = [];
+  renderSuggestions();
+
+  offTimer = setTimeout(async () => {
+    if (seq !== offSeq) return;
+    const res = await searchOFF(q);
+    if (seq !== offSeq) return;
+    offResults = res; offLoading = false;
+    renderSuggestions();
+  }, 400);
+}
+
+function renderSuggestions(){
+  const q = st.query;
+  const local = suggest(q);
+  const localLc = new Set(local.map(x => x.toLowerCase()));
+  const off = offResults.filter(x => !localLc.has(x.toLowerCase())).slice(0, 6);
+
+  let html = local.map(x =>
+    `<button class="ch" data-k="pick" data-v="${esc(x)}" type="button">+ ${esc(x)}</button>`
+  ).join("");
+
+  html += off.map(x =>
+    `<button class="ch off" data-k="pick" data-v="${esc(x)}" type="button" title="From Open Food Facts">🌐 ${esc(x)}</button>`
+  ).join("");
+
+  if (offLoading){
+    html += `<span class="mu" style="align-self:center">Searching Open Food Facts…</span>`;
+  }
+
+  if (!local.length && !off.length && q && !offLoading){
+    html = `<span class="mu">No matches — press Add to save “${esc(q)}” as typed.</span>`;
+  }
+
+  $("#sugg").innerHTML = html;
+}
+
+/* ---------------- pantry chips ---------------- */
+function rC(){
+  $("#ic").innerHTML = st.ing.map((x,i) =>
+    `<span class="ic">${esc(x)}<button data-k="rm" data-v="${i}" type="button" aria-label="Remove ${esc(x)}">×</button></span>`
+  ).join("");
+}
+function addI(v){
+  const parts = String(v || "").split(",").map(x => x.trim().toLowerCase()).filter(Boolean);
+  let added = false;
+  parts.forEach(x => { if (!st.ing.includes(x)){ st.ing.push(x); added = true; } });
+  if (added) savePantry();
+
+  clearTimeout(offTimer);
+  offSeq++;
+  offResults = []; offLoading = false;
+  st.query = "";
+  $("#in").value = "";
+  renderSuggestions();
+  rC();
+  rM();
+}
+
+/* ---------------- tabs ---------------- */
+function rT(){
+  $("#gb").hidden = st.tab !== "find";
+  document.querySelectorAll(".tabs button").forEach(b => {
+    b.setAttribute("aria-selected", b.dataset.v === st.tab ? "true" : "false");
+  });
+}
+
+/* ---------------- filter UI ---------------- */
+const chips = (k, obj, cur) => Object.entries(obj).map(([v,l]) => {
+  const on = cur instanceof Set ? cur.has(v) : cur === v;
+  return `<button class="ch${on ? " on" : ""}" data-k="${k}" data-v="${v}" type="button" aria-pressed="${on}">${l}</button>`;
+}).join("");
+
+const fpn = () => st.fo ? `<div class="box fp">
+  <div><b>Appliance</b>${chips("me", {"":"Any", ...ME}, st.me)}</div>
+  <div><b>Max Cooking Time</b>${chips("tm", {"0":"Any","5":"Under 5 min","10":"Under 10 min","15":"Under 15 min","30":"Under 30 min"}, st.tm)}</div>
+  <div><b>Dietary Filters</b>${chips("tg", TG, st.tg)}</div>
+</div>` : "";
+
+const fbar = () => {
+  const n = (st.me ? 1 : 0) + (+st.tm ? 1 : 0) + st.tg.size;
+  return `<button class="ch${st.fo ? " on" : ""}" data-k="fo" type="button" aria-expanded="${st.fo}">Filters${n ? ` (${n})` : ""}</button>`
+       + (n ? `<button class="ch" data-k="clr" type="button">Clear filters</button>` : "");
+};
+
+/* ---------------- recipe card ---------------- */
+const card = r => {
+  const s = sc(r);
+  const active = st.ing.length > 0;
+  return `<div class="rc" role="button" tabindex="0" data-k="open" data-v="${r.id}">
+    <div class="th m${r.m}"><span>${E[r.m] || "🍲"}</span><b>🔥 ${r.cal} kcal</b></div>
+    <div class="bd">
+      <h3>${esc(r.n)}</h3>
+      <p class="mu">${esc(r.c)} • ⏱️ ${r.t} min • ${mel(r)}</p>
+      <div>${tagsHtml(r)}</div>
+      ${active ? `<div class="mt2"><i style="width:${Math.round(ratio(s)*100)}%"></i></div>
+        <p class="mu">Pantry: ${s.h}/${s.tot}.${s.miss.length ? ` Need ${s.miss.length} more.` : " Ready to cook!"}</p>` : ""}
+    </div>
+  </div>`;
+};
+
+/* ---------------- browse render ---------------- */
+function rM(){
+  const out = $("#out");
+  if (st.tab === "plan") return rP(out);
+
+  const active = st.ing.length > 0;
+  let L = R.filter(passes);
+
+  if (active){
+    L = L.map(r => [r, sc(r)])
+         .filter(([, s]) => s.h > 0 && (!st.full || s.miss.length === 0))
+         .sort((a,b) => ratio(b[1]) - ratio(a[1])
+                     || a[1].miss.length - b[1].miss.length
+                     || a[0].t - b[0].t)
+         .map(x => x[0]);
+  } else {
+    L = L.slice().sort((a,b) => a.t - b.t);
+  }
+
+  const cats = Object.entries({"":"All", ...M})
+    .map(([v,l]) => `<button class="cat${st.meal === v ? " on" : ""}" data-k="meal" data-v="${v}" type="button">${v ? E[v] + " " : ""}${l}</button>`)
+    .join("");
+
+  out.innerHTML = `<div class="cats">${cats}</div>
+  <div class="bar2">
+    ${fbar()}
+    ${active ? `<label><input type="checkbox" id="full" ${st.full ? "checked" : ""}> Only recipes I can fully make</label>` : ""}
+    <button class="btn alt" data-k="rand" type="button" style="margin-left:auto">Surprise me</button>
+  </div>
+  ${fpn()}
+  <h2 class="cnt">${L.length} recipe${L.length === 1 ? "" : "s"}${active ? " matching your pantry" : ""}${st.query ? ` for “${esc(st.query)}”` : ""}</h2>
+  ${L.length
+    ? `<div class="grid">${L.map(card).join("")}</div>`
+    : `<p class="mu">${st.query ? `Nothing matches “${esc(st.query)}”. Try a shorter word, or clear the box.` : "No recipes match these filters. Try clearing them."}</p>`}`;
+}
+
+/* ---------------- planner ---------------- */
+function pick(meal, used){
+  let pool = R.filter(r => r.m === meal && passes(r));
+  if (!pool.length) return null;
+  const fresh = pool.filter(r => !used.has(r.n));
+  if (fresh.length) pool = fresh;
+  if (st.ing.length && st.fav){
+    pool = pool.slice().sort((a,b) => ratio(sc(b)) - ratio(sc(a))).slice(0, Math.max(1, Math.min(8, pool.length)));
+  }
+  const r = pool[Math.floor(Math.random() * pool.length)];
+  if (r) used.add(r.n);
+  return r || null;
+}
+function build(){
+  if (!st.pm.size){ st.plan = null; return; }
+  const used = new Set();
+  const meals = Object.keys(M).filter(k => st.pm.has(k));
+  st.plan = Array.from({length: +st.days}, () =>
+    Object.fromEntries(meals.map(k => [k, pick(k, used)]))
+  );
+}
+function missingItems(plan){
+  const c = {};
+  if (!plan) return c;
+  plan.forEach(d => Object.values(d).forEach(r => r && r.i.forEach(x => {
+    if (!pantryHas(x)) c[x] = (c[x] || 0) + 1;
+  })));
+  return c;
+}
+function copyShoppingList(){
+  if (!st.plan) return;
+  const items = missingItems(st.plan);
+  const txt = "🛒 Halal Kitchen shopping list\n" +
+    Object.keys(items).sort().map(x => `- ${x} (x${items[x]})`).join("\n");
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(
+      () => alert("Shopping list copied!"),
+      () => fallbackCopy(txt)
+    );
+  } else fallbackCopy(txt);
+}
+function fallbackCopy(txt){
+  const ta = document.createElement("textarea");
+  ta.value = txt; ta.style.position = "fixed"; ta.style.opacity = "0";
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand("copy"); alert("Shopping list copied!"); }
+  catch(e){ alert("Copy failed — select the list manually."); }
+  document.body.removeChild(ta);
+}
+function shop(plan){
+  const c = missingItems(plan);
+  const keys = Object.keys(c).sort();
+  return `<div class="box" style="margin-top:16px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+      <h2>Shopping List</h2>
+      <button class="btn" data-k="copy" type="button">📋 Copy List</button>
+    </div>
+    <p class="mu">${st.ing.length ? "Only items missing from your pantry are shown." : "Everything your planned week needs."}</p>
+    ${keys.length
+      ? `<ul class="sl">${keys.map(x => `<li>${esc(x)}${c[x] > 1 ? ` ×${c[x]}` : ""}</li>`).join("")}</ul>`
+      : `<p class="mu">Your pantry covers everything in this plan.</p>`}
+  </div>`;
+}
+function rP(out){
+  const pl = st.plan;
+  out.innerHTML = `<div class="box">
+    <h2>Weekly Meal Planner</h2>
+    <div style="margin-top:10px"><p class="mu">Number of Days</p>${chips("days", {"3":"3 days","5":"5 days","7":"7 days"}, st.days)}</div>
+    <div><p class="mu">Meals to Plan</p>${chips("pm", {b:"Breakfast", l:"Lunch", d:"Dinner", s:"Snack"}, st.pm)}</div>
+    <div class="bar2">
+      ${fbar()}
+      ${st.ing.length ? `<label><input type="checkbox" id="fav" ${st.fav ? "checked" : ""}> Prioritise my pantry</label>` : ""}
+    </div>
+    ${fpn()}
+    <button class="btn" data-k="build" type="button">${pl ? "Rebuild Plan" : "Generate Weekly Plan"}</button>
+    ${!st.pm.size ? `<p class="mu" style="color:#b00">Pick at least one meal above.</p>` : ""}
+  </div>
+  ${pl ? `<div class="grid">${pl.map((d,i) => `<section class="day"><h3>${DN[i]}</h3>
+      ${Object.entries(d).map(([k,r]) => `<div class="row">
+        <span class="mu">${M[k]}</span>
+        ${r
+          ? `<button class="lk" data-k="open" data-v="${r.id}" type="button">${esc(r.n)}</button>
+             <button class="rr" data-k="rr" data-v="${i},${k}" type="button" aria-label="Swap ${esc(r.n)}">↻</button>`
+          : `<span class="mu">No match</span>`}
+      </div>`).join("")}
+    </section>`).join("")}</div>` : ""}
+  ${pl ? shop(pl) : `<p class="mu">Choose your preferences and generate a plan.</p>`}`;
+}
+
+/* ---------------- modal ---------------- */
+function openModal(d){ if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open",""); }
+function closeModal(d){ if (typeof d.close === "function") d.close(); else d.removeAttribute("open"); }
+
+function openRecipe(id){
+  const r = R[id];
+  if (!r) return;
+  const active = st.ing.length > 0;
+  const ings = r.i, steps = r.s;
+  $("#dlg .in2").innerHTML = `
+    <div class="dh m${r.m}"><span>${E[r.m] || "🍲"}</span>
+      <button class="x" data-k="close" type="button" aria-label="Close">×</button></div>
+    <h2>${esc(r.n)}</h2>
+    <p class="mu">${esc(r.c)} • ⏱️ ${r.t} min • Appliance: <strong>${mel(r)}</strong></p>
+    <div class="macro-grid">
+      <div class="macro-item"><span>Calories</span><b>${r.cal} kcal</b></div>
+      <div class="macro-item"><span>Protein</span><b>${r.p}g</b></div>
+      <div class="macro-item"><span>Carbs</span><b>${r.car}g</b></div>
+      <div class="macro-item"><span>Fat</span><b>${r.f}g</b></div>
+    </div>
+    <div>${tagsHtml(r)}</div>
+    <h3 style="margin-top:16px">Ingredients Needed</h3>
+    <ul class="il">${ings.map(x => `<li class="${active && !pantryHas(x) ? "no" : ""}">${
+      active ? (pantryHas(x) ? "✓ " : "Need: ") : "• "}${esc(x)}</li>`).join("")}</ul>
+    <h3>Step-by-Step Instructions</h3>
+    <ol class="st">${steps.map(x => `<li><span>${esc(x)}</span></li>`).join("")}</ol>
+    <p class="mu">Cooking oil, salt and black pepper assumed. All meat must be halal certified.</p>
+    ${r.u ? `<button class="ch" data-k="del" data-v="${r.id}" type="button" style="color:#b00">Remove this recipe</button>` : ""}`;
+  openModal($("#dlg"));
+}
+
+function deleteRecipe(id){
+  const r = R[id];
+  if (!r || !r.u) return;
+  R.splice(id, 1);
+  R.forEach((x,i) => x.id = i);
+  saveCustomRecipes();
+  rebuildIngredientIndex();
+  closeModal($("#dlg"));
+  rM();
+}
+
+/* ---------------- AI ---------------- */
+const BAD = /pork|bacon|\bham\b|lard|wine|beer|\brum\b|gelatin|gelatine|alcohol|pepperoni|prosciutto|brandy|whisk(e)?y|\bsake\b|mirin|vodka|chorizo|pancetta/i;
+
+async function aiGemini(prompt){
+  if (!navigator.onLine) throw {c:"off"};
+  const k = KEY();
+  if (!k) throw {c:"key"};
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(k)}`;
+  const sys = "You are a Halal chef AI. Output ONLY one valid JSON object, no markdown. STRICT HALAL: absolutely no pork, bacon, lard, ham, alcohol, wine, beer, mirin, sake or gelatine.";
+  const ask = `${sys}\n\nTask: ${prompt}\n\nReturn exactly this shape: {"n":"Title","m":"b|l|d|s|t","c":"Cuisine","t":15,"me":"a|s|o|m|n","tg":"h|p|v|V|g (combine freely)","cal":380,"p":28,"car":32,"f":14,"i":["2 eggs","1 tbsp olive oil"],"s":["Step one","Step two"]}`;
+
+  let res;
+  try {
+    res = await fetch(url, {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ contents: [{ parts: [{ text: ask }] }] })
+    });
+  } catch(e){ throw {c:"off"}; }
+
+  if (!res.ok) throw {c: (res.status === 400 || res.status === 403) ? "auth" : "api"};
+
+  const j = await res.json();
+  const txt = (((j.candidates || [])[0] || {}).content || {}).parts?.[0]?.text || "";
+  const clean = txt.replace(/```json/gi, "").replace(/```/g, "").trim();
+  const start = clean.indexOf("{"), end = clean.lastIndexOf("}");
+  if (start < 0 || end <= start) throw {c:"api"};
+  return JSON.parse(clean.slice(start, end + 1));
+}
+
+async function genAI(){
+  const g = $("#gm");
+  g.textContent = "Generating a recipe with Gemini…";
+  try {
+    const req = $("#ask").value.trim() || "quick simple halal recipe";
+    const has = st.ing.length ? st.ing.join(", ") : "eggs, bread, tuna";
+    const raw = await aiGemini(`Write one short easy 100% halal recipe using mainly these ingredients: ${has}. Extra preference: ${req}`);
+
+    if (BAD.test(JSON.stringify(raw))){
+      g.textContent = "The generated recipe contained non-halal ingredients and was blocked.";
+      return;
+    }
+    const v = normalizeRecipe(raw);
+    if (!v.n || !v.i.length || !v.s.length){
+      g.textContent = "Gemini returned an unusable recipe. Please try again.";
+      return;
+    }
+    v.id = R.length; v.ai = 1; v.u = 1;
+    R.push(v);
+    saveCustomRecipes();
+    rebuildIngredientIndex();
+    $("#hcount").textContent = R.length;
+
+    g.textContent = `Saved “${v.n}” to your device — it now works offline.`;
+    st.tab = "find";
+    rT(); rM(); openRecipe(v.id);
+  } catch(e){
+    g.textContent =
+      e.c === "off"  ? "You are offline. AI generation needs internet — everything else works offline." :
+      e.c === "key"  ? "Add your free Gemini API key in the settings below." :
+      e.c === "auth" ? "That Gemini API key was rejected. Check it in settings." :
+                       "Could not reach Gemini. Please try again.";
+  }
+}
+
+function saveKey(){
+  const v = $("#key").value.trim();
+  try { v ? localStorage.setItem("hk-gemini-key", v) : localStorage.removeItem("hk-gemini-key"); } catch(e){}
+  $("#key").value = "";
+  $("#kg").textContent = v ? "Gemini API key saved on this device." : "Key removed.";
+}
+
+/* ---------------- custom recipe ---------------- */
+function parseCustomText(t, forcedMeal){
+  const L = t.split(/\r?\n/).map(x => x.trim()).filter(Boolean);
+  if (L.length < 3) return null;
+
+  const iIdx = L.findIndex(x => /^ingredients?\b/i.test(x));
+  const sIdx = L.findIndex((x,k) => k > iIdx && /^(method|instructions|steps|directions)\b/i.test(x));
+
+  let ing = [], stp = [];
+  if (iIdx >= 0 && sIdx > iIdx){
+    ing = L.slice(iIdx + 1, sIdx);
+    stp = L.slice(sIdx + 1);
+  } else {
+    ing = L.slice(1, Math.max(3, Math.ceil(L.length / 2)));
+    stp = L.slice(Math.max(3, Math.ceil(L.length / 2)));
+  }
+  ing = ing.map(x => x.replace(/^[\d.\-\s]+/, "").trim()).filter(Boolean);
+  stp = stp.map(x => x.replace(/^[\d.\-)\s]+/, "").trim()).filter(Boolean);
+  if (!ing.length || !stp.length) return null;
+
+  const lo = t.toLowerCase();
+  let me = "";
+  if (/air.?fry/.test(lo)) me += "a";
+  if (/oven|bake|roast/.test(lo)) me += "o";
+  if (/microwave/.test(lo)) me += "m";
+  if (/pan|fry|boil|simmer|stove|grill/.test(lo)) me += "s";
+  if (!me && /chill|refrigerat|no.?cook|mix/.test(lo)) me = "n";
+
+  let meal = forcedMeal;
+  if (!meal){
+    if (/breakfast|morning|porridge|pancake/.test(lo)) meal = "b";
+    else if (/lunch|sandwich|wrap/.test(lo)) meal = "l";
+    else if (/dessert|sweet|cake|pudding/.test(lo)) meal = "t";
+    else if (/snack|dip/.test(lo)) meal = "s";
+    else meal = "d";
+  }
+
+  return {
+    n: L[0].slice(0, 70), m: meal, c: "Custom recipe",
+    t: 15, me: me || "s", tg: "p",
+    cal: 350, p: 20, car: 30, f: 12,
+    i: ing, s: stp, u: 1
+  };
+}
+
+function addCustomRecipe(){
+  const t = $("#pt").value.trim(), g = $("#pg"), forced = $("#pm2").value;
+  if (t.length < 15){ g.textContent = "Please paste a fuller recipe first."; return; }
+  if (BAD.test(t)){ g.textContent = "Rejected: the text mentions non-halal ingredients (pork, alcohol, gelatine)."; return; }
+
+  const parsed = parseCustomText(t, forced);
+  if (!parsed){ g.textContent = "Could not parse that. Include a title, an Ingredients heading and a Method heading."; return; }
+
+  const r = normalizeRecipe(parsed);
+  if (!r.i.length || !r.s.length){ g.textContent = "No ingredients or steps detected."; return; }
+
+  r.id = R.length;
+  R.push(r);
+  saveCustomRecipes();
+  rebuildIngredientIndex();
+  $("#hcount").textContent = R.length;
+  $("#pt").value = "";
+  g.textContent = `Saved “${r.n}” — it is now available offline.`;
+  st.tab = "find";
+  rT(); rM();
+}
+
+/* ---------------- events ---------------- */
+document.addEventListener("click", e => {
+  const t = e.target;
+
+  if (t.id === "open-key-guide")  return openModal($("#key-dlg"));
+  if (t.id === "close-key-guide") return closeModal($("#key-dlg"));
+  if (t.id === "addb") return addI($("#in").value);
+  if (t.id === "gen")  return genAI();
+  if (t.id === "ks")   return saveKey();
+  if (t.id === "pa")   return addCustomRecipe();
+
+  const el = t.closest("[data-k]");
+  if (!el) return;
+  const k = el.dataset.k, v = el.dataset.v;
+
+  switch (k){
+    case "tab":  st.tab = v; break;
+    case "tg": case "pm":
+      st[k].has(v) ? st[k].delete(v) : st[k].add(v);
+      if (k === "pm" && st.plan) build();
+      break;
+    case "meal": st.meal = v; break;
+    case "me":   st.me = v;   if (st.plan) build(); break;
+    case "tm":   st.tm = v;   if (st.plan) build(); break;
+    case "days": st.days = v; if (st.plan) build(); break;
+    case "fo":   st.fo = !st.fo; break;
+    case "clr":  st.me = ""; st.tm = "0"; st.tg.clear(); if (st.plan) build(); break;
+    case "open": return openRecipe(+v);
+    case "close": return closeModal($("#dlg"));
+    case "del":  return deleteRecipe(+v);
+    case "pick": return addI(v);
+    case "copy": return copyShoppingList();
+    case "clear-off": clearOFFCache(); return;
+    case "rand": {
+      const pool = R.filter(passes);
+      if (pool.length) openRecipe(pool[Math.floor(Math.random() * pool.length)].id);
+      return;
+    }
+    case "build":
+      if (!st.pm.size) return;
+      build(); break;
+    case "rr": {
+      const [i, m] = v.split(",");
+      const used = new Set(st.plan.flatMap(d => Object.values(d)).filter(Boolean).map(r => r.n));
+      const nr = pick(m, used);
+      if (nr) st.plan[+i][m] = nr;
+      break;
+    }
+    case "rm":
+      st.ing.splice(+v, 1);
+      savePantry(); rC();
+      break;
+  }
+  rT(); rM();
+});
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Enter" && e.target.id === "in"){
+    e.preventDefault(); addI(e.target.value); return;
+  }
+  if (e.key === "Enter" || e.key === " "){
+    const el = e.target.closest('[data-k="open"]');
+    if (el){ e.preventDefault(); openRecipe(+el.dataset.v); }
+  }
+});
+
+document.addEventListener("input", e => {
+  if (e.target.id === "in"){
+    st.query = e.target.value.trim();
+    scheduleOffSearch(st.query);
+    if (st.tab !== "find"){ st.tab = "find"; }
+    rT(); rM();
+  }
+});
+
+document.addEventListener("change", e => {
+  if (e.target.id === "full"){ st.full = e.target.checked; rM(); }
+  if (e.target.id === "fav"){  st.fav  = e.target.checked; }
+  if (e.target.id === "off-toggle"){
+    setOffEnabled(e.target.checked);
+    scheduleOffSearch(st.query);
+  }
+});
+
+window.addEventListener("online", () => {
+  if (st.query && st.query.length >= OFF_MIN) scheduleOffSearch(st.query);
+});
+
+$("#dlg").addEventListener("click", e => { if (e.target.id === "dlg") closeModal(e.target); });
+
+/* ---------------- boot ---------------- */
+initDatabase();
+rebuildIngredientIndex();
+const offT = $("#off-toggle");
+if (offT) offT.checked = offEnabled();
+updateCacheCount();
+rC();
+rT();
+rM();
+</script>
+</body>
+</html>
