@@ -3,189 +3,218 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0B5D4B">
+<meta name="theme-color" content="#ffffff">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>Halal Kitchen</title>
 <style>
-:root{--bg:#F5F8F6;--ink:#10231F;--mut:#5E716B;--card:#fff;--line:#E0E9E4;--g:#0B5D4B;--g2:#E3F1EB;--on:#fff;--s:#F2B84B;color-scheme:light}
-@media(prefers-color-scheme:dark){:root{--bg:#0B1613;--ink:#E9F2EE;--mut:#98B0A8;--card:#12231E;--line:#223A33;--g:#46C2A5;--g2:#143129;--on:#05211A;color-scheme:dark}}
+:root{
+  --bg:#F9FAFB; --ink:#111827; --mut:#6B7280; --card:#FFFFFF;
+  --line:#E5E7EB; --g:#059669; --g2:#D1FAE5; --on:#FFFFFF; --s:#F59E0B;
+  color-scheme:light
+}
+@media(prefers-color-scheme:dark){
+  :root{--bg:#111827;--ink:#F9FAFB;--mut:#9CA3AF;--card:#1F2937;--line:#374151;--g:#10B981;--g2:#064E3B;--on:#FFFFFF;color-scheme:dark}
+}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding-bottom:env(safe-area-inset-bottom, 20px)}
-h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;margin:0;line-height:1.15}
-h2{font-size:1.45rem}h3{font-size:1.1rem}
-button,select,input,textarea{font:inherit;color:inherit}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  padding-bottom:env(safe-area-inset-bottom, 20px); -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;margin:0;line-height:1.2;letter-spacing:-0.02em}
+h2{font-size:1.35rem;font-weight:700}h3{font-size:1.05rem;font-weight:600}
+button,select,input,textarea{font:inherit;color:inherit;outline:none}
 
-/* Fixed Header Layout */
-.hero{background:#0B5D4B url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Cg fill='none' stroke='white' stroke-opacity='.1' stroke-width='1.5'%3E%3Crect x='12' y='12' width='32' height='32'/%3E%3Crect x='12' y='12' width='32' height='32' transform='rotate(45 28 28)'/%3E%3C/g%3E%3C/svg%3E");color:#fff;padding:calc(16px + env(safe-area-inset-top,0px)) 20px 64px;position:relative;transition:padding .3s,border-radius .3s}
-.hero.compact{padding-bottom:16px;border-radius:0 0 20px 20px;box-shadow:0 4px 12px rgba(0,0,0,0.1)}
-.hero.compact h1, .hero.compact p{display:none}
-.hero.compact .top-bar{margin-bottom:0}
-.in{max-width:960px;margin:auto}
-.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;transition:margin .3s}
-.menu-btn{background:rgba(255,255,255,0.15);border:0;color:#fff;font-size:1.5rem;padding:8px 12px;border-radius:8px;cursor:pointer}
-.brand{font-weight:600;opacity:.9}
-.hero h1{font-size:clamp(1.8rem,6vw,3rem);font-weight:700;max-width:13em;letter-spacing:-.01em}
-.hero p{max-width:34em;opacity:.85;margin:12px 0 0;font-size:.95rem}
+/* Minimal Header */
+header{
+  background:var(--card); border-bottom:1px solid var(--line);
+  position:sticky; top:0; z-index:20;
+  padding:calc(12px + env(safe-area-inset-top,0px)) 16px 12px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.brand{font-weight:700;font-size:1.15rem;display:flex;align-items:center;gap:8px}
+.menu-btn{background:transparent;border:0;font-size:1.5rem;cursor:pointer;padding:4px 8px;border-radius:8px;transition:background .2s}
+.menu-btn:hover{background:var(--bg)}
 
-.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);opacity:0;pointer-events:none;transition:opacity .3s;z-index:100}
+/* Drawer Navigation */
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);opacity:0;pointer-events:none;transition:opacity .3s;z-index:100;backdrop-filter:blur(2px)}
 .drawer-overlay.open{opacity:1;pointer-events:auto}
-.drawer{position:fixed;top:0;left:-280px;bottom:0;width:280px;background:var(--card);z-index:101;transition:left .3s cubic-bezier(0.4,0,0.2,1);display:flex;flex-direction:column;box-shadow:4px 0 24px rgba(0,0,0,0.2)}
+.drawer{position:fixed;top:0;left:-280px;bottom:0;width:280px;background:var(--card);z-index:101;transition:left .3s cubic-bezier(0.4,0,0.2,1);display:flex;flex-direction:column;box-shadow:4px 0 24px rgba(0,0,0,0.1);border-right:1px solid var(--line)}
 .drawer.open{left:0}
-.drawer-head{padding:calc(20px + env(safe-area-inset-top,0px)) 20px 20px;background:var(--g);color:var(--on);font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:1.3rem;font-weight:700}
-.drawer-list{list-style:none;padding:10px 0;margin:0;flex:1;overflow-y:auto}
-.drawer-item{display:block;width:100%;text-align:left;background:none;border:0;padding:16px 20px;font-size:1.05rem;font-weight:600;cursor:pointer;border-bottom:1px solid var(--line);transition:background .2s}
-.drawer-item:hover,.drawer-item.active{background:var(--g2);color:var(--g)}
-.drawer-item span{display:inline-block;width:28px;font-size:1.2rem}
+.drawer-head{padding:calc(20px + env(safe-area-inset-top,0px)) 20px 20px;border-bottom:1px solid var(--line);font-weight:700;font-size:1.15rem}
+.drawer-list{list-style:none;padding:12px 0;margin:0;flex:1;overflow-y:auto}
+.drawer-item{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:none;border:0;padding:14px 20px;font-size:1rem;font-weight:500;cursor:pointer;transition:background .2s}
+.drawer-item:hover,.drawer-item.active{background:var(--bg);color:var(--g);font-weight:600}
+.drawer-item span{font-size:1.2rem;width:24px;text-align:center}
 
-/* Main Content Layout */
-.wrap{max-width:960px;margin:0 auto;padding:20px 16px 56px;transition:margin .3s}
-.hero:not(.compact) + .wrap{margin-top:-40px}
-.box{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 10px 28px -14px rgba(11,93,75,.35);margin-bottom:16px}
+/* Layout */
+.wrap{max-width:800px;margin:0 auto;padding:20px 16px 60px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,0.05);margin-bottom:20px}
 .add{display:flex;gap:8px}
-input[type=text],input[type=password],select,textarea{flex:1;min-width:0;padding:13px 15px;border-radius:13px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)}
-input:focus,textarea:focus{border-color:var(--g);outline:0}
+input[type=text],input[type=password],select,textarea{
+  flex:1;min-width:0;padding:12px 16px;border-radius:10px;border:1px solid var(--line);
+  background:var(--bg);color:var(--ink);transition:border-color .2s
+}
+input:focus,textarea:focus{border-color:var(--g);box-shadow:0 0 0 3px var(--g2)}
 textarea{width:100%;resize:vertical;font-family:inherit;line-height:1.5}
-.btn{background:var(--g);color:var(--on);border:0;border-radius:13px;padding:12px 20px;font-weight:600;cursor:pointer}
-.btn.alt{background:var(--s);color:#2b2000}
-.btn.full{width:100%}
-.ch{border:1px solid var(--line);background:var(--card);padding:6px 14px;border-radius:99px;font-size:.92rem;cursor:pointer;margin:0 6px 6px 0}
+.btn{background:var(--g);color:var(--on);border:0;border-radius:10px;padding:12px 20px;font-weight:600;cursor:pointer;transition:transform .1s,opacity .2s}
+.btn:active{transform:scale(0.98)}
+.btn.alt{background:var(--ink);color:var(--bg)}
+.btn.outline{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.full{width:100%;display:flex;justify-content:center;align-items:center;gap:8px}
+.ch{border:1px solid var(--line);background:var(--card);padding:6px 14px;border-radius:99px;font-size:.85rem;cursor:pointer;margin:0 6px 6px 0;font-weight:500;transition:all .2s}
 .ch.on{background:var(--g);color:var(--on);border-color:var(--g)}
-.ch.off{background:var(--g2);border-color:var(--g);font-weight:500;font-size:.9rem}
-#sugg{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}
-#ic{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
-.ic{display:inline-flex;align-items:center;background:var(--g2);color:var(--ink);border-radius:99px;padding:3px 4px 3px 14px;font-weight:600}
+.ch.off{background:var(--bg);border-color:var(--line);color:var(--mut)}
+#sugg{margin-top:12px;display:flex;flex-wrap:wrap;gap:6px}
+#ic{margin-top:12px;display:flex;flex-wrap:wrap;gap:6px}
+.ic{display:inline-flex;align-items:center;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:99px;padding:4px 4px 4px 14px;font-size:.9rem;font-weight:500}
 .ic button{background:none;border:0;cursor:pointer;font-size:1.15rem;padding:0 9px;color:var(--mut)}
-.mu{color:var(--mut);font-size:.92rem;margin:2px 0 6px}
+.mu{color:var(--mut);font-size:.9rem;margin:4px 0 8px}
 
-.cats{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 12px}
-.cat{flex:none;border:1px solid var(--line);background:var(--card);border-radius:14px;padding:9px 15px;cursor:pointer;font-weight:600}
-.cat.on{background:var(--g);color:var(--on);border-color:var(--g)}
-.bar2{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin-bottom:12px}.bar2 .ch,.bar2 label{margin:0}
-label{display:flex;gap:8px;align-items:center;font-size:.95rem}
-.fp b{display:block;font-size:.88rem;color:var(--mut);margin:8px 0 5px;font-weight:600}.fp>div:first-child b{margin-top:0}
-.cnt{margin:6px 0 14px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
-.rc{padding:0;overflow:hidden;text-align:left;cursor:pointer;display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:18px;transition:transform .15s,border-color .15s;position:relative}
-.rc:hover,.rc:focus-visible{transform:translateY(-3px);border-color:var(--g)}
-.th,.dh{display:flex;align-items:flex-end;justify-content:space-between;padding:10px 12px;color:#10231F}
-.th{height:100px}.th span{font-size:2.7rem;line-height:1}.th b{font-size:.8rem;background:#fffa;border-radius:99px;padding:2px 11px}
-.mb{background:#FBE3A6}.ml{background:#CDEBD9}.md{background:#F8CDBE}.ms{background:#DDD2F3}.mt{background:#F9D0DD}
-.bd{padding:12px 14px 14px;flex:1;display:flex;flex-direction:column}.bd h3{margin-bottom:3px}
-.tg{display:inline-block;font-size:.78rem;background:var(--g2);border-radius:6px;padding:1px 8px;margin:2px 5px 2px 0}
-.mt2{height:6px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:8px}.mt2 i{display:block;height:100%;background:var(--s)}
-.day{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px}
-.row{display:grid;grid-template-columns:72px 1fr auto;gap:6px;align-items:baseline;padding:7px 0;border-top:1px solid var(--line)}
-.lk{background:none;border:0;text-align:left;cursor:pointer;font-weight:600;padding:0;color:var(--g)}
-.rr{border:1px solid var(--line);background:none;border-radius:8px;cursor:pointer;padding:0 8px}
-.sl{columns:2;margin:0;padding-left:20px}
-.macro-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0;text-align:center}
-.macro-item{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:8px 4px}
-.macro-item span{display:block;font-size:.75rem;color:var(--mut);text-transform:uppercase;font-weight:600}
+/* Categories */
+.cats{display:flex;gap:8px;overflow-x:auto;padding:0 0 16px;scrollbar-width:none}
+.cats::-webkit-scrollbar{display:none}
+.cat{flex:none;border:1px solid var(--line);background:var(--card);border-radius:99px;padding:8px 16px;cursor:pointer;font-weight:500;font-size:.9rem;transition:all .2s}
+.cat.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.bar2{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:16px}
+label{display:flex;gap:8px;align-items:center;font-size:.9rem;color:var(--mut)}
+.fp b{display:block;font-size:.85rem;color:var(--ink);margin:12px 0 6px;font-weight:600}.fp>div:first-child b{margin-top:0}
+.cnt{margin:0 0 16px;font-weight:600;font-size:1.1rem}
+
+/* Grid & Cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.rc{
+  padding:0;overflow:hidden;text-align:left;cursor:pointer;display:flex;flex-direction:column;
+  background:var(--card);border:1px solid var(--line);border-radius:16px;
+  transition:transform .15s,border-color .15s,box-shadow .15s;position:relative;
+  box-shadow:0 1px 2px rgba(0,0,0,0.02)
+}
+.rc:hover,.rc:focus-visible{transform:translateY(-2px);border-color:var(--g);box-shadow:0 4px 12px rgba(0,0,0,0.05)}
+.th{display:flex;align-items:flex-start;justify-content:space-between;padding:16px 16px 8px}
+.th span{font-size:2rem;line-height:1}
+.th b{font-size:.8rem;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:99px;padding:4px 10px;font-weight:600}
+.bd{padding:0 16px 16px;flex:1;display:flex;flex-direction:column}
+.bd h3{margin-bottom:4px;font-size:1.1rem}
+.tg{display:inline-block;font-size:.75rem;background:var(--bg);border:1px solid var(--line);color:var(--mut);border-radius:4px;padding:2px 6px;margin:2px 4px 2px 0}
+.mt2{height:6px;background:var(--bg);border-radius:99px;overflow:hidden;margin-top:12px}.mt2 i{display:block;height:100%;background:var(--g)}
+
+/* Planner */
+.day{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
+.row{display:grid;grid-template-columns:60px 1fr auto;gap:8px;align-items:baseline;padding:10px 0;border-top:1px solid var(--line)}
+.lk{background:none;border:0;text-align:left;cursor:pointer;font-weight:600;padding:0;color:var(--g);font-size:.95rem}
+.rr{border:1px solid var(--line);background:var(--bg);border-radius:6px;cursor:pointer;padding:4px 8px;font-size:.85rem}
+.sl{columns:2;margin:0;padding-left:20px;color:var(--ink)}
+
+/* Modal */
+dialog{border:1px solid var(--line);border-radius:20px;max-width:560px;width:calc(100% - 32px);background:var(--card);color:var(--ink);padding:0;max-height:90vh;overflow:auto;box-shadow:0 20px 40px rgba(0,0,0,0.2)}
+dialog::backdrop{background:rgba(0,0,0,0.4);backdrop-filter:blur(4px)}
+.in2{padding:24px}
+.dh{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
+.dh span{font-size:2.5rem;line-height:1}
+.dh .x{border:1px solid var(--line);background:var(--bg);color:var(--ink);width:32px;height:32px;border-radius:50%;font-size:1.2rem;cursor:pointer;display:grid;place-items:center}
+.il{columns:2;padding:0;list-style:none;margin:12px 0 24px}.il li{padding:4px 0;font-size:.95rem}.il .no{color:var(--mut);text-decoration:line-through}
+.st{list-style:none;padding:0;margin:12px 0 24px;counter-reset:n}
+.st li{counter-increment:n;display:flex;gap:12px;margin:16px 0;font-size:.95rem}
+.st li::before{content:counter(n);flex:none;width:24px;height:24px;border-radius:50%;background:var(--g);color:var(--on);display:grid;place-items:center;font-size:.8rem;font-weight:700}
+.macro-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:16px 0;text-align:center;background:var(--bg);padding:12px;border-radius:12px;border:1px solid var(--line)}
+.macro-item span{display:block;font-size:.7rem;color:var(--mut);text-transform:uppercase;font-weight:700;letter-spacing:.5px}
 .macro-item b{font-size:1.05rem;color:var(--ink)}
-dialog{border:0;border-radius:22px;max-width:560px;width:calc(100% - 24px);background:var(--card);color:var(--ink);padding:0;max-height:90vh;overflow:auto;box-shadow:0 20px 40px rgba(0,0,0,.3)}
-dialog::backdrop{background:rgba(0,0,0,.6);backdrop-filter:blur(3px)}
-.in2{padding:0 22px 22px}
-.dh{height:120px;margin:0 -22px 16px;border-radius:0}.dh span{font-size:3.6rem;line-height:1}
-.dh .x{border:0;background:#fffb;color:#10231F;width:34px;height:34px;border-radius:50%;font-size:1.3rem;cursor:pointer;align-self:flex-start}
-.il{columns:2;padding:0;list-style:none;margin:8px 0 16px}.il li{padding:3px 0}.il .no{color:var(--mut)}
-.st{list-style:none;padding:0;margin:8px 0 16px;counter-reset:n}
-.st li{counter-increment:n;display:flex;gap:12px;margin:11px 0}
-.st li::before{content:counter(n);flex:none;width:26px;height:26px;border-radius:50%;background:var(--g);color:var(--on);display:grid;place-items:center;font-size:.85rem;font-weight:700}
-details summary{cursor:pointer;font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:1.15rem;font-weight:700}
-details[open] summary{margin-bottom:8px}
-:focus-visible{outline:3px solid var(--s);outline-offset:2px}
-.warn-box{background:#FFF3CD;border:1px solid #FFEBAA;color:#856404;padding:12px 16px;border-radius:12px;margin:12px 0;font-size:.9rem}
-.err-box{background:#FEE2E2;border:1px solid #FCA5A5;color:#991B1B;padding:12px 16px;border-radius:12px;margin:12px 0;font-size:.9rem}
-.ok-box{background:#D1FAE5;border:1px solid #6EE7B7;color:#065F46;padding:12px 16px;border-radius:12px;margin:12px 0;font-size:.9rem}
-@media(prefers-color-scheme:dark){.warn-box{background:#3A2E00;border-color:#524200;color:#FFE8A3}.err-box{background:#450a0a;border-color:#7f1d1d;color:#fecaca}.ok-box{background:#064e3b;border-color:#065f46;color:#d1fae5}}
-@media(max-width:480px){.sl,.il{columns:1}.macro-grid{grid-template-columns:repeat(2,1fr)}}
-input[type=file]{width:100%;padding:14px;border:2px dashed var(--line);border-radius:14px;background:var(--bg);cursor:pointer;transition:border-color .15s}
-input[type=file]:hover{border-color:var(--g)}
-#file-results{margin-top:12px}
-#file-results ul{margin:8px 0;padding-left:20px;font-size:.85rem;color:var(--mut)}
-.file-fmt{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;font-size:.85rem;line-height:1.7}
-.file-fmt code{background:var(--g2);padding:1px 6px;border-radius:4px;font-size:.82rem}
-.load-more-wrap{text-align:center;margin-top:24px;margin-bottom:24px}
-.load-more-wrap button{width:100%;max-width:300px;padding:14px;background:var(--g2);color:var(--g);border:1px solid var(--g);font-size:1.05rem}
 
-.upload-preview{margin-top:14px;padding:14px;background:var(--bg);border-radius:14px;border:1px solid var(--line)}
-.upload-preview h4{margin:0 0 10px;font-size:.95rem;font-weight:600}
-.pending-item{display:flex;align-items:flex-start;gap:10px;padding:10px 4px;border-bottom:1px solid var(--line);cursor:pointer}
+details summary{cursor:pointer;font-weight:600;font-size:1.05rem}
+details[open] summary{margin-bottom:12px}
+:focus-visible{outline:2px solid var(--g);outline-offset:2px}
+.warn-box{background:#FEF3C7;border:1px solid #FDE68A;color:#92400E;padding:12px 16px;border-radius:12px;margin:16px 0;font-size:.9rem}
+.err-box{background:#FEE2E2;border:1px solid #FCA5A5;color:#991B1B;padding:12px 16px;border-radius:12px;margin:16px 0;font-size:.9rem}
+.ok-box{background:#D1FAE5;border:1px solid #6EE7B7;color:#065F46;padding:12px 16px;border-radius:12px;margin:16px 0;font-size:.9rem}
+@media(prefers-color-scheme:dark){
+  .warn-box{background:#422006;border-color:#78350F;color:#FDE68A}
+  .err-box{background:#450A0A;border-color:#7F1D1D;color:#FCA5A5}
+  .ok-box{background:#064E3B;border-color:#047857;color:#A7F3D0}
+}
+@media(max-width:480px){.sl,.il{columns:1}.macro-grid{grid-template-columns:repeat(2,1fr)}}
+input[type=file]{width:100%;padding:16px;border:2px dashed var(--line);border-radius:12px;background:var(--bg);cursor:pointer;transition:border-color .15s;font-size:.9rem;color:var(--mut)}
+input[type=file]:hover{border-color:var(--g)}
+#file-results{margin-top:16px}
+#file-results ul{margin:8px 0;padding-left:20px;font-size:.85rem;color:var(--mut)}
+.file-fmt{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:12px 0;font-size:.85rem;line-height:1.6;color:var(--mut)}
+.file-fmt code{background:var(--card);border:1px solid var(--line);padding:2px 6px;border-radius:4px;font-size:.8rem;color:var(--ink)}
+.load-more-wrap{text-align:center;margin-top:24px}
+.load-more-wrap button{width:100%;max-width:300px;padding:14px;background:var(--card);color:var(--ink);border:1px solid var(--line);font-size:.95rem;border-radius:10px;cursor:pointer;font-weight:600}
+
+/* Upload preview & Custom Cards */
+.upload-preview{margin-top:16px;padding:16px;background:var(--bg);border-radius:12px;border:1px solid var(--line)}
+.upload-preview h4{margin:0 0 12px;font-size:.95rem;font-weight:700}
+.pending-item{display:flex;align-items:flex-start;gap:12px;padding:12px 4px;border-bottom:1px solid var(--line);cursor:pointer}
 .pending-item:last-of-type{border-bottom:0}
-.pending-item input[type=checkbox]{margin-top:4px;flex:none;width:18px;height:18px}
-.pending-item strong{display:block;font-size:.95rem}
-.pending-actions{display:flex;gap:8px;margin-top:14px}
+.pending-item input[type=checkbox]{margin-top:4px;flex:none;width:20px;height:20px;accent-color:var(--g)}
+.pending-item strong{display:block;font-size:.95rem;margin-bottom:2px}
+.pending-actions{display:flex;gap:8px;margin-top:16px}
 .pending-actions button{flex:1}
-.upload-status{padding:14px;background:var(--g2);border-radius:12px;margin-top:12px;font-size:.92rem;display:flex;align-items:center;gap:10px}
-.spinner{width:18px;height:18px;border:2px solid var(--g);border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;flex:none}
+.upload-status{padding:16px;background:var(--g2);color:var(--g);border-radius:12px;margin-top:12px;font-size:.95rem;display:flex;align-items:center;gap:12px;font-weight:600}
+.spinner{width:20px;height:20px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;flex:none}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-.mine-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px;flex-wrap:wrap}
+.mine-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:10px;flex-wrap:wrap}
 .home-matches{margin-top:16px}
-.home-matches h2{margin-bottom:8px}
 [hidden]{display:none !important}
 
-.rc .action-row { display:flex; gap:8px; margin-top:auto; padding-top:10px; }
-.rc .del-btn{background:var(--bg);border:1px solid var(--line);color:#b00;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:.78rem}
-.rc .chat-btn{background:var(--g2);border:1px solid var(--g);color:var(--g);padding:6px 10px;border-radius:8px;cursor:pointer;font-size:.78rem;font-weight:600}
+.rc .action-row { display:flex; gap:8px; margin-top:auto; padding-top:16px; }
+.rc .del-btn{background:var(--bg);border:1px solid var(--line);color:#b00;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:.8rem;font-weight:600}
+.rc .chat-btn{background:var(--g2);border:1px solid var(--g);color:var(--g);padding:8px 12px;border-radius:8px;cursor:pointer;font-size:.8rem;font-weight:600}
 
 /* Chat UI */
-.chat-container{display:flex;flex-direction:column;height:65vh;background:var(--bg);border-radius:16px;border:1px solid var(--line);overflow:hidden}
+.chat-container{display:flex;flex-direction:column;height:65vh;background:var(--bg);border-radius:12px;border:1px solid var(--line);overflow:hidden}
 .chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
-.chat-bubble{max-width:85%;padding:12px 16px;border-radius:16px;font-size:.95rem;line-height:1.4}
+.chat-bubble{max-width:85%;padding:12px 16px;border-radius:16px;font-size:.95rem;line-height:1.4;box-shadow:0 1px 2px rgba(0,0,0,0.05)}
 .chat-bubble.user{align-self:flex-end;background:var(--g);color:var(--on);border-bottom-right-radius:4px}
 .chat-bubble.ai{align-self:flex-start;background:var(--card);border:1px solid var(--line);border-bottom-left-radius:4px}
 .chat-input-area{padding:12px;background:var(--card);border-top:1px solid var(--line);display:flex;gap:8px}
+
+/* AI Suggestions */
+.ai-suggestion-card { background:var(--bg); border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:12px; }
+.ai-suggestion-card h4 { margin:0 0 4px; font-size:1rem; }
+.ai-suggestion-card p { margin:0 0 12px; font-size:.85rem; color:var(--mut); }
+.ai-suggestion-actions { display:flex; gap:8px; }
 </style>
 </head>
 <body>
 
+<header>
+  <div class="brand"><span>🍲</span> Halal Kitchen</div>
+  <button class="menu-btn" id="menu-btn" aria-label="Open menu">☰</button>
+</header>
+
 <div class="drawer-overlay" id="drawer-overlay"></div>
 <nav class="drawer" id="drawer">
-  <div class="drawer-head">🍲 Halal Kitchen</div>
+  <div class="drawer-head">Menu</div>
   <ul class="drawer-list">
-    <button class="drawer-item active" data-k="nav" data-v="home"><span>🏠</span> Home</button>
+    <button class="drawer-item active" data-k="nav" data-v="home"><span>🏠</span> Home & Pantry</button>
     <button class="drawer-item" data-k="nav" data-v="find"><span>🍳</span> Browse Recipes</button>
     <button class="drawer-item" data-k="nav" data-v="plan"><span>📅</span> Meal Planner</button>
     <button class="drawer-item" data-k="nav" data-v="mine"><span>📁</span> My Recipes</button>
-    <button class="drawer-item" data-k="nav" data-v="tools"><span>⚙️</span> Tools & Settings</button>
+    <button class="drawer-item" data-k="nav" data-v="tools"><span>✨</span> AI Studio</button>
   </ul>
 </nav>
-
-<header class="hero" id="main-header">
-  <div class="in">
-    <div class="top-bar">
-      <button class="menu-btn" id="menu-btn" aria-label="Open menu">☰</button>
-      <div class="brand">Halal Kitchen</div>
-    </div>
-    <h1>What shall we cook tonight?</h1>
-    <p><span id="hcount">Halal</span> recipes with calories, macros, air fryer settings, live pantry search and a weekly planner.</p>
-  </div>
-</header>
 
 <div class="wrap">
 
   <!-- VIEW: HOME -->
   <div id="view-home">
     <section class="box">
-      <h3>Your Pantry &amp; Ingredients</h3>
-      <p class="mu">Type an ingredient — suggestions appear below. Press Add or Enter to save it.</p>
+      <h3>Pantry & Ingredients</h3>
+      <p class="mu">Type an ingredient to see suggestions. Press Enter or Add to save it.</p>
       <div class="add">
-        <input type="text" id="in" autocomplete="off" placeholder="e.g. sal… → salmon, or pasta" aria-label="Ingredient you have">
+        <input type="text" id="in" autocomplete="off" placeholder="e.g. chicken, pasta, rice...">
         <button class="btn" id="addb" type="button">Add</button>
       </div>
       <div id="sugg" aria-live="polite"></div>
       <div id="ic"></div>
-      <label class="mu" style="display:flex;align-items:center;gap:8px;margin-top:12px;cursor:pointer">
-        <input type="checkbox" id="off-toggle">
-        <span>Also suggest real products from <strong>Open Food Facts</strong> <span style="opacity:.7">(online)</span></span>
+      <label class="mu" style="display:flex;align-items:center;gap:8px;margin-top:16px;cursor:pointer">
+        <input type="checkbox" id="off-toggle" style="accent-color:var(--g)">
+        <span>Search real products from Open Food Facts</span>
       </label>
-      <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
-        <button class="ch" data-k="clear-off" type="button" style="font-size:.82rem;margin:0">🗑️ Clear OFF cache</button>
-        <span class="mu" id="off-count" style="margin:0"></span>
-      </div>
     </section>
 
     <div id="out-home" class="home-matches"></div>
@@ -204,18 +233,18 @@ input[type=file]:hover{border-color:var(--g)}
   <!-- VIEW: MY RECIPES -->
   <div id="view-mine" hidden>
     <details class="box" open>
-      <summary>📁 Upload recipes from a file</summary>
-      <p class="mu">Upload TXT, MD, CSV, JSON, or PDF. If the standard parser fails, use the <b>AI Parse</b> button.</p>
+      <summary>📁 Import from File</summary>
+      <p class="mu" style="margin-top:10px">Upload TXT, MD, CSV, JSON, or PDF. If the standard parser fails, use the <b>AI Parse</b> button.</p>
       <input type="file" id="file-upload" accept=".txt,.md,.csv,.json,.pdf" multiple>
       <div id="file-results" aria-live="polite"></div>
       <div id="upload-preview"></div>
     </details>
 
     <details class="box">
-      <summary>✍️ Add a recipe manually</summary>
-      <p class="mu">Paste any recipe text with an "Ingredients" and "Method" section.</p>
-      <textarea id="pt" rows="6" placeholder="Spicy Lemon Salmon&#10;Ingredients&#10;2 salmon fillets&#10;1 tsp paprika&#10;1 lemon&#10;Method&#10;1. Air fry salmon at 190C for 10 mins"></textarea>
-      <div class="add" style="margin-top:10px">
+      <summary>✍️ Add Manually</summary>
+      <p class="mu" style="margin-top:10px">Paste any recipe text with an "Ingredients" and "Method" section.</p>
+      <textarea id="pt" rows="5" placeholder="Spicy Lemon Salmon..."></textarea>
+      <div class="add" style="margin-top:12px">
         <select id="pm2">
           <option value="">Meal: auto-detect</option>
           <option value="b">Breakfast</option>
@@ -224,59 +253,59 @@ input[type=file]:hover{border-color:var(--g)}
           <option value="s">Snack</option>
           <option value="t">Dessert</option>
         </select>
-        <button class="btn" id="pa" type="button">Add Recipe</button>
+        <button class="btn" id="pa" type="button">Save Recipe</button>
       </div>
       <p class="mu" id="pg" role="status"></p>
     </details>
 
     <div class="mine-header">
-      <h2>Your recipes (<span id="mine-count">0</span>)</h2>
+      <h2>My Recipes (<span id="mine-count">0</span>)</h2>
       <div>
         <button class="ch" data-k="filter-mine" data-v="all" type="button">All</button>
-        <button class="ch" data-k="filter-mine" data-v="ai" type="button">🤖 AI</button>
-        <button class="ch" data-k="delete-all-mine" type="button" style="color:#b00">🗑️ Delete all</button>
+        <button class="ch" data-k="filter-mine" data-v="ai" type="button">🤖 AI Only</button>
+        <button class="ch" data-k="delete-all-mine" type="button" style="color:#b00">🗑️ Clear</button>
       </div>
     </div>
     <div id="out-mine"></div>
   </div>
 
-  <!-- VIEW: TOOLS -->
+  <!-- VIEW: TOOLS (AI) -->
   <div id="view-tools" hidden>
     <section class="box">
-      <h3>🤖 Generate AI Halal Recipe</h3>
-      <p class="mu">Uses Gemini AI to write a custom recipe and saves it to "My Recipes".</p>
-      <textarea id="ask" rows="3" placeholder="e.g. high protein, air fryer, Turkish, under 20 mins."></textarea>
-      <button class="btn alt full" id="gen" type="button" style="margin-top:10px">Generate with Gemini</button>
-      <div class="mu" id="gm" role="status" style="margin-top:10px;white-space:pre-wrap;font-weight:600"></div>
+      <h3>✨ AI Recipe Studio</h3>
+      <p class="mu">Describe what you want. The AI will generate 3 ideas. You can refine your prompt or save the ones you like.</p>
+      
+      <textarea id="ask" rows="3" placeholder="e.g. Quick easy breakfast, high protein, under 10 mins"></textarea>
+      
+      <button class="btn alt full" id="gen" type="button" style="margin-top:12px">Generate Suggestions</button>
+      <div class="mu" id="gm" role="status" style="margin-top:12px;white-space:pre-wrap;font-weight:600"></div>
+      
+      <div id="ai-suggestions-container" style="margin-top:20px"></div>
     </section>
 
     <details class="box">
-      <summary>🔑 Gemini AI Settings</summary>
-      <p class="mu">Get a free API key from aistudio.google.com. Stored only in your browser.</p>
+      <summary>🔑 Gemini API Settings</summary>
+      <p class="mu" style="margin-top:10px">Get a free API key from aistudio.google.com. Stored only on this device.</p>
       <div class="add">
-        <input type="password" id="key" autocomplete="off" placeholder="AIzaSy..." aria-label="Gemini API Key">
-        <button class="btn" id="ks" type="button">Save Key</button>
+        <input type="password" id="key" autocomplete="off" placeholder="AIzaSy...">
+        <button class="btn outline" id="ks" type="button">Save</button>
       </div>
-      <p class="mu" id="kg" role="status"></p>
-      <div class="add" style="margin-top:10px">
-        <button class="ch" id="test-key" type="button" style="margin:0;flex:1">🧪 Test Key</button>
-        <button class="ch" id="clear-key" type="button" style="margin:0;flex:1">🗑️ Clear Key</button>
-      </div>
-      <button class="ch" id="open-key-guide" type="button" style="margin-top:10px">Free Key Guide</button>
+      <p class="mu" id="kg" role="status" style="margin-top:12px"></p>
+      <button class="ch" id="test-key" type="button">Test Key</button>
     </details>
   </div>
 
   <!-- VIEW: CHAT -->
   <div id="view-chat" hidden>
-    <div class="box" style="padding:14px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-        <h3 style="margin:0">🤖 Chat: <span id="chat-title"></span></h3>
-        <button class="ch" data-k="nav" data-v="home" type="button" style="margin:0">Back</button>
+    <div class="box" style="padding:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <h3 style="margin:0;font-size:1.1rem">🤖 Edit: <span id="chat-title"></span></h3>
+        <button class="ch" data-k="nav" data-v="home" type="button" style="margin:0">Done</button>
       </div>
       <div class="chat-container">
         <div class="chat-messages" id="chat-messages"></div>
         <div class="chat-input-area">
-          <input type="text" id="chat-input" placeholder="Ask to change ingredients, steps, etc..." autocomplete="off">
+          <input type="text" id="chat-input" placeholder="e.g. Make it spicier, swap chicken for tofu..." autocomplete="off">
           <button class="btn" id="chat-send" type="button">Send</button>
         </div>
       </div>
@@ -286,19 +315,6 @@ input[type=file]:hover{border-color:var(--g)}
 </div>
 
 <dialog id="dlg"><div class="in2"></div></dialog>
-
-<dialog id="key-dlg">
-  <div style="padding:22px">
-    <h2>Getting a Free Gemini API Key</h2>
-    <ol style="margin:14px 0;padding-left:20px;line-height:1.6">
-      <li>Visit <strong>aistudio.google.com</strong></li>
-      <li>Sign in with your Google account</li>
-      <li>Click "Get API key" → "Create API key"</li>
-      <li>Copy the key (starts with <code>AIzaSy...</code>) into settings.</li>
-    </ol>
-    <button class="btn" id="close-key-guide" type="button" style="width:100%;margin-top:12px">Got it!</button>
-  </div>
-</dialog>
 
 <script>
 if ('serviceWorker' in navigator) {
@@ -457,7 +473,8 @@ const st = {
   rawUploadText: "",
   mineFilter: "all",
   chatRecipe: null,
-  chatHistory: []
+  chatHistory: [],
+  aiSuggestions: [] // Store AI generated ideas before saving
 };
 
 function normalizeRecipe(r){
@@ -665,16 +682,13 @@ function initDatabase(){
   R = R.filter(r => r.i.length && r.s.length);
   R.forEach((r, i) => r.id = i);
   loadPantry();
-  $("#hcount").textContent = R.length;
 }
 
 let ALL_ING = [];
 function rebuildIngredientIndex(){
   const set = new Set();
   R.forEach(r => r.i.forEach(x => set.add(x)));
-  // Include base suggestions too
   COMMON_ING.forEach(x => set.add(x));
-  
   ALL_ING = [...set].sort((a,b) => a.localeCompare(b));
   expandCache.clear();
 }
@@ -691,7 +705,6 @@ function suggest(q){
     if (lc.startsWith(v)) starts.push(x);
     else if (lc.includes(v)) contains.push(x);
   });
-  // Returns 15 suggestions instead of 8
   return starts.concat(contains).slice(0, 15);
 }
 
@@ -739,39 +752,8 @@ async function idbPut(q, v){
     });
   } catch(e){ return false; }
 }
-async function idbCount(){
-  try {
-    if (!offDB) await openOFFDB();
-    return await new Promise(resolve => {
-      const tx = offDB.transaction(OFF_STORE, "readonly");
-      const req = tx.objectStore(OFF_STORE).count();
-      req.onsuccess = () => resolve(req.result);
-      req.onerror  = () => resolve(0);
-    });
-  } catch(e){ return 0; }
-}
-async function idbClear(){
-  try {
-    if (!offDB) await openOFFDB();
-    return await new Promise(resolve => {
-      const tx = offDB.transaction(OFF_STORE, "readwrite");
-      tx.objectStore(OFF_STORE).clear();
-      tx.oncomplete = () => resolve(true);
-      tx.onerror    = () => resolve(false);
-    });
-  } catch(e){ return false; }
-}
 async function updateCacheCount(){
-  const el = document.getElementById("off-count");
-  if (!el) return;
-  const n = await idbCount();
-  el.textContent = n ? `(${n} cached)` : "";
-}
-async function clearOFFCache(){
-  if (!confirm("Clear all cached Open Food Facts searches?\n\nYour pantry, recipes and AI recipes are unaffected.")) return;
-  await idbClear();
-  updateCacheCount();
-  alert("OFF cache cleared. Next searches will hit the network.");
+  // Removed visual indicator to keep UI minimal
 }
 async function searchOFF(q){
   if (!navigator.onLine) return [];
@@ -787,7 +769,6 @@ async function searchOFF(q){
   names.forEach(n => { if (!seen.has(n)){ seen.add(n); out.push(n); } });
   const result = out.slice(0, 6);
   await idbPut(q, result);
-  updateCacheCount();
   return result;
 }
 let offTimer = null, offSeq = 0, offLoading = false, offResults = [];
@@ -802,9 +783,6 @@ async function scheduleOffSearch(q){
   if (seq !== offSeq) return;
   if (cached){
     offResults = cached.v; offLoading = false; renderSuggestions();
-    if (navigator.onLine && (Date.now() - cached.t) > OFF_STALE_MS){
-      searchOFF(q).then(fresh => { if (seq !== offSeq) return; offResults = fresh; renderSuggestions(); }).catch(() => {});
-    }
     return;
   }
   offLoading = true; offResults = [];
@@ -823,8 +801,8 @@ function renderSuggestions(){
   const off = offResults.filter(x => !localLc.has(x.toLowerCase())).slice(0, 6);
   let html = local.map(x => `<button class="ch" data-k="pick" data-v="${esc(x)}" type="button">+ ${esc(x)}</button>`).join("");
   html += off.map(x => `<button class="ch off" data-k="pick" data-v="${esc(x)}" type="button" title="From Open Food Facts">🌐 ${esc(x)}</button>`).join("");
-  if (offLoading) html += `<span class="mu" style="align-self:center">Searching Open Food Facts…</span>`;
-  if (!local.length && !off.length && q && !offLoading) html = `<span class="mu">No matches — press Add to save "${esc(q)}" as typed.</span>`;
+  if (offLoading) html += `<span class="mu" style="align-self:center">Searching…</span>`;
+  if (!local.length && !off.length && q && !offLoading) html = `<span class="mu">No matches — press Add to save "${esc(q)}".</span>`;
   $("#sugg").innerHTML = html;
 }
 
@@ -857,10 +835,6 @@ function switchView(v){
   document.getElementById('view-tools').hidden = v !== 'tools';
   document.getElementById('view-chat').hidden = v !== 'chat';
   
-  const hero = document.getElementById('main-header');
-  if (v === 'home') hero.classList.remove('compact');
-  else hero.classList.add('compact');
-
   document.querySelectorAll('.drawer-item').forEach(b => {
     b.classList.toggle('active', b.dataset.v === v);
   });
@@ -879,7 +853,7 @@ const chips = (k, obj, cur) => Object.entries(obj).map(([v,l]) => {
   return `<button class="ch${on ? " on" : ""}" data-k="${k}" data-v="${v}" type="button" aria-pressed="${on}">${l}</button>`;
 }).join("");
 
-const fpn = () => st.fo ? `<div class="box fp">
+const fpn = () => st.fo ? `<div class="box fp" style="margin-bottom:16px">
   <div><b>Appliance</b>${chips("me", {"":"Any", ...ME}, st.me)}</div>
   <div><b>Max Cooking Time</b>${chips("tm", {"0":"Any","5":"Under 5 min","10":"Under 10 min","15":"Under 15 min","30":"Under 30 min"}, st.tm)}</div>
   <div><b>Dietary Filters</b>${chips("tg", TG, st.tg)}</div>
@@ -887,19 +861,22 @@ const fpn = () => st.fo ? `<div class="box fp">
 
 const fbar = () => {
   const n = (st.me ? 1 : 0) + (+st.tm ? 1 : 0) + st.tg.size;
-  return `<button class="ch${st.fo ? " on" : ""}" data-k="fo" type="button" aria-expanded="${st.fo}">Filters${n ? ` (${n})` : ""}</button>` + (n ? `<button class="ch" data-k="clr" type="button">Clear filters</button>` : "");
+  return `<button class="ch${st.fo ? " on" : ""}" data-k="fo" type="button" aria-expanded="${st.fo}">Filters${n ? ` (${n})` : ""}</button>` + (n ? `<button class="ch" data-k="clr" type="button">Clear</button>` : "");
 };
 
 const card = r => {
   const s = sc(r);
   const active = st.ing.length > 0;
   return `<div class="rc" role="button" tabindex="0" data-k="open" data-v="${r.id}">
-    <div class="th m${r.m}"><span>${E[r.m] || "🍲"}</span><b>🔥 ${r.cal} kcal</b></div>
+    <div class="th">
+      <span>${E[r.m] || "🍲"}</span>
+      <b>🔥 ${r.cal} kcal</b>
+    </div>
     <div class="bd">
       <h3>${esc(r.n)}</h3>
       <p class="mu">${esc(r.c)} • ⏱️ ${r.t} min • ${mel(r)}</p>
       <div>${tagsHtml(r)}</div>
-      ${active ? `<div class="mt2"><i style="width:${Math.round(ratio(s)*100)}%"></i></div><p class="mu">Pantry: ${s.h}/${s.tot}.${s.miss.length ? ` Need ${s.miss.length} more.` : " Ready to cook!"}</p>` : ""}
+      ${active ? `<div class="mt2"><i style="width:${Math.round(ratio(s)*100)}%"></i></div><p class="mu" style="margin-top:4px">Pantry: ${s.h}/${s.tot}.${s.miss.length ? ` Need ${s.miss.length}.` : " Ready!"}</p>` : ""}
       <div class="action-row">
         <button class="chat-btn" data-k="chat-edit" data-v="${r.id}" type="button">🤖 Chat</button>
       </div>
@@ -909,7 +886,10 @@ const card = r => {
 
 const userCard = r => {
   return `<div class="rc" role="button" tabindex="0" data-k="open" data-v="${r.id}">
-    <div class="th m${r.m}"><span>${E[r.m] || "🍲"}</span><b>🔥 ${r.cal} kcal</b></div>
+    <div class="th">
+      <span>${E[r.m] || "🍲"}</span>
+      <b>🔥 ${r.cal} kcal</b>
+    </div>
     <div class="bd">
       <h3>${esc(r.n)}</h3>
       <p class="mu">${esc(r.c)} • ⏱️ ${r.t} min • ${mel(r)}</p>
@@ -925,8 +905,8 @@ const userCard = r => {
 function rHome(){
   const out = $("#out-home");
   if (!st.ing.length){
-    out.innerHTML = `<div class="box" style="text-align:center;padding:28px">
-      <p class="mu" style="margin:0 0 12px">Add some ingredients above to find matching recipes.</p>
+    out.innerHTML = `<div class="box" style="text-align:center;padding:32px">
+      <p class="mu" style="margin:0 0 16px">Add some ingredients above to find matching recipes.</p>
       <button class="btn" data-k="nav" data-v="find" type="button">Browse all ${R.length} recipes →</button>
     </div>`;
     return;
@@ -943,7 +923,7 @@ function rHome(){
   const preview = L.slice(0, 3);
   out.innerHTML = `<h2>${L.length} recipe${L.length === 1 ? "" : "s"} match${L.length === 1 ? "es" : ""}</h2>
     <div class="grid">${preview.map(card).join("")}</div>
-    ${L.length > 3 ? `<div class="load-more-wrap"><button class="btn" data-k="nav" data-v="find" type="button">See all ${L.length} matches →</button></div>` : ""}`;
+    ${L.length > 3 ? `<div class="load-more-wrap"><button class="btn outline" data-k="nav" data-v="find" type="button">See all ${L.length} matches →</button></div>` : ""}`;
 }
 
 function rM(){
@@ -965,15 +945,15 @@ function rM(){
   let html = `<div class="cats">${cats}</div>
   <div class="bar2">
     ${fbar()}
-    ${st.ing.length ? `<label><input type="checkbox" id="full" ${st.full ? "checked" : ""}> Only recipes I can fully make</label>` : ""}
-    <button class="btn alt" data-k="rand" type="button" style="margin-left:auto">Surprise me</button>
+    ${st.ing.length ? `<label><input type="checkbox" id="full" ${st.full ? "checked" : ""} style="accent-color:var(--g)"> Only show what I can fully make</label>` : ""}
+    <button class="btn outline" data-k="rand" type="button" style="margin-left:auto;padding:6px 14px;font-size:.85rem">🎲 Surprise me</button>
   </div>
   ${fpn()}
   <h2 class="cnt">${totalFound} recipe${totalFound === 1 ? "" : "s"}${st.ing.length ? " matching your pantry" : ""}</h2>`;
   if (totalFound){
     html += `<div class="grid">${visibleList.map(card).join("")}</div>`;
     if (totalFound > st.limit){
-      html += `<div class="load-more-wrap"><button class="btn" data-k="load-more" type="button">Show More Recipes (${totalFound - st.limit} remaining)</button></div>`;
+      html += `<div class="load-more-wrap"><button class="btn outline" data-k="load-more" type="button">Show More Recipes (${totalFound - st.limit} remaining)</button></div>`;
     }
   } else {
     html += `<p class="mu">No recipes match these filters. ${st.ing.length ? "Try removing an ingredient or clearing filters." : "Try clearing filters."}</p>`;
@@ -994,7 +974,7 @@ function rMine(){
   $("#mine-count").textContent = mine.length;
   const out = $("#out-mine");
   if (!mine.length){
-    out.innerHTML = `<div class="box" style="text-align:center;padding:28px"><p class="mu" style="margin:0">You haven't added any recipes yet.</p></div>`;
+    out.innerHTML = `<div class="box" style="text-align:center;padding:32px"><p class="mu" style="margin:0">You haven't added any recipes yet.</p></div>`;
     return;
   }
   out.innerHTML = `<div class="grid">${mine.map(userCard).join("")}</div>`;
@@ -1049,7 +1029,7 @@ function shop(plan){
   return `<div class="box" style="margin-top:16px">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
       <h2>Shopping List</h2>
-      <button class="btn" data-k="copy" type="button">📋 Copy List</button>
+      <button class="btn outline" data-k="copy" type="button" style="padding:8px 16px">📋 Copy</button>
     </div>
     <p class="mu">${st.ing.length ? "Only items missing from your pantry are shown." : "Everything your planned week needs."}</p>
     ${keys.length ? `<ul class="sl">${keys.map(x => `<li>${esc(x)}${c[x] > 1 ? ` ×${c[x]}` : ""}</li>`).join("")}</ul>` : `<p class="mu">Your pantry covers everything in this plan.</p>`}
@@ -1059,39 +1039,44 @@ function rP(out){
   const pl = st.plan;
   out.innerHTML = `<div class="box">
     <h2>Weekly Meal Planner</h2>
-    <div style="margin-top:10px"><p class="mu">Number of Days</p>${chips("days", {"3":"3 days","5":"5 days","7":"7 days"}, st.days)}</div>
+    <div style="margin-top:16px"><p class="mu">Number of Days</p>${chips("days", {"3":"3 days","5":"5 days","7":"7 days"}, st.days)}</div>
     <div><p class="mu">Meals to Plan</p>${chips("pm", {b:"Breakfast", l:"Lunch", d:"Dinner", s:"Snack"}, st.pm)}</div>
-    <div class="bar2">
+    <div class="bar2" style="margin-top:12px">
       ${fbar()}
-      ${st.ing.length ? `<label><input type="checkbox" id="fav" ${st.fav ? "checked" : ""}> Prioritise my pantry</label>` : ""}
+      ${st.ing.length ? `<label><input type="checkbox" id="fav" ${st.fav ? "checked" : ""} style="accent-color:var(--g)"> Prioritise my pantry</label>` : ""}
     </div>
     ${fpn()}
-    <div style="display:flex;gap:8px;margin-top:10px">
-      <button class="btn" data-k="build" type="button" style="flex:1">${pl ? "Rebuild Plan" : "Generate Weekly Plan"}</button>
-      <button class="btn alt" data-k="build-ai" type="button" style="flex:1">🤖 Generate with AI</button>
+    <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap">
+      <button class="btn outline" data-k="build" type="button" style="flex:1">${pl ? "Rebuild" : "Generate Plan"}</button>
+      <button class="btn alt" data-k="build-ai" type="button" style="flex:1">🤖 AI Plan</button>
     </div>
-    <p class="mu" id="plan-ai-status" style="margin-top:10px;font-weight:600"></p>
+    <p class="mu" id="plan-ai-status" style="margin-top:12px;font-weight:600"></p>
     ${!st.pm.size ? `<p class="mu" style="color:#b00">Pick at least one meal above.</p>` : ""}
   </div>
   ${pl ? `<div class="grid">${pl.map((d,i) => `<section class="day"><h3>${DN[i]}</h3>
       ${Object.entries(d).map(([k,r]) => `<div class="row">
-        <span class="mu">${M[k]}</span>
+        <span class="mu" style="margin:0">${M[k]}</span>
         ${r ? `<button class="lk" data-k="open" data-v="${r.id}" type="button">${esc(r.n)}</button><button class="rr" data-k="rr" data-v="${i},${k}" type="button" aria-label="Swap ${esc(r.n)}">↻</button>` : `<span class="mu">No match</span>`}
       </div>`).join("")}
     </section>`).join("")}</div>` : ""}
-  ${pl ? shop(pl) : `<p class="mu">Choose your preferences and generate a plan.</p>`}`;
+  ${pl ? shop(pl) : `<p class="mu" style="text-align:center">Choose your preferences and generate a plan.</p>`}`;
 }
 
 function openModal(d){ if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open",""); }
 function closeModal(d){ if (typeof d.close === "function") d.close(); else d.removeAttribute("open"); }
 
 function openRecipe(id){
-  const r = R[id];
+  const r = R[id] || st.aiSuggestions[id];
   if (!r) return;
   const active = st.ing.length > 0;
   const ings = r.i, steps = r.s;
+  const isSuggestion = !r.u && st.aiSuggestions.length > 0;
+  
   $("#dlg .in2").innerHTML = `
-    <div class="dh m${r.m}"><span>${E[r.m] || "🍲"}</span><button class="x" data-k="close" type="button" aria-label="Close">×</button></div>
+    <div class="dh">
+      <span>${E[r.m] || "🍲"}</span>
+      <button class="x" data-k="close" type="button" aria-label="Close">×</button>
+    </div>
     <h2>${esc(r.n)}</h2>
     <p class="mu">${esc(r.c)} • ⏱️ ${r.t} min • Appliance: <strong>${mel(r)}</strong></p>
     <div class="macro-grid">
@@ -1101,15 +1086,18 @@ function openRecipe(id){
       <div class="macro-item"><span>Fat</span><b>${r.f}g</b></div>
     </div>
     <div>${tagsHtml(r)}</div>
-    <h3 style="margin-top:16px">Ingredients Needed</h3>
+    <h3 style="margin-top:24px">Ingredients Needed</h3>
     <ul class="il">${ings.map(x => `<li class="${active && !pantryHas(x) ? "no" : ""}">${active ? (pantryHas(x) ? "✓ " : "Need: ") : "• "}${esc(x)}</li>`).join("")}</ul>
     <h3>Step-by-Step Instructions</h3>
     <ol class="st">${steps.map(x => `<li><span>${esc(x)}</span></li>`).join("")}</ol>
     <p class="mu">Cooking oil, salt and black pepper assumed. All meat must be halal certified.</p>
     
-    <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap">
-      <button class="btn" data-k="chat-edit" data-v="${r.id}" type="button" style="flex:1">🤖 Chat & Modify</button>
-      ${r.u ? `<button class="btn" data-k="del" data-v="${r.id}" type="button" style="background:#b00;color:#fff">🗑️ Delete</button>` : ""}
+    <div style="display:flex;gap:8px;margin-top:24px;flex-wrap:wrap">
+      ${isSuggestion 
+        ? `<button class="btn full" data-k="save-suggestion" data-v="${id}" type="button">💾 Save to My Recipes</button>`
+        : `<button class="btn" data-k="chat-edit" data-v="${r.id}" type="button" style="flex:1">🤖 Chat & Modify</button>
+           ${r.u ? `<button class="btn" data-k="del" data-v="${r.id}" type="button" style="background:#b00;color:#fff">🗑️ Delete</button>` : ""}`
+      }
     </div>`;
   openModal($("#dlg"));
 }
@@ -1134,7 +1122,7 @@ const BAD = /pork|bacon|\bham\b|lard|wine|beer|\brum\b|gelatin|gelatine|alcohol|
 async function aiGemini(prompt, requireJson = true){
   if (!navigator.onLine) throw new Error("You are offline.");
   const k = KEY();
-  if (!k) throw new Error("API Key is missing. Please save it in Settings.");
+  if (!k) throw new Error("API Key is missing. Please save it in AI Studio Settings.");
   
   const models = ["gemini-2.0-flash", "gemini-flash-latest", "gemini-1.5-flash-latest"];
   const sys = "You are a Halal chef AI. STRICT HALAL: absolutely no pork, bacon, lard, ham, alcohol, wine, beer, mirin, sake or gelatine.";
@@ -1176,44 +1164,67 @@ async function aiGemini(prompt, requireJson = true){
 
 async function genAI(){
   const g = $("#gm");
+  const container = $("#ai-suggestions-container");
+  
   g.style.color = "var(--mut)";
-  g.textContent = "Generating a recipe with Gemini…";
+  g.innerHTML = `<span class="spinner"></span> AI is brainstorming...`;
+  container.innerHTML = "";
+  st.aiSuggestions = [];
+  
   try {
     const req = $("#ask").value.trim() || "quick simple halal recipe";
-    const has = st.ing.length ? st.ing.join(", ") : "eggs, bread, tuna";
-    const raw = await aiGemini(`Write one short easy 100% halal recipe using mainly these ingredients: ${has}. Extra preference: ${req}. Return JSON: {"n":"Title","m":"b","c":"Cuisine","t":15,"me":"a","tg":"hpvVg","cal":380,"p":28,"car":32,"f":14,"i":["2 eggs"],"s":["Step 1"]}`);
+    const has = st.ing.length ? st.ing.join(", ") : "basic pantry staples";
     
-    if (BAD.test(JSON.stringify(raw))){
-      g.style.color = "#b00";
-      g.textContent = "The generated recipe contained non-halal ingredients and was blocked.";
-      return;
-    }
+    const prompt = `Write 3 distinct halal recipe ideas based on this request: "${req}". Use mainly these ingredients if possible: ${has}.
+    Return a JSON array of exactly 3 objects. Each object must have: "n" (Title), "m" (b/l/d/s/t), "c" (Cuisine), "t" (minutes), "me" (asomn), "tg" (hpvVg), "cal" (number), "p" (number), "car" (number), "f" (number), "i" (array of strings), "s" (array of strings).`;
+
+    const rawArray = await aiGemini(prompt);
     
-    const v = normalizeRecipe(raw);
-    if (!v.n || !v.i.length || !v.s.length) throw new Error("Unusable recipe format.");
+    if (!Array.isArray(rawArray)) throw new Error("AI did not return an array.");
     
-    v.id = R.length; v.ai = 1; v.u = 1;
-    R.push(v);
-    saveCustomRecipes();
-    rebuildIngredientIndex(); // This updates the database with new ingredients
-    $("#hcount").textContent = R.length;
+    st.aiSuggestions = rawArray.map(raw => {
+      if (BAD.test(JSON.stringify(raw))) throw new Error("Generated non-halal content.");
+      return normalizeRecipe({...raw, u: 1, ai: 1});
+    });
     
     g.style.color = "var(--g)";
-    g.textContent = `Success! Saved "${v.n}" to My Recipes.`;
+    g.textContent = "✅ Here are 3 suggestions. Refine your prompt above or save the ones you like.";
     
-    st.limit = 12;
-    switchView('mine');
+    container.innerHTML = st.aiSuggestions.map((r, i) => `
+      <div class="ai-suggestion-card">
+        <h4>${esc(r.n)}</h4>
+        <p>${r.cal} kcal • ${r.t} min • ${r.p}g protein</p>
+        <div class="ai-suggestion-actions">
+          <button class="btn outline" data-k="open-suggestion" data-v="${i}" type="button" style="flex:1">View Recipe</button>
+          <button class="btn" data-k="save-suggestion" data-v="${i}" type="button" style="flex:1">Save</button>
+        </div>
+      </div>
+    `).join("");
+    
   } catch(e){
     g.style.color = "#b00";
-    g.textContent = e.message;
+    g.textContent = `❌ ${e.message}`;
   }
+}
+
+function saveSuggestion(idx) {
+  const r = st.aiSuggestions[idx];
+  if (!r) return;
+  
+  r.id = R.length;
+  R.push(r);
+  saveCustomRecipes();
+  rebuildIngredientIndex();
+  
+  closeModal($("#dlg"));
+  switchView('mine');
 }
 
 function saveKey(){
   const v = $("#key").value.trim();
   try { v ? localStorage.setItem("hk-gemini-key", v) : localStorage.removeItem("hk-gemini-key"); } catch(e){}
   $("#key").value = "";
-  $("#kg").textContent = v ? "Gemini API key saved on this device." : "Key removed.";
+  $("#kg").textContent = v ? "✅ API key saved." : "Key removed.";
   $("#kg").style.color = v ? "var(--g)" : "var(--mut)";
 }
 
@@ -1233,7 +1244,7 @@ async function testKey(){
 
 /* ---------------- AI Chat Logic ---------------- */
 function startChat(id) {
-  const r = R[id];
+  const r = R[id] || st.aiSuggestions[id];
   if (!r) return;
   st.chatRecipe = JSON.parse(JSON.stringify(r)); // Clone it
   st.chatHistory = [{
@@ -1262,7 +1273,6 @@ async function sendChatMessage() {
   st.chatHistory.push({ role: "user", text: msg });
   rChat();
   
-  // Add loading bubble
   const loadId = "load-" + Date.now();
   st.chatHistory.push({ role: "ai", text: "Thinking...", id: loadId });
   rChat();
@@ -1278,7 +1288,6 @@ Update the recipe based on their request. Return the ENTIRE updated recipe in th
 
     const newRecipeData = await aiGemini(prompt);
     
-    // Remove loading bubble
     st.chatHistory = st.chatHistory.filter(h => h.id !== loadId);
     
     if (BAD.test(JSON.stringify(newRecipeData))) {
@@ -1286,17 +1295,14 @@ Update the recipe based on their request. Return the ENTIRE updated recipe in th
     }
     
     const updated = normalizeRecipe(newRecipeData);
-    updated.u = 1; // Ensure it saves as a custom recipe
+    updated.u = 1; 
     updated.ai = 1;
-    updated.id = R.length; // New ID
+    updated.id = R.length; 
     
-    // Save to database
     R.push(updated);
     saveCustomRecipes();
     rebuildIngredientIndex();
-    $("#hcount").textContent = R.length;
     
-    // Update chat state
     st.chatRecipe = JSON.parse(JSON.stringify(updated));
     
     st.chatHistory.push({ 
@@ -1318,7 +1324,7 @@ async function buildAIMealPlan() {
   if (!st.pm.size) return alert("Pick at least one meal to plan.");
   
   status.style.color = "var(--mut)";
-  status.innerHTML = `<span class="spinner"></span> AI is designing your week...`;
+  status.innerHTML = `<span class="spinner"></span> Designing your week...`;
   
   try {
     const meals = Object.keys(M).filter(k => st.pm.has(k)).map(k => M[k]).join(", ");
@@ -1342,10 +1348,8 @@ async function buildAIMealPlan() {
     }
     
     saveCustomRecipes();
-    rebuildIngredientIndex(); // Update ingredient database
-    $("#hcount").textContent = R.length;
+    rebuildIngredientIndex();
     
-    // Assign to plan grid
     const mealKeys = Object.keys(M).filter(k => st.pm.has(k));
     let idx = 0;
     st.plan = Array.from({length: +st.days}, () => {
@@ -1354,14 +1358,14 @@ async function buildAIMealPlan() {
         if (idx < newRecipes.length) {
           day[k] = newRecipes[idx++];
         } else {
-          day[k] = pick(k, new Set()); // fallback
+          day[k] = pick(k, new Set());
         }
       });
       return day;
     });
     
     status.style.color = "var(--g)";
-    status.textContent = "✅ Plan generated! Scroll down to view it.";
+    status.textContent = "✅ Plan generated!";
     rP(document.getElementById('out-plan'));
     
   } catch(e) {
@@ -1507,9 +1511,9 @@ async function handleFileUpload(files){
   }
 
   if (!st.pending.length) {
-    bar.innerHTML = `<div class="warn-box">Standard text parser found 0 recipes. This happens with messy PDFs.</div>`;
+    bar.innerHTML = `<div class="warn-box">Standard parser found 0 recipes. Use AI Parse below.</div>`;
   } else {
-    bar.innerHTML = `<div class="ok-box">✅ Found ${st.pending.length} recipes using the standard text parser.</div>`;
+    bar.innerHTML = `<div class="ok-box">✅ Found ${st.pending.length} recipes.</div>`;
   }
   
   showUploadPreview();
@@ -1520,7 +1524,7 @@ function showUploadPreview() {
   let html = "";
 
   if (!st.pending.length) {
-    html += `<button class="btn alt full" id="ai-parse-btn" type="button" onclick="triggerAIParse()">🤖 Let AI parse this file instead</button>
+    html += `<button class="btn alt full" id="ai-parse-btn" type="button" onclick="triggerAIParse()">🤖 Parse this file with AI</button>
              <div class="mu" id="ai-parse-status" style="margin-top:10px;text-align:center"></div>`;
   } else {
     html += `<h4>Select recipes to import:</h4>`;
@@ -1586,8 +1590,7 @@ function confirmImport(){
 
   if (added > 0) {
     saveCustomRecipes();
-    rebuildIngredientIndex(); // Adds new ingredients
-    $("#hcount").textContent = R.length;
+    rebuildIngredientIndex(); 
     $("#upload-preview").innerHTML = `<div class="ok-box">✅ Successfully imported ${added} recipes!</div>`;
     $("#file-results").innerHTML = "";
     rMine();
@@ -1682,9 +1685,9 @@ function addCustomRecipe(){
   R.push(r);
   saveCustomRecipes();
   rebuildIngredientIndex();
-  $("#hcount").textContent = R.length;
   $("#pt").value = "";
-  g.textContent = `Saved "${r.n}" — it is now available offline.`;
+  g.textContent = `✅ Saved "${r.n}".`;
+  g.style.color = "var(--g)";
   
   st.limit = 12;
   switchView('mine');
@@ -1703,8 +1706,6 @@ document.getElementById('drawer-overlay').addEventListener('click', () => {
 document.addEventListener("click", e => {
   const t = e.target;
 
-  if (t.id === "open-key-guide")  return openModal($("#key-dlg"));
-  if (t.id === "close-key-guide") return closeModal($("#key-dlg"));
   if (t.id === "addb") return addI($("#in").value);
   if (t.id === "gen")  return genAI();
   if (t.id === "ks")   return saveKey();
@@ -1721,6 +1722,8 @@ document.addEventListener("click", e => {
   switch (k){
     case "nav": switchView(v); return;
     case "chat-edit": return startChat(+v);
+    case "open-suggestion": return openRecipe(+v);
+    case "save-suggestion": return saveSuggestion(+v);
     case "filter-mine": st.mineFilter = v; rMine(); return;
     case "tg": case "pm":
       st[k].has(v) ? st[k].delete(v) : st[k].add(v);
@@ -1737,13 +1740,12 @@ document.addEventListener("click", e => {
     case "del":  return deleteRecipe(+v);
     case "pick": return addI(v);
     case "copy": return copyShoppingList();
-    case "clear-off": clearOFFCache(); return;
     case "load-more": st.limit += 12; break;
     case "delete-all-mine":
       if(confirm("Delete ALL your custom recipes? This cannot be undone.")) {
         R = R.filter(r => !r.u);
         R.forEach((r,i) => r.id = i);
-        saveCustomRecipes(); rMine(); rHome(); $("#hcount").textContent = R.length;
+        saveCustomRecipes(); rMine(); rHome();
       }
       return;
     case "rand": {
@@ -1820,7 +1822,6 @@ initDatabase();
 rebuildIngredientIndex();
 const offT = $("#off-toggle");
 if (offT) offT.checked = offEnabled();
-updateCacheCount();
 rC();
 switchView('home');
 </script>
