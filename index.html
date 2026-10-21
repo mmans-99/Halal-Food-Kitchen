@@ -17,8 +17,9 @@ h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,seri
 h2{font-size:1.45rem}h3{font-size:1.1rem}
 button,select,input,textarea{font:inherit;color:inherit}
 
-.hero{background:#0B5D4B url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Cg fill='none' stroke='white' stroke-opacity='.1' stroke-width='1.5'%3E%3Crect x='12' y='12' width='32' height='32'/%3E%3Crect x='12' y='12' width='32' height='32' transform='rotate(45 28 28)'/%3E%3C/g%3E%3C/svg%3E");color:#fff;padding:calc(16px + env(safe-area-inset-top,0px)) 20px 64px;position:relative;transition:padding .3s}
-.hero.compact{padding-bottom:16px}
+/* Fixed Header Layout */
+.hero{background:#0B5D4B url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Cg fill='none' stroke='white' stroke-opacity='.1' stroke-width='1.5'%3E%3Crect x='12' y='12' width='32' height='32'/%3E%3Crect x='12' y='12' width='32' height='32' transform='rotate(45 28 28)'/%3E%3C/g%3E%3C/svg%3E");color:#fff;padding:calc(16px + env(safe-area-inset-top,0px)) 20px 64px;position:relative;transition:padding .3s,border-radius .3s}
+.hero.compact{padding-bottom:16px;border-radius:0 0 20px 20px;box-shadow:0 4px 12px rgba(0,0,0,0.1)}
 .hero.compact h1, .hero.compact p{display:none}
 .hero.compact .top-bar{margin-bottom:0}
 .in{max-width:960px;margin:auto}
@@ -38,8 +39,9 @@ button,select,input,textarea{font:inherit;color:inherit}
 .drawer-item:hover,.drawer-item.active{background:var(--g2);color:var(--g)}
 .drawer-item span{display:inline-block;width:28px;font-size:1.2rem}
 
-.wrap{max-width:960px;margin:-40px auto 0;padding:0 16px 56px}
-.hero.compact + .wrap{margin-top:-16px}
+/* Main Content Layout */
+.wrap{max-width:960px;margin:0 auto;padding:20px 16px 56px;transition:margin .3s}
+.hero:not(.compact) + .wrap{margin-top:-40px}
 .box{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 10px 28px -14px rgba(11,93,75,.35);margin-bottom:16px}
 .add{display:flex;gap:8px}
 input[type=text],input[type=password],select,textarea{flex:1;min-width:0;padding:13px 15px;border-radius:13px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)}
@@ -119,15 +121,18 @@ input[type=file]:hover{border-color:var(--g)}
 .upload-status{padding:14px;background:var(--g2);border-radius:12px;margin-top:12px;font-size:.92rem;display:flex;align-items:center;gap:10px}
 .spinner{width:18px;height:18px;border:2px solid var(--g);border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;flex:none}
 @keyframes spin{to{transform:rotate(360deg)}}
-.rc .del-btn{background:var(--bg);border:1px solid var(--line);color:#b00;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:.82rem;margin-top:auto;align-self:flex-start}
-.rc .del-btn:hover{background:#fee;border-color:#fcc}
+
 .mine-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px;flex-wrap:wrap}
 .home-matches{margin-top:16px}
 .home-matches h2{margin-bottom:8px}
 [hidden]{display:none !important}
 
+.rc .action-row { display:flex; gap:8px; margin-top:auto; padding-top:10px; }
+.rc .del-btn{background:var(--bg);border:1px solid var(--line);color:#b00;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:.78rem}
+.rc .chat-btn{background:var(--g2);border:1px solid var(--g);color:var(--g);padding:6px 10px;border-radius:8px;cursor:pointer;font-size:.78rem;font-weight:600}
+
 /* Chat UI */
-.chat-container{display:flex;flex-direction:column;height:70vh;background:var(--bg);border-radius:16px;border:1px solid var(--line);overflow:hidden}
+.chat-container{display:flex;flex-direction:column;height:65vh;background:var(--bg);border-radius:16px;border:1px solid var(--line);overflow:hidden}
 .chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
 .chat-bubble{max-width:85%;padding:12px 16px;border-radius:16px;font-size:.95rem;line-height:1.4}
 .chat-bubble.user{align-self:flex-end;background:var(--g);color:var(--on);border-bottom-right-radius:4px}
@@ -228,8 +233,8 @@ input[type=file]:hover{border-color:var(--g)}
       <h2>Your recipes (<span id="mine-count">0</span>)</h2>
       <div>
         <button class="ch" data-k="filter-mine" data-v="all" type="button">All</button>
-        <button class="ch" data-k="filter-mine" data-v="ai" type="button">🤖 AI Generated</button>
-        <button class="ch" data-k="delete-all-mine" type="button" style="color:#b00">Delete all</button>
+        <button class="ch" data-k="filter-mine" data-v="ai" type="button">🤖 AI</button>
+        <button class="ch" data-k="delete-all-mine" type="button" style="color:#b00">🗑️ Delete all</button>
       </div>
     </div>
     <div id="out-mine"></div>
@@ -667,6 +672,9 @@ let ALL_ING = [];
 function rebuildIngredientIndex(){
   const set = new Set();
   R.forEach(r => r.i.forEach(x => set.add(x)));
+  // Include base suggestions too
+  COMMON_ING.forEach(x => set.add(x));
+  
   ALL_ING = [...set].sort((a,b) => a.localeCompare(b));
   expandCache.clear();
 }
@@ -675,15 +683,16 @@ function suggest(q){
   if (!v) return [];
   const starts = [], contains = [];
   const seen = new Set();
-  const pool = [...ALL_ING, ...COMMON_ING];
-  pool.forEach(x => {
+  
+  ALL_ING.forEach(x => {
     const lc = x.toLowerCase();
     if (seen.has(lc)) return;
     seen.add(lc);
     if (lc.startsWith(v)) starts.push(x);
     else if (lc.includes(v)) contains.push(x);
   });
-  return starts.concat(contains).slice(0, 8);
+  // Returns 15 suggestions instead of 8
+  return starts.concat(contains).slice(0, 15);
 }
 
 /* ---------------- Open Food Facts ---------------- */
@@ -891,18 +900,24 @@ const card = r => {
       <p class="mu">${esc(r.c)} • ⏱️ ${r.t} min • ${mel(r)}</p>
       <div>${tagsHtml(r)}</div>
       ${active ? `<div class="mt2"><i style="width:${Math.round(ratio(s)*100)}%"></i></div><p class="mu">Pantry: ${s.h}/${s.tot}.${s.miss.length ? ` Need ${s.miss.length} more.` : " Ready to cook!"}</p>` : ""}
+      <div class="action-row">
+        <button class="chat-btn" data-k="chat-edit" data-v="${r.id}" type="button">🤖 Chat</button>
+      </div>
     </div>
   </div>`;
 };
 
 const userCard = r => {
-  return `<div class="rc">
+  return `<div class="rc" role="button" tabindex="0" data-k="open" data-v="${r.id}">
     <div class="th m${r.m}"><span>${E[r.m] || "🍲"}</span><b>🔥 ${r.cal} kcal</b></div>
     <div class="bd">
       <h3>${esc(r.n)}</h3>
       <p class="mu">${esc(r.c)} • ⏱️ ${r.t} min • ${mel(r)}</p>
       <div>${tagsHtml(r)}</div>
-      <button class="del-btn" data-k="del" data-v="${r.id}" type="button">🗑️ Delete</button>
+      <div class="action-row">
+        <button class="chat-btn" data-k="chat-edit" data-v="${r.id}" type="button">🤖 Chat</button>
+        <button class="del-btn" data-k="del" data-v="${r.id}" type="button">🗑️ Delete</button>
+      </div>
     </div>
   </div>`;
 };
@@ -1180,7 +1195,7 @@ async function genAI(){
     v.id = R.length; v.ai = 1; v.u = 1;
     R.push(v);
     saveCustomRecipes();
-    rebuildIngredientIndex();
+    rebuildIngredientIndex(); // This updates the database with new ingredients
     $("#hcount").textContent = R.length;
     
     g.style.color = "var(--g)";
@@ -1327,7 +1342,7 @@ async function buildAIMealPlan() {
     }
     
     saveCustomRecipes();
-    rebuildIngredientIndex();
+    rebuildIngredientIndex(); // Update ingredient database
     $("#hcount").textContent = R.length;
     
     // Assign to plan grid
@@ -1571,7 +1586,7 @@ function confirmImport(){
 
   if (added > 0) {
     saveCustomRecipes();
-    rebuildIngredientIndex();
+    rebuildIngredientIndex(); // Adds new ingredients
     $("#hcount").textContent = R.length;
     $("#upload-preview").innerHTML = `<div class="ok-box">✅ Successfully imported ${added} recipes!</div>`;
     $("#file-results").innerHTML = "";
