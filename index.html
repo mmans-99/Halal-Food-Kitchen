@@ -4,12 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0B5D4B">
-
-<!-- Link to Web App Manifest & Icons -->
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-
 <title>Halal Kitchen</title>
 <style>
 :root{--bg:#F5F8F6;--ink:#10231F;--mut:#5E716B;--card:#fff;--line:#E0E9E4;--g:#0B5D4B;--g2:#E3F1EB;--on:#fff;--s:#F2B84B;color-scheme:light}
@@ -20,7 +17,7 @@ h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,seri
 h2{font-size:1.45rem}h3{font-size:1.1rem}
 button,select,input,textarea{font:inherit;color:inherit}
 
-/* Header & Drawer Navigation */
+/* Header & Drawer */
 .hero{background:#0B5D4B url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Cg fill='none' stroke='white' stroke-opacity='.1' stroke-width='1.5'%3E%3Crect x='12' y='12' width='32' height='32'/%3E%3Crect x='12' y='12' width='32' height='32' transform='rotate(45 28 28)'/%3E%3C/g%3E%3C/svg%3E");color:#fff;padding:calc(16px + env(safe-area-inset-top,0px)) 20px 64px;position:relative}
 .in{max-width:960px;margin:auto}
 .top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
@@ -31,7 +28,7 @@ button,select,input,textarea{font:inherit;color:inherit}
 
 .drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);opacity:0;pointer-events:none;transition:opacity .3s;z-index:100}
 .drawer-overlay.open{opacity:1;pointer-events:auto}
-.drawer{position:fixed;top:0;left:-280px;bottom:0;width:280px;background:var(--card);z-index:101;transition:left .3s cubic-bezier(0.4, 0, 0.2, 1);display:flex;flex-direction:column;box-shadow:4px 0 24px rgba(0,0,0,0.2)}
+.drawer{position:fixed;top:0;left:-280px;bottom:0;width:280px;background:var(--card);z-index:101;transition:left .3s cubic-bezier(0.4,0,0.2,1);display:flex;flex-direction:column;box-shadow:4px 0 24px rgba(0,0,0,0.2)}
 .drawer.open{left:0}
 .drawer-head{padding:calc(20px + env(safe-area-inset-top,0px)) 20px 20px;background:var(--g);color:var(--on);font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:1.3rem;font-weight:700}
 .drawer-list{list-style:none;padding:10px 0;margin:0;flex:1;overflow-y:auto}
@@ -45,9 +42,10 @@ button,select,input,textarea{font:inherit;color:inherit}
 .add{display:flex;gap:8px}
 input[type=text],input[type=password],select,textarea{flex:1;min-width:0;padding:13px 15px;border-radius:13px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)}
 input:focus,textarea:focus{border-color:var(--g);outline:0}
-textarea{width:100%;resize:vertical}
+textarea{width:100%;resize:vertical;font-family:inherit;line-height:1.5}
 .btn{background:var(--g);color:var(--on);border:0;border-radius:13px;padding:12px 20px;font-weight:600;cursor:pointer}
 .btn.alt{background:var(--s);color:#2b2000}
+.btn.full{width:100%}
 .ch{border:1px solid var(--line);background:var(--card);padding:6px 14px;border-radius:99px;font-size:.92rem;cursor:pointer;margin:0 6px 6px 0}
 .ch.on{background:var(--g);color:var(--on);border-color:var(--g)}
 .ch.off{background:var(--g2);border-color:var(--g);font-weight:500;font-size:.9rem}
@@ -65,12 +63,12 @@ label{display:flex;gap:8px;align-items:center;font-size:.95rem}
 .fp b{display:block;font-size:.88rem;color:var(--mut);margin:8px 0 5px;font-weight:600}.fp>div:first-child b{margin-top:0}
 .cnt{margin:6px 0 14px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
-.rc{padding:0;overflow:hidden;text-align:left;cursor:pointer;display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:18px;transition:transform .15s,border-color .15s}
+.rc{padding:0;overflow:hidden;text-align:left;cursor:pointer;display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:18px;transition:transform .15s,border-color .15s;position:relative}
 .rc:hover,.rc:focus-visible{transform:translateY(-3px);border-color:var(--g)}
 .th,.dh{display:flex;align-items:flex-end;justify-content:space-between;padding:10px 12px;color:#10231F}
 .th{height:100px}.th span{font-size:2.7rem;line-height:1}.th b{font-size:.8rem;background:#fffa;border-radius:99px;padding:2px 11px}
 .mb{background:#FBE3A6}.ml{background:#CDEBD9}.md{background:#F8CDBE}.ms{background:#DDD2F3}.mt{background:#F9D0DD}
-.bd{padding:12px 14px 14px}.bd h3{margin-bottom:3px}
+.bd{padding:12px 14px 14px;flex:1;display:flex;flex-direction:column}.bd h3{margin-bottom:3px}
 .tg{display:inline-block;font-size:.78rem;background:var(--g2);border-radius:6px;padding:1px 8px;margin:2px 5px 2px 0}
 .mt2{height:6px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:8px}.mt2 i{display:block;height:100%;background:var(--s)}
 .day{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px}
@@ -96,7 +94,8 @@ details[open] summary{margin-bottom:8px}
 :focus-visible{outline:3px solid var(--s);outline-offset:2px}
 .warn-box{background:#FFF3CD;border:1px solid #FFEBAA;color:#856404;padding:12px 16px;border-radius:12px;margin:12px 0;font-size:.9rem}
 .err-box{background:#FEE2E2;border:1px solid #FCA5A5;color:#991B1B;padding:12px 16px;border-radius:12px;margin:12px 0;font-size:.9rem}
-@media(prefers-color-scheme:dark){.warn-box{background:#3A2E00;border-color:#524200;color:#FFE8A3}.err-box{background:#450a0a;border-color:#7f1d1d;color:#fecaca}}
+.ok-box{background:#D1FAE5;border:1px solid #6EE7B7;color:#065F46;padding:12px 16px;border-radius:12px;margin:12px 0;font-size:.9rem}
+@media(prefers-color-scheme:dark){.warn-box{background:#3A2E00;border-color:#524200;color:#FFE8A3}.err-box{background:#450a0a;border-color:#7f1d1d;color:#fecaca}.ok-box{background:#064e3b;border-color:#065f46;color:#d1fae5}}
 @media(max-width:480px){.sl,.il{columns:1}.macro-grid{grid-template-columns:repeat(2,1fr)}}
 input[type=file]{width:100%;padding:14px;border:2px dashed var(--line);border-radius:14px;background:var(--bg);cursor:pointer;transition:border-color .15s}
 input[type=file]:hover{border-color:var(--g)}
@@ -106,6 +105,24 @@ input[type=file]:hover{border-color:var(--g)}
 .file-fmt code{background:var(--g2);padding:1px 6px;border-radius:4px;font-size:.82rem}
 .load-more-wrap{text-align:center;margin-top:24px;margin-bottom:24px}
 .load-more-wrap button{width:100%;max-width:300px;padding:14px;background:var(--g2);color:var(--g);border:1px solid var(--g);font-size:1.05rem}
+
+/* Upload preview & Custom Cards */
+.upload-preview{margin-top:14px;padding:14px;background:var(--bg);border-radius:14px;border:1px solid var(--line)}
+.upload-preview h4{margin:0 0 10px;font-size:.95rem;font-weight:600}
+.pending-item{display:flex;align-items:flex-start;gap:10px;padding:10px 4px;border-bottom:1px solid var(--line);cursor:pointer}
+.pending-item:last-of-type{border-bottom:0}
+.pending-item input[type=checkbox]{margin-top:4px;flex:none;width:18px;height:18px}
+.pending-item strong{display:block;font-size:.95rem}
+.pending-actions{display:flex;gap:8px;margin-top:14px}
+.pending-actions button{flex:1}
+.upload-status{padding:14px;background:var(--g2);border-radius:12px;margin-top:12px;font-size:.92rem;display:flex;align-items:center;gap:10px}
+.spinner{width:18px;height:18px;border:2px solid var(--g);border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;flex:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.rc .del-btn{background:var(--bg);border:1px solid var(--line);color:#b00;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:.82rem;margin-top:auto;align-self:flex-start}
+.rc .del-btn:hover{background:#fee;border-color:#fcc}
+.mine-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px;flex-wrap:wrap}
+.home-matches{margin-top:16px}
+.home-matches h2{margin-bottom:8px}
 [hidden]{display:none !important}
 </style>
 </head>
@@ -116,8 +133,10 @@ input[type=file]:hover{border-color:var(--g)}
 <nav class="drawer" id="drawer">
   <div class="drawer-head">🍲 Halal Kitchen</div>
   <ul class="drawer-list">
-    <button class="drawer-item active" data-k="nav" data-v="find"><span>🍳</span> Browse Recipes</button>
+    <button class="drawer-item active" data-k="nav" data-v="home"><span>🏠</span> Home</button>
+    <button class="drawer-item" data-k="nav" data-v="find"><span>🍳</span> Browse Recipes</button>
     <button class="drawer-item" data-k="nav" data-v="plan"><span>📅</span> Meal Planner</button>
+    <button class="drawer-item" data-k="nav" data-v="mine"><span>📁</span> My Recipes</button>
     <button class="drawer-item" data-k="nav" data-v="tools"><span>⚙️</span> Tools & Settings</button>
   </ul>
 </nav>
@@ -135,18 +154,18 @@ input[type=file]:hover{border-color:var(--g)}
 
 <div class="wrap">
 
-  <!-- VIEW: BROWSE -->
-  <div id="view-find">
+  <!-- VIEW: HOME -->
+  <div id="view-home">
     <section class="box">
       <h3>Your Pantry &amp; Ingredients</h3>
-      <p class="mu">Type an ingredient — suggestions appear below and the recipe list narrows live. Press Add or Enter to save it.</p>
+      <p class="mu">Type an ingredient — suggestions appear below. Press Add or Enter to save it, then browse matches.</p>
       <div class="add">
         <input type="text" id="in" autocomplete="off" placeholder="e.g. sal… → salmon, or chips" aria-label="Ingredient you have">
         <button class="btn" id="addb" type="button">Add</button>
       </div>
       <div id="sugg" aria-live="polite"></div>
       <div id="ic"></div>
-      <label class="mu" style="display:flex;align-items:center;gap:8px;margin-top:10px;cursor:pointer">
+      <label class="mu" style="display:flex;align-items:center;gap:8px;margin-top:12px;cursor:pointer">
         <input type="checkbox" id="off-toggle">
         <span>Also suggest real products from <strong>Open Food Facts</strong> <span style="opacity:.7">(online)</span></span>
       </label>
@@ -155,46 +174,41 @@ input[type=file]:hover{border-color:var(--g)}
         <span class="mu" id="off-count" style="margin:0"></span>
       </div>
     </section>
-    
+
+    <div id="out-home" class="home-matches"></div>
+  </div>
+
+  <!-- VIEW: BROWSE -->
+  <div id="view-find" hidden>
     <div id="out"></div>
   </div>
 
-  <!-- VIEW: MEAL PLANNER -->
+  <!-- VIEW: PLAN -->
   <div id="view-plan" hidden>
     <div id="out-plan"></div>
   </div>
 
-  <!-- VIEW: TOOLS -->
-  <div id="view-tools" hidden>
-    <section class="box" id="gb">
-      <h3>Generate AI Halal Recipe</h3>
-      <p class="mu">Uses Google Gemini AI. Generated recipes are sanitised, checked against halal rules, and saved to this device.</p>
-      <div class="add">
-        <input type="text" id="ask" autocomplete="off" placeholder="Optional: high protein, low carb, Turkish">
-        <button class="btn alt" id="gen" type="button">Generate with Gemini</button>
-      </div>
-      <p class="mu" id="gm" role="status"></p>
-    </section>
-
-    <details class="box">
-      <summary>📁 Upload recipes from file (TXT, MD, CSV, JSON, PDF)</summary>
-      <p class="mu">Upload files. The parser finds all recipes, checks each for halal compliance, and imports the valid ones.</p>
+  <!-- VIEW: MY RECIPES -->
+  <div id="view-mine" hidden>
+    <details class="box" open>
+      <summary>📁 Upload recipes from a file</summary>
+      <p class="mu">Upload TXT, MD, CSV, JSON, or PDF. You'll see a preview before anything is saved.</p>
       <input type="file" id="file-upload" accept=".txt,.md,.csv,.json,.pdf" multiple>
       <div class="file-fmt">
         <strong>Accepted formats:</strong><br>
-        • <strong>TXT / MD</strong> — one recipe per block, with <em>Ingredients</em> and <em>Method</em> headings.<br>
-        • <strong>CSV</strong> — one recipe per line: <code>Title;meal;cuisine;time;appliance;tags;cal;P;C;F;ingredients;steps</code><br>
+        • <strong>TXT / MD</strong> — one recipe per block with <em>Ingredients</em> and <em>Method</em> headings.<br>
+        • <strong>CSV</strong> — <code>Title;meal;cuisine;time;appliance;tags;cal;P;C;F;ingredients;steps</code><br>
         • <strong>JSON</strong> — array of objects with fields <code>n,m,c,t,me,tg,cal,p,car,f,i,s</code>.<br>
-        • <strong>PDF</strong> — text-based PDFs only. Needs internet on first upload to fetch pdf.js.
+        • <strong>PDF</strong> — text-based only. Needs internet on first upload (fetches pdf.js).
       </div>
-      <button class="ch" data-k="download-template" type="button" style="margin-top:8px">⬇️ Download template CSV</button>
       <div id="file-results" aria-live="polite"></div>
+      <div id="upload-preview"></div>
     </details>
 
     <details class="box">
-      <summary>Add your own custom recipe manually</summary>
-      <p class="mu">Paste a recipe text to save it on this device for offline use.</p>
-      <textarea id="pt" rows="6" placeholder="Spicy Lemon Salmon&#10;Ingredients&#10;2 salmon fillets&#10;1 tsp paprika&#10;Method&#10;1. Air fry salmon at 190C for 10 mins"></textarea>
+      <summary>✍️ Add a recipe manually</summary>
+      <p class="mu">Paste any recipe text with an "Ingredients" and "Method" section.</p>
+      <textarea id="pt" rows="8" placeholder="Spicy Lemon Salmon&#10;Ingredients&#10;2 salmon fillets&#10;1 tsp paprika&#10;1 lemon&#10;Method&#10;1. Air fry salmon at 190C for 10 mins"></textarea>
       <div class="add" style="margin-top:10px">
         <select id="pm2">
           <option value="">Meal: auto-detect</option>
@@ -204,24 +218,49 @@ input[type=file]:hover{border-color:var(--g)}
           <option value="s">Snack</option>
           <option value="t">Dessert</option>
         </select>
-        <button class="btn" id="pa" type="button">Sort &amp; Add</button>
+        <button class="btn" id="pa" type="button">Add Recipe</button>
       </div>
       <p class="mu" id="pg" role="status"></p>
     </details>
 
+    <div class="mine-header">
+      <h2>Your recipes (<span id="mine-count">0</span>)</h2>
+      <button class="ch" data-k="delete-all-mine" type="button" style="margin:0;font-size:.82rem;color:#b00">Delete all my recipes</button>
+    </div>
+    <div id="out-mine"></div>
+  </div>
+
+  <!-- VIEW: TOOLS -->
+  <div id="view-tools" hidden>
+    <section class="box">
+      <h3>🤖 Generate AI Halal Recipe</h3>
+      <p class="mu">Uses Google Gemini AI. Generated recipes are checked against halal rules and saved to this device.</p>
+      <textarea id="ask" rows="4" placeholder="e.g. high protein, air fryer, Turkish, under 20 mins. Leave blank for a quick simple recipe."></textarea>
+      <button class="btn alt full" id="gen" type="button" style="margin-top:10px">Generate with Gemini</button>
+      <div class="mu" id="gm" role="status" style="margin-top:10px;white-space:pre-wrap;font-weight:600"></div>
+    </section>
+
     <details class="box">
-      <summary>Gemini AI Settings</summary>
-      <p class="mu">A free API key from aistudio.google.com. Stored only in this browser's localStorage.</p>
+      <summary>🔑 Gemini AI Settings</summary>
+      <p class="mu">Get a free API key from aistudio.google.com. Stored only in your browser.</p>
       <div class="add">
         <input type="password" id="key" autocomplete="off" placeholder="AIzaSy..." aria-label="Gemini API Key">
         <button class="btn" id="ks" type="button">Save Key</button>
       </div>
       <p class="mu" id="kg" role="status"></p>
-      <button class="ch" id="open-key-guide" type="button" style="margin-top:10px">🔑 Free Key Guide</button>
+      <div class="add" style="margin-top:10px">
+        <button class="ch" id="test-key" type="button" style="margin:0;flex:1">🧪 Test Key</button>
+        <button class="ch" id="clear-key" type="button" style="margin:0;flex:1">🗑️ Clear Key</button>
+      </div>
+      <button class="ch" id="open-key-guide" type="button" style="margin-top:10px">Free Key Guide</button>
     </details>
+
+    <section class="box">
+      <h3>About</h3>
+      <p class="mu">100% halal — no pork, bacon, lard, alcohol, wine or gelatine. All browsing, pantry search, macros and meal planning work fully offline.</p>
+    </section>
   </div>
 
-  <p class="mu" style="text-align:center;margin-top:30px">100% halal: no pork, bacon, lard, alcohol, wine or gelatine. Browsing, pantry search, macros and meal planning work fully offline.</p>
 </div>
 
 <dialog id="dlg"><div class="in2"></div></dialog>
@@ -241,7 +280,6 @@ input[type=file]:hover{border-color:var(--g)}
 </dialog>
 
 <script>
-// Register Service Worker for PWA offline support
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js').catch(() => {});
@@ -391,9 +429,10 @@ const OK_APPL = "asomn";
 let R = [];
 const st = {
   ing: [], query: "", meal: "", me: "", tm: "0", tg: new Set(),
-  tab: "find", full: false, days: "5", pm: new Set(["b","l","d"]),
+  tab: "home", full: false, days: "5", pm: new Set(["b","l","d"]),
   fav: true, plan: null, fo: false,
-  limit: 12
+  limit: 12,
+  pending: [] // uploads waiting for confirmation
 };
 
 function normalizeRecipe(r){
@@ -422,7 +461,13 @@ const saveCustomRecipes = () => {
     localStorage.setItem("hk-user", JSON.stringify(list));
   } catch(e){}
 };
-const KEY = () => { try { return localStorage.getItem("hk-gemini-key"); } catch(e){ return null; } };
+const KEY = () => {
+  try {
+    let k = localStorage.getItem("hk-gemini-key");
+    if (!k) return null;
+    return k.trim().replace(/^["']|["']$/g, '');
+  } catch(e) { return null; }
+};
 
 const stem = w => {
   if (w.length <= 3) return w;
@@ -528,9 +573,7 @@ function matchIng(pantryItem, recipeIng){
   const b = expandSynonyms(recipeIng);
   if (!a.size || !b.size) return false;
   const [small, large] = a.size <= b.size ? [a, b] : [b, a];
-  for (const x of small){
-    if (x.length >= 3 && large.has(x)) return true;
-  }
+  for (const x of small){ if (x.length >= 3 && large.has(x)) return true; }
   return false;
 }
 function matchQuery(q, recipeIng){
@@ -539,9 +582,7 @@ function matchQuery(q, recipeIng){
   if (rTokens.some(y => qTokens.some(x => y === x || (x.length >= 2 && y.startsWith(x))))) return true;
   const a = expandSynonyms(q);
   const b = expandSynonyms(recipeIng);
-  for (const x of a){
-    if (x.length >= 3 && b.has(x)) return true;
-  }
+  for (const x of a){ if (x.length >= 3 && b.has(x)) return true; }
   return false;
 }
 
@@ -623,6 +664,7 @@ function suggest(q){
   return starts.concat(contains).slice(0, 8);
 }
 
+/* ---------------- Open Food Facts ---------------- */
 const OFF_MIN = 2;
 const OFF_STALE_MS = 90 * 24 * 60 * 60 * 1000;
 function offEnabled(){ try { return localStorage.getItem("hk-off-enabled") !== "0"; } catch(e){ return true; } }
@@ -751,7 +793,7 @@ function renderSuggestions(){
   let html = local.map(x => `<button class="ch" data-k="pick" data-v="${esc(x)}" type="button">+ ${esc(x)}</button>`).join("");
   html += off.map(x => `<button class="ch off" data-k="pick" data-v="${esc(x)}" type="button" title="From Open Food Facts">🌐 ${esc(x)}</button>`).join("");
   if (offLoading) html += `<span class="mu" style="align-self:center">Searching Open Food Facts…</span>`;
-  if (!local.length && !off.length && q && !offLoading) html = `<span class="mu">No matches — press Add to save “${esc(q)}” as typed.</span>`;
+  if (!local.length && !off.length && q && !offLoading) html = `<span class="mu">No matches — press Add to save "${esc(q)}" as typed.</span>`;
   $("#sugg").innerHTML = html;
 }
 
@@ -771,25 +813,26 @@ function addI(v){
   $("#in").value = "";
   renderSuggestions();
   rC();
-  rM();
+  rHome();
 }
 
-/* Navigation Logic */
+/* ---------------- Navigation ---------------- */
 function switchView(v){
   st.tab = v;
+  document.getElementById('view-home').hidden = v !== 'home';
   document.getElementById('view-find').hidden = v !== 'find';
   document.getElementById('view-plan').hidden = v !== 'plan';
+  document.getElementById('view-mine').hidden = v !== 'mine';
   document.getElementById('view-tools').hidden = v !== 'tools';
-  
   document.querySelectorAll('.drawer-item').forEach(b => {
     b.classList.toggle('active', b.dataset.v === v);
   });
-  
   document.getElementById('drawer').classList.remove('open');
   document.getElementById('drawer-overlay').classList.remove('open');
-  
+  if (v === 'home') rHome();
   if (v === 'find') rM();
   if (v === 'plan') rP(document.getElementById('out-plan'));
+  if (v === 'mine') rMine();
 }
 
 const chips = (k, obj, cur) => Object.entries(obj).map(([v,l]) => {
@@ -822,11 +865,46 @@ const card = r => {
   </div>`;
 };
 
+const userCard = r => {
+  return `<div class="rc">
+    <div class="th m${r.m}"><span>${E[r.m] || "🍲"}</span><b>🔥 ${r.cal} kcal</b></div>
+    <div class="bd">
+      <h3>${esc(r.n)}</h3>
+      <p class="mu">${esc(r.c)} • ⏱️ ${r.t} min • ${mel(r)}</p>
+      <div>${tagsHtml(r)}</div>
+      <button class="del-btn" data-k="del" data-v="${r.id}" type="button">🗑️ Delete</button>
+    </div>
+  </div>`;
+};
+
+function rHome(){
+  const out = $("#out-home");
+  if (!st.ing.length){
+    out.innerHTML = `<div class="box" style="text-align:center;padding:28px">
+      <p class="mu" style="margin:0 0 12px">Add some ingredients above to find matching recipes.</p>
+      <button class="btn" data-k="nav" data-v="find" type="button">Browse all ${R.length} recipes →</button>
+    </div>`;
+    return;
+  }
+  let L = R.filter(passes);
+  L = L.map(r => [r, sc(r)])
+       .filter(([, s]) => s.h > 0)
+       .sort((a,b) => ratio(b[1]) - ratio(a[1]) || a[1].miss.length - b[1].miss.length || a[0].t - b[0].t)
+       .map(x => x[0]);
+  if (!L.length){
+    out.innerHTML = `<div class="box"><p class="mu">No recipes match those ingredients. Try simpler basics like eggs, bread, chicken, rice, tomatoes or potatoes.</p></div>`;
+    return;
+  }
+  const preview = L.slice(0, 3);
+  out.innerHTML = `<h2>${L.length} recipe${L.length === 1 ? "" : "s"} match${L.length === 1 ? "es" : ""}</h2>
+    <div class="grid">${preview.map(card).join("")}</div>
+    ${L.length > 3 ? `<div class="load-more-wrap"><button class="btn" data-k="nav" data-v="find" type="button">See all ${L.length} matches →</button></div>` : ""}`;
+}
+
 function rM(){
   const out = $("#out");
-  const active = st.ing.length > 0;
   let L = R.filter(passes);
-  if (active){
+  if (st.ing.length){
     L = L.map(r => [r, sc(r)])
          .filter(([, s]) => s.h > 0 && (!st.full || s.miss.length === 0))
          .sort((a,b) => ratio(b[1]) - ratio(a[1]) || a[1].miss.length - b[1].miss.length || a[0].t - b[0].t)
@@ -834,36 +912,39 @@ function rM(){
   } else {
     L = L.slice().sort((a,b) => a.t - b.t);
   }
-  
   const cats = Object.entries({"":"All", ...M})
     .map(([v,l]) => `<button class="cat${st.meal === v ? " on" : ""}" data-k="meal" data-v="${v}" type="button">${v ? E[v] + " " : ""}${l}</button>`)
     .join("");
-  
   const totalFound = L.length;
   const visibleList = L.slice(0, st.limit);
-  
   let html = `<div class="cats">${cats}</div>
   <div class="bar2">
     ${fbar()}
-    ${active ? `<label><input type="checkbox" id="full" ${st.full ? "checked" : ""}> Only recipes I can fully make</label>` : ""}
+    ${st.ing.length ? `<label><input type="checkbox" id="full" ${st.full ? "checked" : ""}> Only recipes I can fully make</label>` : ""}
     <button class="btn alt" data-k="rand" type="button" style="margin-left:auto">Surprise me</button>
   </div>
   ${fpn()}
-  <h2 class="cnt">${totalFound} recipe${totalFound === 1 ? "" : "s"}${active ? " matching your pantry" : ""}${st.query ? ` for “${esc(st.query)}”` : ""}</h2>`;
-  
-  if (totalFound) {
+  <h2 class="cnt">${totalFound} recipe${totalFound === 1 ? "" : "s"}${st.ing.length ? " matching your pantry" : ""}</h2>`;
+  if (totalFound){
     html += `<div class="grid">${visibleList.map(card).join("")}</div>`;
-    if (totalFound > st.limit) {
-      html += `<div class="load-more-wrap">
-        <button class="btn" data-k="load-more" type="button">Show More Recipes (${totalFound - st.limit} remaining)</button>
-      </div>`;
+    if (totalFound > st.limit){
+      html += `<div class="load-more-wrap"><button class="btn" data-k="load-more" type="button">Show More Recipes (${totalFound - st.limit} remaining)</button></div>`;
     }
   } else {
-    html += `<p class="mu">${st.query
-        ? `Nothing matches “${esc(st.query)}”. Try a shorter word, or clear the box.`
-        : `No recipes use your pantry items. Try adding everyday basics like eggs, bread, chicken, rice, tomatoes, or potatoes.`}</p>`;
+    html += `<p class="mu">No recipes match these filters. ${st.ing.length ? "Try removing an ingredient or clearing filters." : "Try clearing filters."}</p>`;
   }
   out.innerHTML = html;
+}
+
+function rMine(){
+  const mine = R.filter(r => r.u);
+  $("#mine-count").textContent = mine.length;
+  const out = $("#out-mine");
+  if (!mine.length){
+    out.innerHTML = `<div class="box" style="text-align:center;padding:28px"><p class="mu" style="margin:0">You haven't added any recipes yet. Upload a file or paste a recipe above.</p></div>`;
+    return;
+  }
+  out.innerHTML = `<div class="grid">${mine.map(userCard).join("")}</div>`;
 }
 
 function pick(meal, used){
@@ -980,67 +1061,90 @@ function deleteRecipe(id){
   saveCustomRecipes();
   rebuildIngredientIndex();
   closeModal($("#dlg"));
-  rM();
+  if (st.tab === 'mine') rMine();
+  if (st.tab === 'find') rM();
+  if (st.tab === 'home') rHome();
   if (st.tab === 'plan') rP(document.getElementById('out-plan'));
 }
 
+/* ---------------- AI ---------------- */
 const BAD = /pork|bacon|\bham\b|lard|wine|beer|\brum\b|gelatin|gelatine|alcohol|pepperoni|prosciutto|brandy|whisk(e)?y|\bsake\b|mirin|vodka|chorizo|pancetta/i;
 
 async function aiGemini(prompt){
-  if (!navigator.onLine) throw {c:"off"};
+  if (!navigator.onLine) throw new Error("You are offline.");
   const k = KEY();
-  if (!k) throw {c:"key"};
+  if (!k) throw new Error("API Key is missing. Please save it in Settings.");
+  
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(k)}`;
-  const sys = "You are a Halal chef AI. Output ONLY one valid JSON object, no markdown. STRICT HALAL: absolutely no pork, bacon, lard, ham, alcohol, wine, beer, mirin, sake or gelatine.";
-  const ask = `${sys}\n\nTask: ${prompt}\n\nReturn exactly this shape: {"n":"Title","m":"b|l|d|s|t","c":"Cuisine","t":15,"me":"a|s|o|m|n","tg":"h|p|v|V|g (combine freely)","cal":380,"p":28,"car":32,"f":14,"i":["2 eggs","1 tbsp olive oil"],"s":["Step one","Step two"]}`;
+  const sys = "You are a Halal chef AI. Output ONLY valid JSON. No markdown. Strict halal rules.";
+  const ask = `${sys}\n\nTask: ${prompt}\n\nReturn this exact JSON shape: {"n":"Title","m":"b","c":"Cuisine","t":15,"me":"a","tg":"hpvVg","cal":380,"p":28,"car":32,"f":14,"i":["2 eggs","1 tbsp oil"],"s":["Step 1","Step 2"]}`;
+  
   let res;
   try {
     res = await fetch(url, {
       method: "POST",
       headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({ contents: [{ parts: [{ text: ask }] }] })
+      body: JSON.stringify({ 
+        contents: [{ parts: [{ text: ask }] }],
+        generationConfig: { responseMimeType: "application/json" }
+      })
     });
-  } catch(e){ throw {c:"off"}; }
-  if (!res.ok) throw {c: (res.status === 400 || res.status === 403) ? "auth" : "api"};
+  } catch(e){ throw new Error("Network error: Could not reach Google servers. Check connection."); }
+
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    const msg = errData.error?.message || `HTTP ${res.status}`;
+    if (res.status === 400 || res.status === 403) throw new Error(`API Key rejected: ${msg}`);
+    throw new Error(`Gemini API Error: ${msg}`);
+  }
+
   const j = await res.json();
-  const txt = (((j.candidates || [])[0] || {}).content || {}).parts?.[0]?.text || "";
-  const clean = txt.replace(/```json/gi, "").replace(/```/g, "").trim();
-  const start = clean.indexOf("{"), end = clean.lastIndexOf("}");
-  if (start < 0 || end <= start) throw {c:"api"};
-  return JSON.parse(clean.slice(start, end + 1));
+  const txt = j.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!txt) throw new Error("Gemini returned an empty response. Try a different prompt.");
+  
+  try {
+    return JSON.parse(txt);
+  } catch(e) {
+    throw new Error("Gemini returned invalid JSON. Please try again.");
+  }
 }
 
 async function genAI(){
   const g = $("#gm");
+  g.style.color = "var(--mut)";
   g.textContent = "Generating a recipe with Gemini…";
   try {
     const req = $("#ask").value.trim() || "quick simple halal recipe";
     const has = st.ing.length ? st.ing.join(", ") : "eggs, bread, tuna";
     const raw = await aiGemini(`Write one short easy 100% halal recipe using mainly these ingredients: ${has}. Extra preference: ${req}`);
+    
     if (BAD.test(JSON.stringify(raw))){
+      g.style.color = "#b00";
       g.textContent = "The generated recipe contained non-halal ingredients and was blocked.";
       return;
     }
+    
     const v = normalizeRecipe(raw);
     if (!v.n || !v.i.length || !v.s.length){
+      g.style.color = "#b00";
       g.textContent = "Gemini returned an unusable recipe. Please try again.";
       return;
     }
+    
     v.id = R.length; v.ai = 1; v.u = 1;
     R.push(v);
     saveCustomRecipes();
     rebuildIngredientIndex();
     $("#hcount").textContent = R.length;
-    g.textContent = `Saved “${v.n}” to your device — it now works offline.`;
+    
+    g.style.color = "var(--g)";
+    g.textContent = `Success! Saved "${v.n}" to your device.`;
+    
     st.limit = 12;
-    switchView('find');
-    openRecipe(v.id);
+    switchView('mine');
   } catch(e){
-    g.textContent =
-      e.c === "off"  ? "You are offline. AI generation needs internet — everything else works offline." :
-      e.c === "key"  ? "Add your free Gemini API key in the settings below." :
-      e.c === "auth" ? "That Gemini API key was rejected. Check it in settings." :
-                       "Could not reach Gemini. Please try again.";
+    g.style.color = "#b00";
+    g.textContent = e.message;
   }
 }
 
@@ -1049,24 +1153,79 @@ function saveKey(){
   try { v ? localStorage.setItem("hk-gemini-key", v) : localStorage.removeItem("hk-gemini-key"); } catch(e){}
   $("#key").value = "";
   $("#kg").textContent = v ? "Gemini API key saved on this device." : "Key removed.";
+  $("#kg").style.color = v ? "var(--g)" : "var(--mut)";
 }
 
-function parseCustomText(t, forcedMeal){
-  const L = t.split(/\r?\n/).map(x => x.trim()).filter(Boolean);
-  if (L.length < 3) return null;
-  const iIdx = L.findIndex(x => /^ingredients?\b/i.test(x));
-  const sIdx = L.findIndex((x,k) => k > iIdx && /^(method|instructions|steps|directions)\b/i.test(x));
-  let ing = [], stp = [];
-  if (iIdx >= 0 && sIdx > iIdx){
-    ing = L.slice(iIdx + 1, sIdx);
-    stp = L.slice(sIdx + 1);
-  } else {
-    ing = L.slice(1, Math.max(3, Math.ceil(L.length / 2)));
-    stp = L.slice(Math.max(3, Math.ceil(L.length / 2)));
+async function testKey(){
+  const kg = $("#kg");
+  kg.style.color = "var(--mut)";
+  kg.textContent = "Testing...";
+  try {
+    await aiGemini("just say test");
+    kg.style.color = "var(--g)";
+    kg.textContent = "✅ API Key works perfectly!";
+  } catch(e) {
+    kg.style.color = "#b00";
+    kg.textContent = `❌ ${e.message}`;
   }
-  ing = ing.map(x => x.replace(/^[\d.\-\s]+/, "").trim()).filter(Boolean);
-  stp = stp.map(x => x.replace(/^[\d.\-)\s]+/, "").trim()).filter(Boolean);
-  if (!ing.length || !stp.length) return null;
+}
+
+/* ---------------- Custom Recipe Parsing (SMART) ---------------- */
+function parseCustomText(t, forcedMeal){
+  const lines = t.split(/\r?\n/).map(x => x.trim()).filter(Boolean);
+  if (!lines.length) return null;
+
+  // 1. Find Ingredients heading
+  const iIdx = lines.findIndex(x => /^ingredients?:?/i.test(x));
+  
+  let title = "Custom Recipe";
+  let macros = { cal: 350, p: 20, car: 30, f: 12, t: 15 };
+  let ingLines = [];
+  let stpLines = [];
+
+  // Extract macros from the whole text first
+  const calMatch = t.match(/(\d+)\s*kcal/i);
+  const proMatch = t.match(/(\d+)\s*g\s*Protein/i);
+  const timeMatch = t.match(/(\d+)\s*mins?/i);
+  if (calMatch) macros.cal = parseInt(calMatch[1]);
+  if (proMatch) macros.p = parseInt(proMatch[1]);
+  if (timeMatch) macros.t = parseInt(timeMatch[1]);
+
+  if (iIdx >= 0) {
+    // Title is everything before Ingredients, cleaned up
+    let rawTitle = lines.slice(0, iIdx).join(" ");
+    // Remove leading numbers like "1. " or "3) "
+    rawTitle = rawTitle.replace(/^\d+[\.\)]\s*/, "");
+    // Remove the macros part from the title (e.g. "345 kcal | 18g Protein | 7 mins")
+    title = rawTitle.split(/\d+\s*kcal/i)[0].trim();
+    if (!title) title = "Imported Recipe";
+
+    // Ingredients are between Ingredients and the first step
+    let stepStartIndex = iIdx + 1;
+    for (let i = iIdx + 1; i < lines.length; i++) {
+      // A line is a step if it starts with a number (1. or 1)) or the word Step
+      if (/^\d+[\.\)]/.test(lines[i]) || /^step\s*\d/i.test(lines[i])) {
+        stepStartIndex = i;
+        break;
+      }
+    }
+
+    // Join ingredients and split by commas
+    const ingText = lines.slice(iIdx + 1, stepStartIndex).join(" ");
+    ingLines = ingText.split(",").map(x => x.trim()).filter(Boolean);
+    
+    // Steps are everything after stepStartIndex
+    stpLines = lines.slice(stepStartIndex).map(x => x.replace(/^\d+[\.\)]\s*/, "").trim()).filter(Boolean);
+  } else {
+    // Fallback if no "Ingredients" keyword found (e.g., pasted without headings)
+    title = lines[0].replace(/^\d+[\.\)]\s*/, "").split(/\d+\s*kcal/i)[0].trim();
+    const mid = Math.ceil(lines.length / 2);
+    ingLines = lines.slice(1, mid).join(",").split(",").map(x => x.trim()).filter(Boolean);
+    stpLines = lines.slice(mid).map(x => x.replace(/^\d+[\.\)]\s*/, "").trim()).filter(Boolean);
+  }
+
+  if (!ingLines.length || !stpLines.length) return null;
+
   const lo = t.toLowerCase();
   let me = "";
   if (/air.?fry/.test(lo)) me += "a";
@@ -1074,6 +1233,7 @@ function parseCustomText(t, forcedMeal){
   if (/microwave/.test(lo)) me += "m";
   if (/pan|fry|boil|simmer|stove|grill/.test(lo)) me += "s";
   if (!me && /chill|refrigerat|no.?cook|mix/.test(lo)) me = "n";
+
   let meal = forcedMeal;
   if (!meal){
     if (/breakfast|morning|porridge|pancake/.test(lo)) meal = "b";
@@ -1082,81 +1242,45 @@ function parseCustomText(t, forcedMeal){
     else if (/snack|dip/.test(lo)) meal = "s";
     else meal = "d";
   }
+
   return {
-    n: L[0].slice(0, 70), m: meal, c: "Custom recipe",
-    t: 15, me: me || "s", tg: "p",
-    cal: 350, p: 20, car: 30, f: 12,
-    i: ing, s: stp, u: 1
+    n: title.slice(0, 70), m: meal, c: "Custom recipe",
+    t: macros.t, me: me || "s", tg: "p",
+    cal: macros.cal, p: macros.p, car: macros.car, f: macros.f,
+    i: ingLines, s: stpLines, u: 1
   };
 }
 
 function addCustomRecipe(){
   const t = $("#pt").value.trim(), g = $("#pg"), forced = $("#pm2").value;
   if (t.length < 15){ g.textContent = "Please paste a fuller recipe first."; return; }
-  if (BAD.test(t)){ g.textContent = "Rejected: the text mentions non-halal ingredients (pork, alcohol, gelatine)."; return; }
+  if (BAD.test(t)){ g.textContent = "Rejected: the text mentions non-halal ingredients."; return; }
+  
   const parsed = parseCustomText(t, forced);
-  if (!parsed){ g.textContent = "Could not parse that. Include a title, an Ingredients heading and a Method heading."; return; }
+  if (!parsed){ g.textContent = "Could not parse that. Make sure it has ingredients and steps."; return; }
+  
   const r = normalizeRecipe(parsed);
   if (!r.i.length || !r.s.length){ g.textContent = "No ingredients or steps detected."; return; }
+  
   r.id = R.length;
   R.push(r);
   saveCustomRecipes();
   rebuildIngredientIndex();
   $("#hcount").textContent = R.length;
   $("#pt").value = "";
-  g.textContent = `Saved “${r.n}” — it is now available offline.`;
+  g.textContent = `Saved "${r.n}" — it is now available offline.`;
+  
   st.limit = 12;
-  switchView('find');
+  switchView('mine');
 }
 
-const looksLikeTitle = s => {
-  if (!s) return false;
-  const t = s.trim();
-  if (!t || t.length > 80) return false;
-  if (/[.!?]$/.test(t)) return false;
-  if (/^\s*[-•*]\s/.test(t)) return false;
-  if (/^\s*\d+[.)]\s/.test(t)) return false;
-  if (!/[A-Z]/.test(t)) return false;
-  return true;
-};
-
-function splitRecipeBlocks(text){
-  const blocks = [];
-  let current = [];
-  const lines = text.split(/\r?\n/);
-  for (let i = 0; i < lines.length; i++){
-    const line = lines[i];
-    if (/^# /.test(line) && current.some(l => l.trim())){
-      blocks.push(current.join("\n"));
-      current = [line.replace(/^#\s*/, "")];
-      continue;
-    }
-    if (/^\s*(-{3,}|={3,})\s*$/.test(line)){
-      if (current.some(l => l.trim())){
-        blocks.push(current.join("\n"));
-        current = [];
-      }
-      continue;
-    }
-    if (!line.trim() && current.some(l => l.trim())){
-      const nextNonBlank = (lines.slice(i+1).find(l => l.trim()) || "").trim();
-      const hasIng = current.some(l => /^ingredients?\b/i.test(l));
-      const hasMet = current.some(l => /^(method|instructions|steps|directions)\b/i.test(l));
-      const nextIsHeading = /^(ingredients?|method|instructions|steps|directions)\b/i.test(nextNonBlank);
-      if (hasIng && hasMet && !nextIsHeading && looksLikeTitle(nextNonBlank)){
-        blocks.push(current.join("\n"));
-        current = [];
-        continue;
-      }
-    }
-    current.push(line);
-  }
-  if (current.some(l => l.trim())) blocks.push(current.join("\n"));
-  return blocks.filter(b => b.trim().length > 20);
-}
-
-function parseTextFile(content){
-  return splitRecipeBlocks(content).map(b => parseCustomText(b, "")).filter(Boolean);
+/* ---------------- File Upload Logic ---------------- */
+function validateFile(file){
+  if (!file) return "No file provided";
+  const ext = (file.name.split(".").pop() || "").toLowerCase();
+  if (!["txt","md","csv","json","pdf"].includes(ext)) return `${file.name}: unsupported type ".${ext}".`;
+  if (!file.size) return `${file.name}: file is empty`;
+  return null;
 }
 
 function parseCSVFile(content){
@@ -1179,51 +1303,21 @@ function parseCSVFile(content){
   return recipes;
 }
 
-const FIELD_ALIASES = {
-  n: ["n","name","title"],
-  m: ["m","meal","mealType","meal_type"],
-  c: ["c","cuisine","category"],
-  t: ["t","time","minutes","cookTime","cook_time"],
-  me: ["me","appliance","method"],
-  tg: ["tg","tags","diet","dietary"],
-  cal: ["cal","calories","kcal"],
-  p: ["p","protein"],
-  car: ["car","carbs","carbohydrates"],
-  f: ["f","fat"],
-  i: ["i","ingredients","ing"],
-  s: ["s","steps","instructions","method"]
-};
-
-function mapJSONRecipe(item){
-  if (Array.isArray(item)){
-    const [n,m,c,t,me,tg,cal,p,car,f,i,s] = item;
-    return { n, m, c, t, me, tg, cal, p, car, f, i, s };
-  }
-  const out = {};
-  for (const [target, aliases] of Object.entries(FIELD_ALIASES)){
-    for (const a of aliases){
-      if (item[a] !== undefined){ out[target] = item[a]; break; }
-    }
-  }
-  return out;
-}
-
 function parseJSONFile(content){
   const data = JSON.parse(content);
-  let arr = [];
-  if (Array.isArray(data)) arr = data;
-  else if (data && Array.isArray(data.recipes)) arr = data.recipes;
-  else if (data && data.recipe) arr = [data.recipe];
-  else arr = [data];
-  return arr.map(mapJSONRecipe).filter(r => r && r.n);
+  let arr = Array.isArray(data) ? data : (data.recipes || [data]);
+  return arr.filter(r => r && (r.n || r.title)).map(r => normalizeRecipe({
+    n: r.n || r.title, m: r.m || "d", c: r.c || "Imported",
+    t: r.t || 15, me: r.me || "s", tg: r.tg || "p",
+    cal: r.cal || 350, p: r.p || 20, car: r.car || 30, f: r.f || 12,
+    i: r.i || r.ingredients || [], s: r.s || r.steps || []
+  }));
 }
 
 let pdfJsLoaded = false;
 async function loadPdfJs(){
   if (pdfJsLoaded && window.pdfjsLib) return;
-  if (!navigator.onLine && !window.pdfjsLib){
-    throw new Error("PDF support needs internet the first time (loads pdf.js once)");
-  }
+  if (!navigator.onLine && !window.pdfjsLib) throw new Error("PDF support needs internet first time.");
   await new Promise((resolve, reject) => {
     if (window.pdfjsLib){
       window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
@@ -1233,26 +1327,18 @@ async function loadPdfJs(){
     const s = document.createElement("script");
     s.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
     s.onload = () => {
-      if (!window.pdfjsLib) return reject(new Error("pdf.js failed to initialise"));
       window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
       pdfJsLoaded = true;
       resolve();
     };
-    s.onerror = () => reject(new Error("Could not load pdf.js — check your connection"));
+    s.onerror = () => reject(new Error("Could not load pdf.js"));
     document.head.appendChild(s);
   });
 }
 
 async function extractPdfText(arrayBuffer){
   await loadPdfJs();
-  let pdf;
-  try {
-    pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-  } catch(e){
-    if (/password/i.test(e.message)) throw new Error("PDF is password-protected");
-    throw new Error("Could not open PDF: " + e.message);
-  }
-  if (!pdf || !pdf.numPages) throw new Error("PDF has no pages");
+  const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
   let out = "";
   for (let p = 1; p <= pdf.numPages; p++){
     const page = await pdf.getPage(p);
@@ -1270,119 +1356,119 @@ async function extractPdfText(arrayBuffer){
     if (line.trim()) out += line.trim() + "\n";
     out += "\n";
   }
-  const clean = out.trim();
-  if (clean.length < 20) throw new Error("PDF appears to have no extractable text (scanned/image-only PDF)");
-  return clean;
-}
-
-const SUPPORTED_EXTS = ["txt","md","csv","json","pdf"];
-function validateFile(file){
-  if (!file) return "No file provided";
-  const ext = (file.name.split(".").pop() || "").toLowerCase();
-  if (!ext) return `${file.name}: file has no extension`;
-  if (!SUPPORTED_EXTS.includes(ext)) return `${file.name}: unsupported type ".${ext}". Use TXT, MD, CSV, JSON, or PDF.`;
-  if (!file.size) return `${file.name}: file is empty`;
-  const limit = ext === "pdf" ? 20 * 1024 * 1024 : 5 * 1024 * 1024;
-  if (file.size > limit) return `${file.name}: exceeds ${(limit / 1048576)|0} MB limit`;
-  return null;
-}
-
-function parseUploadedFile(file){
-  const ext = file.name.split(".").pop().toLowerCase();
-  const isPdf = ext === "pdf";
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onerror = () => reject(new Error("Could not read file"));
-    reader.onload = async () => {
-      const raw = reader.result;
-      if (isPdf){
-        try {
-          const text = await extractPdfText(raw);
-          const recipes = parseTextFile(text);
-          if (!recipes.length) reject(new Error("PDF text extracted, but no recipes detected (try a PDF with clearer 'Ingredients' and 'Method' headings)"));
-          else resolve(recipes);
-        } catch(e){ reject(e); }
-        return;
-      }
-      const content = raw;
-      if (/^\s*(<!doctype|<html|<head|<body)/i.test(content)) return reject(new Error("HTML files are not supported"));
-      try {
-        if (ext === "json") return resolve(parseJSONFile(content));
-        if (ext === "csv")  return resolve(parseCSVFile(content));
-        return resolve(parseTextFile(content));
-      } catch(e){ reject(new Error(e.message)); }
-    };
-    if (isPdf) reader.readAsArrayBuffer(file);
-    else reader.readAsText(file);
-  });
+  return out.trim();
 }
 
 async function handleFileUpload(files){
   const bar = $("#file-results");
+  const preview = $("#upload-preview");
   if (!files.length) return;
-  bar.innerHTML = `<p class="mu">Processing ${files.length} file${files.length === 1 ? "" : "s"}…</p>`;
-  const total = { added: 0, rejected: 0, invalid: 0, errors: [] };
+  
+  bar.innerHTML = `<div class="upload-status"><div class="spinner"></div> Reading file(s)...</div>`;
+  preview.innerHTML = "";
+  st.pending = [];
 
   for (const file of files){
-    const failReason = validateFile(file);
-    if (failReason){ total.errors.push(failReason); continue; }
-    let recipes = [];
-    try { recipes = await parseUploadedFile(file); }
-    catch(e){ total.errors.push(`${file.name}: ${e.message}`); continue; }
-    if (!recipes.length){ total.errors.push(`${file.name}: no recipes detected`); continue; }
-
-    for (const raw of recipes){
-      if (!raw || !raw.n){ total.invalid++; continue; }
-      if (BAD.test(JSON.stringify(raw))){ total.rejected++; total.errors.push(`${raw.n}: contains non-halal ingredients`); continue; }
-      const r = normalizeRecipe({...raw, c: raw.c || `Imported from ${file.name}`});
-      if (!r.i.length || !r.s.length){ total.invalid++; total.errors.push(`${raw.n}: missing ingredients or steps`); continue; }
-      r.id = R.length; r.u = 1; R.push(r); total.added++;
+    const fail = validateFile(file);
+    if (fail){ bar.innerHTML = `<div class="err-box">${fail}</div>`; continue; }
+    
+    const ext = file.name.split(".").pop().toLowerCase();
+    let text = "";
+    
+    try {
+      if (ext === "pdf") {
+        const buf = await file.arrayBuffer();
+        text = await extractPdfText(buf);
+      } else {
+        text = await file.text();
+      }
+    } catch(e) {
+      bar.innerHTML = `<div class="err-box">Failed to read ${file.name}: ${e.message}</div>`;
+      continue;
     }
+
+    let parsedList = [];
+    
+    if (ext === "csv") {
+      parsedList = parseCSVFile(text);
+    } else if (ext === "json") {
+      parsedList = parseJSONFile(text);
+    } else {
+      // TXT, MD, PDF Smart Parser
+      // Split by lines that look like a new recipe title (start with number, or blank line before "Ingredients")
+      // For the provided PDF, it's sequential numbered recipes
+      const blocks = text.split(/\n(?=\d+\.\s)/); // Split on "1. ", "2. ", etc.
+      for (let b of blocks) {
+        if (!b.toLowerCase().includes("ingredients")) continue;
+        const parsed = parseCustomText(b, "");
+        if (parsed) parsedList.push(parsed);
+      }
+    }
+
+    parsedList.forEach(r => {
+      if (BAD.test(JSON.stringify(r))) {
+        console.warn("Skipped non-halal recipe", r.n);
+        return;
+      }
+      st.pending.push(normalizeRecipe(r));
+    });
   }
 
-  saveCustomRecipes();
-  rebuildIngredientIndex();
-  $("#hcount").textContent = R.length;
+  if (!st.pending.length) {
+    bar.innerHTML = `<div class="err-box">No valid recipes found. Ensure the file has "Ingredients" and steps.</div>`;
+    return;
+  }
 
-  let html = "";
-  if (total.added === 0){
-    html += `<div class="err-box">⚠️ <strong>No recipes were imported.</strong> See reasons below.</div>`;
+  bar.innerHTML = `<div class="ok-box">✅ Found ${st.pending.length} recipes in the file(s).</div>`;
+  
+  // Show preview
+  let html = `<h4>Select recipes to import:</h4>`;
+  st.pending.forEach((r, i) => {
+    html += `<label class="pending-item">
+      <input type="checkbox" class="pending-cb" data-idx="${i}" checked>
+      <div>
+        <strong>${esc(r.n)}</strong>
+        <span class="mu">${r.cal} kcal • ${r.t} min • ${r.i.length} ingredients</span>
+      </div>
+    </label>`;
+  });
+  
+  html += `<div class="pending-actions">
+    <button class="btn" id="confirm-import" type="button">Import Selected</button>
+    <button class="ch" id="cancel-import" type="button" style="margin:0">Cancel</button>
+  </div>`;
+  
+  preview.innerHTML = `<div class="upload-preview">${html}</div>`;
+}
+
+function confirmImport(){
+  const cbs = document.querySelectorAll(".pending-cb");
+  let added = 0;
+  
+  cbs.forEach(cb => {
+    if (cb.checked) {
+      const idx = parseInt(cb.dataset.idx);
+      const r = st.pending[idx];
+      r.id = R.length;
+      R.push(r);
+      added++;
+    }
+  });
+
+  if (added > 0) {
+    saveCustomRecipes();
+    rebuildIngredientIndex();
+    $("#hcount").textContent = R.length;
+    $("#upload-preview").innerHTML = `<div class="ok-box">✅ Successfully imported ${added} recipes!</div>`;
+    $("#file-results").innerHTML = "";
+    rMine();
   } else {
-    html += `<p class="mu" style="margin:0 0 8px"><strong>${total.added}</strong> recipe${total.added === 1 ? "" : "s"} added`;
-    if (total.rejected) html += `, <strong>${total.rejected}</strong> rejected (non-halal)`;
-    if (total.invalid)  html += `, <strong>${total.invalid}</strong> skipped (invalid)`;
-    html += `</p>`;
+    $("#upload-preview").innerHTML = `<div class="warn-box">No recipes were selected.</div>`;
   }
-
-  if (total.errors.length){
-    html += `<details ${total.added === 0 ? "open" : ""}><summary class="mu" style="cursor:pointer">Issues (${total.errors.length})</summary>
-      <ul>${total.errors.slice(0, 30).map(x => `<li>${esc(x)}</li>`).join("")}${total.errors.length > 30 ? `<li>… and ${total.errors.length - 30} more</li>` : ""}</ul>
-    </details>`;
-  }
-  bar.innerHTML = html;
-
-  if (total.added > 0){
-    st.limit = 12;
-    switchView('find');
-  }
+  st.pending = [];
 }
 
-function downloadTemplate(){
-  const tpl = `Spicy Lemon Salmon;d;Modern;15;a;hp;380;32;4;22;salmon,lemon,olive oil,paprika,garlic;Rub the salmon with oil and spices|Air fry at 190C for 10 minutes|Squeeze lemon over before serving
-Garlic Butter Prawns;d;Mediterranean;10;s;hp;290;28;2;18;prawns,butter,garlic,parsley,lemon;Melt butter with garlic|Add prawns and cook 3 minutes|Finish with parsley and lemon
-Cinnamon Apple Oats;b;Modern;12;s;hvVg;290;8;50;7;oats,apple,cinnamon,raisins,milk;Simmer the oats in the milk|Grate the apple into the pan|Add the cinnamon and raisins|Cook for 3 more minutes
-`;
-  const blob = new Blob([tpl], { type: "text/csv;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "halal-kitchen-template.csv";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
+/* ---------------- Global Event Listeners ---------------- */
 document.getElementById('menu-btn').addEventListener('click', () => {
   document.getElementById('drawer').classList.add('open');
   document.getElementById('drawer-overlay').classList.add('open');
@@ -1394,18 +1480,24 @@ document.getElementById('drawer-overlay').addEventListener('click', () => {
 
 document.addEventListener("click", e => {
   const t = e.target;
+
+  // Modal Controls
   if (t.id === "open-key-guide")  return openModal($("#key-dlg"));
   if (t.id === "close-key-guide") return closeModal($("#key-dlg"));
   if (t.id === "addb") return addI($("#in").value);
   if (t.id === "gen")  return genAI();
   if (t.id === "ks")   return saveKey();
+  if (t.id === "test-key") return testKey();
   if (t.id === "pa")   return addCustomRecipe();
+  if (t.id === "confirm-import") return confirmImport();
+  if (t.id === "cancel-import") { st.pending = []; $("#upload-preview").innerHTML = ""; return; }
+
   const el = t.closest("[data-k]");
   if (!el) return;
   const k = el.dataset.k, v = el.dataset.v;
+  
   switch (k){
     case "nav": switchView(v); return;
-    case "tab": switchView(v); return;
     case "tg": case "pm":
       st[k].has(v) ? st[k].delete(v) : st[k].add(v);
       if (k === "pm" && st.plan) build();
@@ -1422,8 +1514,14 @@ document.addEventListener("click", e => {
     case "pick": return addI(v);
     case "copy": return copyShoppingList();
     case "clear-off": clearOFFCache(); return;
-    case "download-template": downloadTemplate(); return;
     case "load-more": st.limit += 12; break;
+    case "delete-all-mine":
+      if(confirm("Delete ALL your custom recipes? This cannot be undone.")) {
+        R = R.filter(r => !r.u);
+        R.forEach((r,i) => r.id = i);
+        saveCustomRecipes(); rMine(); rHome(); $("#hcount").textContent = R.length;
+      }
+      return;
     case "rand": {
       const pool = R.filter(passes);
       if (pool.length) openRecipe(pool[Math.floor(Math.random() * pool.length)].id);
@@ -1441,10 +1539,11 @@ document.addEventListener("click", e => {
     }
     case "rm":
       st.ing.splice(+v, 1);
-      savePantry(); rC();
-      break;
+      savePantry(); rC(); rHome();
+      return;
   }
   
+  if (st.tab === 'home') rHome();
   if (st.tab === 'find') rM();
   if (st.tab === 'plan') rP(document.getElementById('out-plan'));
 });
@@ -1464,7 +1563,7 @@ document.addEventListener("input", e => {
     st.query = e.target.value.trim();
     st.limit = 12;
     scheduleOffSearch(st.query);
-    rM();
+    rHome();
   }
 });
 
@@ -1487,13 +1586,14 @@ window.addEventListener("online", () => {
 
 $("#dlg").addEventListener("click", e => { if (e.target.id === "dlg") closeModal(e.target); });
 
+/* ---------------- Boot ---------------- */
 initDatabase();
 rebuildIngredientIndex();
 const offT = $("#off-toggle");
 if (offT) offT.checked = offEnabled();
 updateCacheCount();
 rC();
-switchView('find');
+switchView('home');
 </script>
 </body>
 </html>
