@@ -176,7 +176,6 @@ input[type=file]:hover{border-color:var(--g)}
 .ai-suggestion-card { background:var(--bg); border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:12px; }
 .ai-suggestion-card h4 { margin:0 0 4px; font-size:1rem; }
 .ai-suggestion-card p { margin:0 0 12px; font-size:.85rem; color:var(--mut); }
-.ai-suggestion-actions { display:flex; gap:8px; }
 </style>
 </head>
 <body>
@@ -474,7 +473,7 @@ const st = {
   mineFilter: "all",
   chatRecipe: null,
   chatHistory: [],
-  aiSuggestions: [] // Store AI generated ideas before saving
+  aiSuggestions: [] 
 };
 
 function normalizeRecipe(r){
@@ -752,9 +751,6 @@ async function idbPut(q, v){
     });
   } catch(e){ return false; }
 }
-async function updateCacheCount(){
-  // Removed visual indicator to keep UI minimal
-}
 async function searchOFF(q){
   if (!navigator.onLine) return [];
   if (!q || q.length < OFF_MIN) return [];
@@ -867,7 +863,7 @@ const fbar = () => {
 const card = r => {
   const s = sc(r);
   const active = st.ing.length > 0;
-  return `<div class="rc" role="button" tabindex="0" data-k="open" data-v="${r.id}">
+  return `<div class="rc" role="button" tabindex="0" data-k="open" data-type="main" data-v="${r.id}">
     <div class="th">
       <span>${E[r.m] || "🍲"}</span>
       <b>🔥 ${r.cal} kcal</b>
@@ -878,14 +874,14 @@ const card = r => {
       <div>${tagsHtml(r)}</div>
       ${active ? `<div class="mt2"><i style="width:${Math.round(ratio(s)*100)}%"></i></div><p class="mu" style="margin-top:4px">Pantry: ${s.h}/${s.tot}.${s.miss.length ? ` Need ${s.miss.length}.` : " Ready!"}</p>` : ""}
       <div class="action-row">
-        <button class="chat-btn" data-k="chat-edit" data-v="${r.id}" type="button">🤖 Chat</button>
+        <button class="chat-btn" data-k="chat-edit" data-type="main" data-v="${r.id}" type="button">🤖 Chat</button>
       </div>
     </div>
   </div>`;
 };
 
 const userCard = r => {
-  return `<div class="rc" role="button" tabindex="0" data-k="open" data-v="${r.id}">
+  return `<div class="rc" role="button" tabindex="0" data-k="open" data-type="main" data-v="${r.id}">
     <div class="th">
       <span>${E[r.m] || "🍲"}</span>
       <b>🔥 ${r.cal} kcal</b>
@@ -895,7 +891,7 @@ const userCard = r => {
       <p class="mu">${esc(r.c)} • ⏱️ ${r.t} min • ${mel(r)}</p>
       <div>${tagsHtml(r)}</div>
       <div class="action-row">
-        <button class="chat-btn" data-k="chat-edit" data-v="${r.id}" type="button">🤖 Chat</button>
+        <button class="chat-btn" data-k="chat-edit" data-type="main" data-v="${r.id}" type="button">🤖 Chat</button>
         <button class="del-btn" data-k="del" data-v="${r.id}" type="button">🗑️ Delete</button>
       </div>
     </div>
@@ -1056,7 +1052,7 @@ function rP(out){
   ${pl ? `<div class="grid">${pl.map((d,i) => `<section class="day"><h3>${DN[i]}</h3>
       ${Object.entries(d).map(([k,r]) => `<div class="row">
         <span class="mu" style="margin:0">${M[k]}</span>
-        ${r ? `<button class="lk" data-k="open" data-v="${r.id}" type="button">${esc(r.n)}</button><button class="rr" data-k="rr" data-v="${i},${k}" type="button" aria-label="Swap ${esc(r.n)}">↻</button>` : `<span class="mu">No match</span>`}
+        ${r ? `<button class="lk" data-k="open" data-type="main" data-v="${r.id}" type="button">${esc(r.n)}</button><button class="rr" data-k="rr" data-v="${i},${k}" type="button" aria-label="Swap ${esc(r.n)}">↻</button>` : `<span class="mu">No match</span>`}
       </div>`).join("")}
     </section>`).join("")}</div>` : ""}
   ${pl ? shop(pl) : `<p class="mu" style="text-align:center">Choose your preferences and generate a plan.</p>`}`;
@@ -1065,12 +1061,12 @@ function rP(out){
 function openModal(d){ if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open",""); }
 function closeModal(d){ if (typeof d.close === "function") d.close(); else d.removeAttribute("open"); }
 
-function openRecipe(id){
-  const r = R[id] || st.aiSuggestions[id];
+function openRecipe(id, type = 'main'){
+  const r = type === 'sug' ? st.aiSuggestions[id] : R[id];
   if (!r) return;
   const active = st.ing.length > 0;
   const ings = r.i, steps = r.s;
-  const isSuggestion = !r.u && st.aiSuggestions.length > 0;
+  const isSuggestion = type === 'sug';
   
   $("#dlg .in2").innerHTML = `
     <div class="dh">
@@ -1095,7 +1091,7 @@ function openRecipe(id){
     <div style="display:flex;gap:8px;margin-top:24px;flex-wrap:wrap">
       ${isSuggestion 
         ? `<button class="btn full" data-k="save-suggestion" data-v="${id}" type="button">💾 Save to My Recipes</button>`
-        : `<button class="btn" data-k="chat-edit" data-v="${r.id}" type="button" style="flex:1">🤖 Chat & Modify</button>
+        : `<button class="btn" data-k="chat-edit" data-type="main" data-v="${r.id}" type="button" style="flex:1">🤖 Chat & Modify</button>
            ${r.u ? `<button class="btn" data-k="del" data-v="${r.id}" type="button" style="background:#b00;color:#fff">🗑️ Delete</button>` : ""}`
       }
     </div>`;
@@ -1175,7 +1171,7 @@ async function genAI(){
     const req = $("#ask").value.trim() || "quick simple halal recipe";
     const has = st.ing.length ? st.ing.join(", ") : "basic pantry staples";
     
-    const prompt = `Write 3 distinct halal recipe ideas based on this request: "${req}". Use mainly these ingredients if possible: ${has}.
+    const prompt = `Write 3 completely DISTINCT halal recipe ideas based on this request: "${req}". Use mainly these ingredients if possible: ${has}.
     Return a JSON array of exactly 3 objects. Each object must have: "n" (Title), "m" (b/l/d/s/t), "c" (Cuisine), "t" (minutes), "me" (asomn), "tg" (hpvVg), "cal" (number), "p" (number), "car" (number), "f" (number), "i" (array of strings), "s" (array of strings).`;
 
     const rawArray = await aiGemini(prompt);
@@ -1184,7 +1180,7 @@ async function genAI(){
     
     st.aiSuggestions = rawArray.map(raw => {
       if (BAD.test(JSON.stringify(raw))) throw new Error("Generated non-halal content.");
-      return normalizeRecipe({...raw, u: 1, ai: 1});
+      return normalizeRecipe({...raw, ai: 1});
     });
     
     g.style.color = "var(--g)";
@@ -1194,9 +1190,10 @@ async function genAI(){
       <div class="ai-suggestion-card">
         <h4>${esc(r.n)}</h4>
         <p>${r.cal} kcal • ${r.t} min • ${r.p}g protein</p>
-        <div class="ai-suggestion-actions">
-          <button class="btn outline" data-k="open-suggestion" data-v="${i}" type="button" style="flex:1">View Recipe</button>
-          <button class="btn" data-k="save-suggestion" data-v="${i}" type="button" style="flex:1">Save</button>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn outline" data-k="open" data-type="sug" data-v="${i}" type="button" style="flex:1; padding:8px;">View</button>
+          <button class="btn outline" data-k="chat-edit" data-type="sug" data-v="${i}" type="button" style="flex:1; padding:8px;">🤖 Chat</button>
+          <button class="btn" data-k="save-suggestion" data-v="${i}" type="button" style="flex:1; padding:8px;">Save</button>
         </div>
       </div>
     `).join("");
@@ -1211,12 +1208,24 @@ function saveSuggestion(idx) {
   const r = st.aiSuggestions[idx];
   if (!r) return;
   
+  r.u = 1;
   r.id = R.length;
   R.push(r);
   saveCustomRecipes();
   rebuildIngredientIndex();
   
   closeModal($("#dlg"));
+  switchView('mine');
+}
+
+function saveDraft() {
+  if (!st.chatRecipe) return;
+  delete st.chatRecipe.isDraft;
+  st.chatRecipe.u = 1;
+  st.chatRecipe.id = R.length;
+  R.push(st.chatRecipe);
+  saveCustomRecipes();
+  rebuildIngredientIndex();
   switchView('mine');
 }
 
@@ -1243,14 +1252,18 @@ async function testKey(){
 }
 
 /* ---------------- AI Chat Logic ---------------- */
-function startChat(id) {
-  const r = R[id] || st.aiSuggestions[id];
+function startChat(id, type = 'main') {
+  const r = type === 'sug' ? st.aiSuggestions[id] : R[id];
   if (!r) return;
-  st.chatRecipe = JSON.parse(JSON.stringify(r)); // Clone it
+  
+  st.chatRecipe = JSON.parse(JSON.stringify(r));
+  st.chatRecipe.isDraft = (type === 'sug');
+  
   st.chatHistory = [{
     role: "ai",
     text: `I'm ready to modify "${r.n}". What would you like to change? (e.g. "Make it spicier", "Replace chicken with tofu", "Fewer steps")`
   }];
+  
   closeModal($("#dlg"));
   switchView('chat');
 }
@@ -1258,9 +1271,18 @@ function startChat(id) {
 function rChat() {
   $("#chat-title").textContent = st.chatRecipe ? st.chatRecipe.n : "Recipe";
   const container = $("#chat-messages");
-  container.innerHTML = st.chatHistory.map(m => 
+  
+  let html = st.chatHistory.map(m => 
     `<div class="chat-bubble ${m.role}">${esc(m.text)}</div>`
   ).join("");
+  
+  if (st.chatRecipe && st.chatRecipe.isDraft) {
+    html += `<div style="padding:16px;text-align:center;background:var(--card);border-top:1px solid var(--line);position:sticky;bottom:0;margin-top:16px;border-radius:12px">
+      <button class="btn full" onclick="saveDraft()">💾 Save to My Recipes</button>
+    </div>`;
+  }
+  
+  container.innerHTML = html;
   container.scrollTop = container.scrollHeight;
 }
 
@@ -1295,19 +1317,23 @@ Update the recipe based on their request. Return the ENTIRE updated recipe in th
     }
     
     const updated = normalizeRecipe(newRecipeData);
-    updated.u = 1; 
     updated.ai = 1;
-    updated.id = R.length; 
     
-    R.push(updated);
-    saveCustomRecipes();
-    rebuildIngredientIndex();
+    if (!st.chatRecipe.isDraft) {
+      updated.u = 1;
+      updated.id = R.length; 
+      R.push(updated);
+      saveCustomRecipes();
+      rebuildIngredientIndex();
+    } else {
+      updated.isDraft = true;
+    }
     
     st.chatRecipe = JSON.parse(JSON.stringify(updated));
     
     st.chatHistory.push({ 
       role: "ai", 
-      text: `✅ Done! I've updated the recipe. New title: "${updated.n}". You can view it in My Recipes, or continue tweaking it here.` 
+      text: `✅ Done! I've updated the recipe.` 
     });
     rChat();
     
@@ -1717,12 +1743,11 @@ document.addEventListener("click", e => {
 
   const el = t.closest("[data-k]");
   if (!el) return;
-  const k = el.dataset.k, v = el.dataset.v;
+  const k = el.dataset.k, v = el.dataset.v, type = el.dataset.type;
   
   switch (k){
     case "nav": switchView(v); return;
-    case "chat-edit": return startChat(+v);
-    case "open-suggestion": return openRecipe(+v);
+    case "chat-edit": return startChat(+v, type);
     case "save-suggestion": return saveSuggestion(+v);
     case "filter-mine": st.mineFilter = v; rMine(); return;
     case "tg": case "pm":
@@ -1735,7 +1760,7 @@ document.addEventListener("click", e => {
     case "days": st.days = v; if (st.plan) build(); break;
     case "fo":   st.fo = !st.fo; break;
     case "clr":  st.me = ""; st.tm = "0"; st.tg.clear(); if (st.plan) build(); break;
-    case "open": return openRecipe(+v);
+    case "open": return openRecipe(+v, type);
     case "close": return closeModal($("#dlg"));
     case "del":  return deleteRecipe(+v);
     case "pick": return addI(v);
@@ -1785,7 +1810,7 @@ document.addEventListener("keydown", e => {
   }
   if (e.key === "Enter" || e.key === " "){
     const el = e.target.closest('[data-k="open"]');
-    if (el){ e.preventDefault(); openRecipe(+el.dataset.v); }
+    if (el){ e.preventDefault(); openRecipe(+el.dataset.v, el.dataset.type || 'main'); }
   }
 });
 
